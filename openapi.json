@@ -1,0 +1,848 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CODESYS Automation API",
+    "version": "0.1.0",
+    "description": "REST API for automating CODESYS project, POU, PLC binding, and Modbus RS485 configuration workflows."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    },
+    {
+      "url": "http://10.2.40.50:8080"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/session/status": {
+      "get": {
+        "tags": ["Session"],
+        "summary": "Get CODESYS session status",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/session/start": {
+      "post": {
+        "tags": ["Session"],
+        "summary": "Start CODESYS persistent session",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/session/stop": {
+      "post": {
+        "tags": ["Session"],
+        "summary": "Stop CODESYS persistent session",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/session/restart": {
+      "post": {
+        "tags": ["Session"],
+        "summary": "Restart CODESYS persistent session",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/project/list": {
+      "get": {
+        "tags": ["Project"],
+        "summary": "List projects known to the CODESYS session",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/project/create": {
+      "post": {
+        "tags": ["Project"],
+        "summary": "Create a CODESYS project",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProjectCreate"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/project/open": {
+      "post": {
+        "tags": ["Project"],
+        "summary": "Open a CODESYS project",
+        "description": "Project open can take 30-90 seconds for large projects.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProjectOpen"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/project/save": {
+      "post": {
+        "tags": ["Project"],
+        "summary": "Save the active project",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/project/close": {
+      "post": {
+        "tags": ["Project"],
+        "summary": "Close the active project",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/project/compile": {
+      "post": {
+        "tags": ["Project"],
+        "summary": "Compile the active project",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProjectCompile"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/pou/list": {
+      "get": {
+        "tags": ["POU"],
+        "summary": "List textual IEC objects",
+        "parameters": [
+          { "$ref": "#/components/parameters/ParentPath" },
+          { "$ref": "#/components/parameters/IncludeNonPou" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/pou/code": {
+      "get": {
+        "tags": ["POU"],
+        "summary": "Read POU declaration and implementation text",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      },
+      "post": {
+        "tags": ["POU"],
+        "summary": "Write POU declaration and/or implementation text",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PouCodeWrite"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/pou/create": {
+      "post": {
+        "tags": ["POU"],
+        "summary": "Create a POU",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PouCreate"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/targets": {
+      "get": {
+        "tags": ["PLC"],
+        "summary": "List project device and application targets",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/gateways": {
+      "get": {
+        "tags": ["PLC"],
+        "summary": "List configured CODESYS gateways",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/bindings": {
+      "get": {
+        "tags": ["PLC"],
+        "summary": "List project device gateway/address bindings",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/validate-deploy": {
+      "post": {
+        "tags": ["PLC"],
+        "summary": "Validate deploy target inputs without connecting or downloading",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PlcValidateDeploy"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/scan": {
+      "post": {
+        "tags": ["PLC"],
+        "summary": "Scan or query PLC targets through a CODESYS gateway",
+        "description": "Active gateway scans and findAddressByIp can block in CODESYS. Prefer cached scan or known project bindings until this is isolated in a worker.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PlcScan"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/status": {
+      "post": {
+        "tags": ["PLC"],
+        "summary": "Inspect application deploy/online status",
+        "description": "login/connect is opt-in and uses OnlineChangeOption.Keep. It does not download or start the PLC.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PlcStatus"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/plc/bind-ip": {
+      "post": {
+        "tags": ["PLC"],
+        "summary": "Bind a project device to a PLC IP address",
+        "description": "Guarded endpoint. Requires confirmBind=true because changing a project target can point it at a different PLC.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PlcBindIp"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/modbus/devices": {
+      "get": {
+        "tags": ["Modbus"],
+        "summary": "List CODESYS device tree",
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "post": {
+        "tags": ["Modbus"],
+        "summary": "Create a Modbus slave device",
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusDeviceCreate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/devices/{device}": {
+      "get": {
+        "tags": ["Modbus"],
+        "summary": "Get device details",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "delete": {
+        "tags": ["Modbus"],
+        "summary": "Delete a device",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "patch": {
+        "tags": ["Modbus"],
+        "summary": "Update device parameters",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusDeviceUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/devices/{device}/channels": {
+      "get": {
+        "tags": ["Modbus"],
+        "summary": "List Modbus channels for a device",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "post": {
+        "tags": ["Modbus"],
+        "summary": "Create a Modbus channel",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusChannelCreate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/devices/{device}/channels/bulk": {
+      "post": {
+        "tags": ["Modbus"],
+        "summary": "Create Modbus channels in bulk",
+        "description": "Creates a whole Modbus slave channel set. By default this uses the faster CODESYS native .export generation/import path when masterPath is supplied. Use mode=addParameter to force the legacy AddParameter loop, which is much slower.",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusChannelBulkCreate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "put": {
+        "tags": ["Modbus"],
+        "summary": "Bulk update existing Modbus channels",
+        "description": "Updates existing channel configuration structs in one CODESYS script. It does not create missing channels; missing names are returned in the response.",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusChannelBulkUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "patch": {
+        "tags": ["Modbus"],
+        "summary": "Bulk update existing Modbus channels",
+        "description": "Same behavior as PUT /channels/bulk.",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusChannelBulkUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/devices/{device}/channels/{channel}": {
+      "delete": {
+        "tags": ["Modbus"],
+        "summary": "Delete a Modbus channel",
+        "parameters": [
+          { "$ref": "#/components/parameters/DevicePathParam" },
+          { "$ref": "#/components/parameters/ChannelPathParam" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "patch": {
+        "tags": ["Modbus"],
+        "summary": "Update a Modbus channel",
+        "parameters": [
+          { "$ref": "#/components/parameters/DevicePathParam" },
+          { "$ref": "#/components/parameters/ChannelPathParam" }
+        ],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusChannelUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/devices/{device}/channels/{channel}/mapping": {
+      "get": {
+        "tags": ["Modbus"],
+        "summary": "Get IO mapping for a channel",
+        "parameters": [
+          { "$ref": "#/components/parameters/DevicePathParam" },
+          { "$ref": "#/components/parameters/ChannelPathParam" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "put": {
+        "tags": ["Modbus"],
+        "summary": "Set IO mapping for a channel",
+        "parameters": [
+          { "$ref": "#/components/parameters/DevicePathParam" },
+          { "$ref": "#/components/parameters/ChannelPathParam" }
+        ],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusMappingSet" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      },
+      "delete": {
+        "tags": ["Modbus"],
+        "summary": "Clear IO mapping for a channel",
+        "parameters": [
+          { "$ref": "#/components/parameters/DevicePathParam" },
+          { "$ref": "#/components/parameters/ChannelPathParam" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/com/{device}": {
+      "get": {
+        "tags": ["Modbus"],
+        "summary": "Get Modbus COM port parameters",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/master/{device}": {
+      "get": {
+        "tags": ["Modbus"],
+        "summary": "Get Modbus master parameters",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/save": {
+      "post": {
+        "tags": ["Modbus"],
+        "summary": "Save the active project",
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/modbus/devices/{device}/export-io": {
+      "post": {
+        "tags": ["Modbus"],
+        "summary": "Export IO mapping CSV",
+        "parameters": [{ "$ref": "#/components/parameters/DevicePathParam" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ModbusExportIo" },
+        "responses": { "200": { "$ref": "#/components/responses/JsonResponse" } }
+      }
+    },
+    "/api/v1/script/execute": {
+      "post": {
+        "tags": ["Script"],
+        "summary": "Execute an arbitrary CODESYS script",
+        "description": "Administrative escape hatch. Prefer dedicated endpoints for production workflows.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ScriptExecute"
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/system/info": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get API/system metadata",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    },
+    "/api/v1/system/logs": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get CODESYS session log lines",
+        "responses": {
+          "200": { "$ref": "#/components/responses/JsonResponse" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Use the form: ApiKey admin"
+      }
+    },
+    "responses": {
+      "JsonResponse": {
+        "description": "JSON response from CODESYS API",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ModbusChannelDefinition": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "accessType": { "type": "integer", "default": 3 },
+          "access_type": { "type": "integer", "description": "Alias for accessType." },
+          "readOffset": { "type": "string", "default": "16#0000" },
+          "read_offset": { "type": "string", "description": "Alias for readOffset." },
+          "readLength": { "type": "integer", "default": 1 },
+          "read_length": { "type": "integer", "description": "Alias for readLength." },
+          "writeOffset": { "type": "string", "default": "0" },
+          "write_offset": { "type": "string", "description": "Alias for writeOffset." },
+          "writeLength": { "type": "integer", "default": 0 },
+          "write_length": { "type": "integer", "description": "Alias for writeLength." },
+          "trigger": { "type": "integer", "default": 5 },
+          "cycleTime": { "type": "integer", "default": 100 },
+          "cycle_time": { "type": "integer", "description": "Alias for cycleTime." },
+          "errorHandling": { "type": "string", "default": "true" },
+          "error_handling": { "type": "string", "description": "Alias for errorHandling." },
+          "comment": { "type": "string" }
+        }
+      }
+    },
+    "parameters": {
+      "ParentPath": {
+        "name": "parentPath",
+        "in": "query",
+        "schema": { "type": "string" }
+      },
+      "IncludeNonPou": {
+        "name": "includeNonPou",
+        "in": "query",
+        "schema": { "type": "boolean" }
+      },
+      "DevicePathParam": {
+        "name": "device",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      },
+      "ChannelPathParam": {
+        "name": "channel",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    },
+    "requestBodies": {
+      "ProjectCreate": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "template_path": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ProjectOpen": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["path"],
+              "properties": {
+                "path": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ProjectCompile": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "clean_build": { "type": "boolean", "default": false }
+              }
+            }
+          }
+        }
+      },
+      "PouCreate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["name", "type", "language"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": { "type": "string", "enum": ["Program", "FunctionBlock", "Function"] },
+                "language": { "type": "string", "example": "ST" },
+                "parentPath": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "PouCodeWrite": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["path"],
+              "properties": {
+                "path": { "type": "string" },
+                "declaration": { "type": "string" },
+                "implementation": { "type": "string" },
+                "code": { "type": "string", "description": "Legacy alias for implementation" },
+                "save": { "type": "boolean", "default": true },
+                "verify": { "type": "boolean", "default": true }
+              }
+            }
+          }
+        }
+      },
+      "PlcValidateDeploy": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "applicationPath": { "type": "string" },
+                "devicePath": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "PlcScan": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "gateway": { "type": "string" },
+                "cached": { "type": "boolean", "default": true },
+                "ip": { "type": "string" },
+                "host": { "type": "string" },
+                "port": { "type": "integer", "default": 11740 },
+                "timeout": { "type": "integer", "default": 60 }
+              }
+            }
+          }
+        }
+      },
+      "PlcStatus": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "applicationPath": { "type": "string" },
+                "login": { "type": "boolean", "default": false },
+                "connect": { "type": "boolean", "default": false },
+                "includeSignatures": { "type": "boolean", "default": false },
+                "timeout": { "type": "integer", "default": 60 }
+              }
+            }
+          }
+        }
+      },
+      "PlcBindIp": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["devicePath", "ip", "confirmBind"],
+              "properties": {
+                "devicePath": { "type": "string", "example": "P2CDS622" },
+                "ip": { "type": "string" },
+                "port": { "type": "integer", "default": 11740 },
+                "gatewayName": { "type": "string", "default": "Local Gateway" },
+                "gatewayHost": { "type": "string", "default": "localhost" },
+                "gatewayPort": { "type": "integer", "default": 1217 },
+                "save": { "type": "boolean", "default": false },
+                "confirmBind": { "type": "boolean", "description": "Required true to change project target binding" }
+              }
+            }
+          }
+        }
+      },
+      "ModbusDeviceCreate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["masterPath", "name"],
+              "properties": {
+                "masterPath": { "type": "string" },
+                "name": { "type": "string" },
+                "slaveAddress": { "type": "integer", "default": 1 },
+                "deviceType": { "type": "integer", "default": 91 },
+                "deviceId": { "type": "string", "default": "0000 0001" },
+                "deviceVersion": { "type": "string", "default": "4.5.0.0" }
+              }
+            }
+          }
+        }
+      },
+      "ModbusDeviceUpdate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "slaveAddress": { "type": "integer" },
+                "responseTimeout": { "type": "integer" }
+              }
+            }
+          }
+        }
+      },
+      "ModbusChannelCreate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string" },
+                "accessType": { "type": "integer", "default": 3 },
+                "access_type": { "type": "integer", "description": "Alias for accessType." },
+                "readOffset": { "type": "string", "default": "16#0000" },
+                "read_offset": { "type": "string", "description": "Alias for readOffset." },
+                "readLength": { "type": "integer", "default": 1 },
+                "read_length": { "type": "integer", "description": "Alias for readLength." },
+                "writeOffset": { "type": "string", "default": "0" },
+                "write_offset": { "type": "string", "description": "Alias for writeOffset." },
+                "writeLength": { "type": "integer", "default": 0 },
+                "write_length": { "type": "integer", "description": "Alias for writeLength." },
+                "trigger": { "type": "integer", "default": 5 },
+                "cycleTime": { "type": "integer", "default": 100 },
+                "cycle_time": { "type": "integer", "description": "Alias for cycleTime." },
+                "errorHandling": { "type": "string", "default": "true" },
+                "error_handling": { "type": "string", "description": "Alias for errorHandling." },
+                "comment": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ModbusChannelBulkCreate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["channels"],
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": ["native", "addParameter"],
+                  "default": "native",
+                  "description": "native generates a CODESYS .export and imports the slave device. addParameter uses the legacy native ParameterSet.AddParameter loop."
+                },
+                "strategy": {
+                  "type": "string",
+                  "description": "Alias for mode."
+                },
+                "masterPath": {
+                  "type": "string",
+                  "example": "Modbus_COM.Modbus_Master_COM_Port",
+                  "description": "Required for native mode. Dot-separated path from the PLC device to the Modbus master."
+                },
+                "master_path": {
+                  "type": "string",
+                  "description": "Alias for masterPath."
+                },
+                "slaveAddress": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": "Modbus slave/server address used when native mode creates/imports the device."
+                },
+                "slave_address": {
+                  "type": "integer",
+                  "description": "Alias for slaveAddress."
+                },
+                "replace": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "When true in native mode, deletes an existing device with the same name before import. Keep false unless replacing a generated device intentionally."
+                },
+                "channels": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ModbusChannelDefinition" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ModbusChannelBulkUpdate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["channels"],
+              "properties": {
+                "channels": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ModbusChannelDefinition" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ModbusChannelUpdate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "ModbusMappingSet": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["variable"],
+              "properties": {
+                "variable": { "type": "string", "example": "Application.GVL.TagName" },
+                "createVariable": { "type": "boolean", "default": true }
+              }
+            }
+          }
+        }
+      },
+      "ModbusExportIo": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["filePath"],
+              "properties": {
+                "filePath": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ScriptExecute": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["script"],
+              "properties": {
+                "script": { "type": "string" },
+                "timeout": { "type": "integer", "default": 60 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
