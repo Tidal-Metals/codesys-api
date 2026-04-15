@@ -47,7 +47,7 @@ class ProjectHandlersMixin:
         
         logger.info("Executing project creation script in CODESYS")
         # Execute the script with a reasonable timeout
-        result = self.script_executor.execute_script(script, timeout=30)
+        result = self.script_executor.execute_script(script, timeout=120)
         
         logger.info("Script execution result: %s", result)
         
@@ -78,7 +78,7 @@ class ProjectHandlersMixin:
         
         # Generate and execute project open script
         script = self.script_generator.generate_project_open_script(params)
-        result = self.script_executor.execute_script(script, timeout=30)
+        result = self.script_executor.execute_script(script, timeout=120)
         
         if result.get("success", False):
             logger.info("Project opening successful")

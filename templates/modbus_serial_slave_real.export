@@ -1,0 +1,2093 @@
+<ExportFile>
+  <StructuredView Guid="{d9b2b2cc-ea99-4c3b-aa42-1e5c49e65b84}">
+<Single xml:space="preserve" Type="{3daac5e4-660e-42e4-9cea-3711b98bfb63}" Method="IArchivable">
+  <Null Name="Profile" />
+  <List2 Name="EntryList">
+    <Single Type="{6198ad31-4b98-445c-927f-3258a0e82fe3}" Method="IArchivable">
+      <Single Name="IsRoot" Type="bool">True</Single>
+      <Single Name="MetaObject" Type="{81297157-7ec9-45ce-845e-84cab2b88ade}" Method="IArchivable">
+        <Single Name="Guid" Type="System.Guid">5ca01262-c79d-4a82-a997-14a634074d79</Single>
+        <Single Name="ParentGuid" Type="System.Guid">856b7b4b-59e2-4b6c-befe-24bf1fb8624c</Single>
+        <Single Name="Name" Type="string">Pump2</Single>
+        <Dictionary Type="{2c41fa04-1834-41c1-816e-303c7aa2c05b}" Name="Properties">
+          <Entry>
+            <Key>
+              <Single Type="System.Guid">cdadfc2b-8598-4621-ad56-5b1df7db910f</Single>
+            </Key>
+            <Value>
+              <Single Type="{cdadfc2b-8598-4621-ad56-5b1df7db910f}" Method="IArchivable">
+                <Single Name="DeviceIdentification" Type="{05ee0b98-6639-4276-bc32-b75578b819ef}" Method="IArchivable">
+                  <Single Name="Type" Type="int">91</Single>
+                  <Single Name="Id" Type="string">0000 0001</Single>
+                  <Single Name="Version" Type="string">4.5.0.0</Single>
+                  <Null Name="BaseName" />
+                </Single>
+              </Single>
+            </Value>
+          </Entry>
+        </Dictionary>
+        <Single Name="TypeGuid" Type="System.Guid">225bfe47-7336-4dbc-9419-4105a7c831fa</Single>
+        <Null Name="EmbeddedTypeGuids" />
+        <Single Name="Timestamp" Type="long">639021737070393722</Single>
+      </Single>
+      <Single Name="Object" Type="{225bfe47-7336-4dbc-9419-4105a7c831fa}" Method="IArchivable">
+        <Single Name="UniqueIdGenerator" Type="string">4399</Single>
+        <Null Name="TypeList" />
+        <Single Name="NeedsBusCycle" Type="bool">False</Single>
+        <Single Name="Id" Type="{05ee0b98-6639-4276-bc32-b75578b819ef}" Method="IArchivable">
+          <Single Name="Type" Type="int">91</Single>
+          <Single Name="Id" Type="string">0000 0001</Single>
+          <Single Name="Version" Type="string">4.5.0.0</Single>
+          <Null Name="BaseName" />
+        </Single>
+        <Single Name="DefaultDeviceInfo" Type="{59a90934-c888-40db-a9df-306fcf36d75c}" Method="IArchivable">
+          <Single Name="Name" Type="string">Modbus Server, COM Port</Single>
+          <Single Name="Description" Type="string">A generic device that works as a Modbus Server on a serial bus.</Single>
+          <Single Name="Vendor" Type="string">CODESYS</Single>
+          <Single Name="OrderNumber" Type="string">-</Single>
+          <Array Name="Categories" Type="int">WwAAAA==</Array>
+          <Array Name="Families" Type="string" />
+          <Single Name="Custom" Type="string"></Single>
+          <Null Name="DefaultInstanceName" />
+        </Single>
+        <Single Name="DeviceParameterSet" Type="{abc12bfe-e34e-4b2c-a058-42c6e7e03a13}" Method="IArchivable">
+          <List2 Name="Params" />
+          <Single Name="LmGuid" Type="System.Guid">7bc06971-5118-5fd8-954e-05e8d4477fca</Single>
+          <Null Name="Sections" />
+          <Single Name="InitOnOnlineChange" Type="bool">False</Single>
+          <Single Name="AlwaysMapping" Type="bool">False</Single>
+          <Null Name="EditorName" />
+          <Single Name="AlwaysMappingMode" Type="{9d1b24fb-5845-4978-8458-564ca7830fec}">OnlyIfUnused</Single>
+          <Single Name="CreateBitChannels" Type="bool">False</Single>
+        </Single>
+        <Single Name="Disable" Type="bool">True</Single>
+        <Single Name="Exclude" Type="bool">False</Single>
+        <List Name="Connectors" Type="System.Collections.ArrayList" />
+        <Single Name="ConnectorList" Type="{52a6325f-063a-4748-86b6-ec8aa02d3232}" Method="IArchivable">
+          <List Name="InnerList" Type="System.Collections.ArrayList">
+            <Single Type="{850f737d-2abf-45f4-89c1-63ed6b29593d}" Method="IArchivable">
+              <Single Name="VisibleInterfaceName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                <Single Name="Namespace" Type="string">local</Single>
+                <Single Name="Identifier" Type="string">ModbusGenericSerialServer</Single>
+                <Single Name="Default" Type="string">ModbusGenericSerialServer</Single>
+              </Single>
+              <Single Name="ConnectorObjectGuid" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+              <Single Name="IsExplicit" Type="bool">False</Single>
+              <Single Name="ModuleType" Type="ushort">91</Single>
+              <Single Name="Interface" Type="string">Common.ModbusGenericSerialMaster</Single>
+              <Single Name="Role" Type="{6827a808-5967-49c4-a827-10f6c446e075}">Child</Single>
+              <Single Name="ConnectorId" Type="int">1</Single>
+              <Single Name="Hostpath" Type="int">-1</Single>
+              <Single Name="Adapters" Type="{1da2f14a-1c63-4268-9171-3b6869b8ccd6}" Method="IArchivable">
+                <List Name="Adapters" Type="System.Collections.ArrayList">
+                  <Single Type="{6d49a564-d0d1-4914-86ee-4465387ab144}" Method="IArchivable">
+                    <Single Name="AllowEmptySlot" Type="bool">False</Single>
+                    <Null Name="DefaultModules" />
+                    <Array Name="Modules" Type="System.Guid">
+                      <Single Type="System.Guid">856b7b4b-59e2-4b6c-befe-24bf1fb8624c</Single>
+                    </Array>
+                    <Single Name="IncludeSlotNumber" Type="bool">False</Single>
+                    <Single Name="StartSlotNumber" Type="uint">0</Single>
+                    <Null Name="SlotNames" />
+                    <Single Name="HiddenSlot" Type="bool">False</Single>
+                  </Single>
+                </List>
+              </Single>
+              <Single Name="HostParameterSet" Type="{abc12bfe-e34e-4b2c-a058-42c6e7e03a13}" Method="IArchivable">
+                <List2 Name="Params">
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">8000</Single>
+                    <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                    <Single Name="Download" Type="bool">False</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Null Name="FilterFlags" />
+                      <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                      <Single Name="PositionId" Type="long">4104</Single>
+                      <Single Name="EditorPositionId" Type="long">4105</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Namespace" Type="string">local</Single>
+                        <Single Name="Identifier" Type="string">Parameter.NewChannelConfig</Single>
+                        <Single Name="Default" Type="string">Use the new Channel-Config format</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Namespace" Type="string">local</Single>
+                        <Single Name="Identifier" Type="string">Parameter.NewChannelConfig</Single>
+                        <Single Name="Default" Type="string">NewChannelConfig</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">8000</Single>
+                      <Single Name="Value" Type="string">true</Single>
+                      <Single Name="Type" Type="string">BOOL</Single>
+                      <Single Name="Default" Type="string">true</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:BOOL</Single>
+                    <Single Name="IndexInDevDesc" Type="long">0</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">9100</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Single Name="PositionId" Type="long">4394</Single>
+                      <Single Name="EditorPositionId" Type="long">4395</Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">SlaveAddress</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">9100</Single>
+                      <Single Name="Value" Type="string">25</Single>
+                      <Single Name="Type" Type="string">USINT</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:USINT</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">9101</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Single Name="PositionId" Type="long">4396</Single>
+                      <Single Name="EditorPositionId" Type="long">4397</Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">ResponseTimeout</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">9101</Single>
+                      <Single Name="Value" Type="string">1000</Single>
+                      <Single Name="Type" Type="string">DWORD</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:DWORD</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">9102</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Single Name="PositionId" Type="long">4398</Single>
+                      <Single Name="EditorPositionId" Type="long">4399</Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">UseExtendedFunctionCodes</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">9102</Single>
+                      <Single Name="Value" Type="string">TRUE</Single>
+                      <Single Name="Type" Type="string">BOOL</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:BOOL</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">9200</Single>
+                    <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                    <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                    <Single Name="DiagType" Type="{55948f0f-941b-4544-a1c2-3169f7256355}">Diagnosis</Single>
+                    <Single Name="DalaElement" Type="{87130527-d8a8-4a3f-a43d-fabaec05f356}" Method="IArchivable">
+                      <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                        <List2 Name="elements">
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Null Name="FilterFlags" />
+                            <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                            <Single Name="PositionId" Type="long">4114</Single>
+                            <Single Name="EditorPositionId" Type="long">4115</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">StructVersion</Single>
+                              <Single Name="Default" Type="string">Diag Version</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">StructVersion</Single>
+                            <Single Name="Value" Type="string">1</Single>
+                            <Single Name="Type" Type="string">UDINT</Single>
+                            <Single Name="Default" Type="string">1</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Null Name="FilterFlags" />
+                            <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                            <Single Name="PositionId" Type="long">4116</Single>
+                            <Single Name="EditorPositionId" Type="long">4117</Single>
+                            <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">Online.Desc</Single>
+                              <Single Name="Default" Type="string">Current State of TCP Connection</Single>
+                            </Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">ComState</Single>
+                              <Single Name="Default" Type="string">ComState</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ComState</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Null Name="FilterFlags" />
+                            <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                            <Single Name="PositionId" Type="long">4118</Single>
+                            <Single Name="EditorPositionId" Type="long">4119</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">align</Single>
+                              <Single Name="Default" Type="string">align</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">align</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Null Name="FilterFlags" />
+                            <Single Name="PositionId" Type="long">4120</Single>
+                            <Single Name="EditorPositionId" Type="long">4121</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">RequestCounter</Single>
+                              <Single Name="Default" Type="string">Request Counter</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">RequestCounter</Single>
+                            <Single Name="Type" Type="string">UDINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Null Name="FilterFlags" />
+                            <Single Name="PositionId" Type="long">4122</Single>
+                            <Single Name="EditorPositionId" Type="long">4123</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">ErrorCounter</Single>
+                              <Single Name="Default" Type="string">Error Counter</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ErrorCounter</Single>
+                            <Single Name="Type" Type="string">UDINT</Single>
+                          </Single>
+                          <Single Type="{87130527-d8a8-4a3f-a43d-fabaec05f356}" Method="IArchivable">
+                            <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                              <List2 Name="elements">
+                                <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                  <Null Name="FilterFlags" />
+                                  <Single Name="PositionId" Type="long">4126</Single>
+                                  <Single Name="EditorPositionId" Type="long">4127</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Namespace" Type="string">local</Single>
+                                    <Single Name="Identifier" Type="string">Timestamp</Single>
+                                    <Single Name="Default" Type="string">Timestamp</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">Timestamp</Single>
+                                  <Single Name="Type" Type="string">DATE_AND_TIME</Single>
+                                </Single>
+                                <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                  <Null Name="FilterFlags" />
+                                  <Single Name="PositionId" Type="long">4128</Single>
+                                  <Single Name="EditorPositionId" Type="long">4129</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Namespace" Type="string">local</Single>
+                                    <Single Name="Identifier" Type="string">ChannelIndex</Single>
+                                    <Single Name="Default" Type="string">Channel Index</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">ChannelIndex</Single>
+                                  <Single Name="Value" Type="string">-1</Single>
+                                  <Single Name="Type" Type="string">INT</Single>
+                                  <Single Name="Default" Type="string">-1</Single>
+                                </Single>
+                                <Single Type="{4322e2a3-55e5-4e47-9fcd-b70eb1e6bfee}" Method="IArchivable">
+                                  <Null Name="FilterFlags" />
+                                  <Single Name="PositionId" Type="long">4130</Single>
+                                  <Single Name="EditorPositionId" Type="long">4131</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Namespace" Type="string">local</Single>
+                                    <Single Name="Identifier" Type="string">ErrorCounter</Single>
+                                    <Single Name="Default" Type="string">Error Code</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">ErrorCode</Single>
+                                  <Single Name="TypeName" Type="string">MBErrorCode</Single>
+                                  <Single Name="LmEnumTypeGuid" Type="System.Guid">98702ead-7053-5d9a-9ae8-59e501a3fd5f</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Null Name="FilterFlags" />
+                                    <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                                    <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                                    <Single Name="PositionId" Type="long">4130</Single>
+                                    <Single Name="EditorPositionId" Type="long">4131</Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Namespace" Type="string">local</Single>
+                                      <Single Name="Identifier" Type="string">ErrorCounter</Single>
+                                      <Single Name="Default" Type="string">Error Code</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">ErrorCode</Single>
+                                    <Single Name="Value" Type="string">16#FF</Single>
+                                    <Single Name="Type" Type="string">UINT</Single>
+                                    <Single Name="Default" Type="string">16#FF</Single>
+                                  </Single>
+                                  <Array Name="Values" Type="{b955cc99-aa13-473b-b43f-7c76a865c138}">
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_SUCCESS</Single>
+                                        <Single Name="Default" Type="string">RESPONSE SUCCESS</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_SUCCESSDesc</Single>
+                                        <Single Name="Default" Type="string">Request excecuted successfully</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_SUCCESS</Single>
+                                      <Single Name="Value" Type="string">0</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ILLEGAL_FUNCTION</Single>
+                                        <Single Name="Default" Type="string">ILLEGAL FUNCTION</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ILLEGAL_FUNCTIONDesc</Single>
+                                        <Single Name="Default" Type="string">Server does not support the function code</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">ILLEGAL_FUNCTION</Single>
+                                      <Single Name="Value" Type="string">1</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ILLEGAL_DATA_ADDRESS</Single>
+                                        <Single Name="Default" Type="string">ILLEGAL DATA ADDRESS</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ILLEGAL_DATA_ADDRESSDesc</Single>
+                                        <Single Name="Default" Type="string">Server does not support this register offset</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">ILLEGAL_DATA_ADDRESS</Single>
+                                      <Single Name="Value" Type="string">2</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ILLEGAL_DATA_VALUE</Single>
+                                        <Single Name="Default" Type="string">ILLEGAL DATA VALUE</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ILLEGAL_DATA_VALUEDesc</Single>
+                                        <Single Name="Default" Type="string">The value to be written is not valid</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">ILLEGAL_DATA_VALUE</Single>
+                                      <Single Name="Value" Type="string">3</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">SERVER_DEVICE_FAILURE</Single>
+                                        <Single Name="Default" Type="string">Server DEVICE FAILURE</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">SERVER_DEVICE_FAILUREDesc</Single>
+                                        <Single Name="Default" Type="string">Unrecoverable error while performing the request</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">SERVER_DEVICE_FAILURE</Single>
+                                      <Single Name="Value" Type="string">4</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ACKNOWLEDGE</Single>
+                                        <Single Name="Default" Type="string">ACKNOWLEDGE</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">ACKNOWLEDGEDesc</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">ACKNOWLEDGE</Single>
+                                      <Single Name="Value" Type="string">5</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">SERVER_DEVICE_BUSY</Single>
+                                        <Single Name="Default" Type="string">Server DEVICE BUSY</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">SERVER_DEVICE_BUSYDesc</Single>
+                                        <Single Name="Default" Type="string">Notification of a Server that a lengthy operation is in progress</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">SERVER_DEVICE_BUSY</Single>
+                                      <Single Name="Value" Type="string">6</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">MEMORY_PARITY_ERROR</Single>
+                                        <Single Name="Default" Type="string">MEMORY PARITY ERROR</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">MEMORY_PARITY_ERRORDesc</Single>
+                                        <Single Name="Default" Type="string">Special error for function code 20, 21</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">MEMORY_PARITY_ERROR</Single>
+                                      <Single Name="Value" Type="string">8</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">GATEWAY_PATH_UNAVAILABLE</Single>
+                                        <Single Name="Default" Type="string">GATEWAY PATH UNAVAILABLE</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">GATEWAY_PATH_UNAVAILABLEDesc</Single>
+                                        <Single Name="Default" Type="string">Special error when using devices behind a gateway (Gateway misconfigured/busy)</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">GATEWAY_PATH_UNAVAILABLE</Single>
+                                      <Single Name="Value" Type="string">16#0A</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">GATEWAY_TARGET_FAILED_TO_RESPOND</Single>
+                                        <Single Name="Default" Type="string">GATEWAY TARGET FAILED TO RESPOND</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">GATEWAY_TARGET_FAILED_TO_RESPONDDesc</Single>
+                                        <Single Name="Default" Type="string">Special error when using devices behind a gateway (Device does not respond)</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">GATEWAY_TARGET_FAILED_TO_RESPOND</Single>
+                                      <Single Name="Value" Type="string">16#0B</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_TIMEOUT</Single>
+                                        <Single Name="Default" Type="string">RESPONSE TIMEOUT</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_TIMEOUTDesc</Single>
+                                        <Single Name="Default" Type="string">There was no response in time</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_TIMEOUT</Single>
+                                      <Single Name="Value" Type="string">16#A1</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_CRC_FAIL</Single>
+                                        <Single Name="Default" Type="string">RESPONSE CRC FAIL</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_CRC_FAILDesc</Single>
+                                        <Single Name="Default" Type="string">The checksum of the response is not correct</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_CRC_FAIL</Single>
+                                      <Single Name="Value" Type="string">16#A2</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_WRONG_SERVER</Single>
+                                        <Single Name="Default" Type="string">RESPONSE WRONG Server</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_WRONG_SERVERDesc</Single>
+                                        <Single Name="Default" Type="string">The response is not from the expected Server</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_WRONG_SERVER</Single>
+                                      <Single Name="Value" Type="string">16#A3</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_WRONG_FUNCTIONCODE</Single>
+                                        <Single Name="Default" Type="string">RESPONSE WRONG FUNCTIONCODE</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_WRONG_FUNCTIONCODEDesc</Single>
+                                        <Single Name="Default" Type="string">The response is not the expected function code</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_WRONG_FUNCTIONCODE</Single>
+                                      <Single Name="Value" Type="string">16#A4</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">TCP_COMMUNICATION_ERROR</Single>
+                                        <Single Name="Default" Type="string">TCP COMMUNICATION ERROR</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">TCP_COMMUNICATION_ERRORDesc</Single>
+                                        <Single Name="Default" Type="string">TCP Port error. Request was not sent</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">TCP_COMMUNICATION_ERROR</Single>
+                                      <Single Name="Value" Type="string">16#A5</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_INVALID_DATA</Single>
+                                        <Single Name="Default" Type="string">RESPONSE INVALID DATA</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_INVALID_DATADesc</Single>
+                                        <Single Name="Default" Type="string">*The response contains invalid data</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_INVALID_DATA</Single>
+                                      <Single Name="Value" Type="string">16#A6</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_INVALID_PROTOCOL</Single>
+                                        <Single Name="Default" Type="string">RESPONSE INVALID PROTOCOL</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_INVALID_PROTOCOLDesc</Single>
+                                        <Single Name="Default" Type="string">The response is not modbus protocol</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_INVALID_PROTOCOL</Single>
+                                      <Single Name="Value" Type="string">16#A7</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_INVALID_HEADER</Single>
+                                        <Single Name="Default" Type="string">RESPONSE INVALID HEADER</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">RESPONSE_INVALID_HEADERDesc</Single>
+                                        <Single Name="Default" Type="string">Any field of Modbus MBAP (Protocoll, Length) header is  invalid</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">RESPONSE_INVALID_HEADER</Single>
+                                      <Single Name="Value" Type="string">16#A8</Single>
+                                    </Single>
+                                    <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                      <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">UNDEFINED</Single>
+                                        <Single Name="Default" Type="string">UNDEFINED</Single>
+                                      </Single>
+                                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                        <Single Name="Namespace" Type="string">local</Single>
+                                        <Single Name="Identifier" Type="string">UNDEFINEDDesc</Single>
+                                        <Single Name="Default" Type="string">The request's result is undefined or not yet known, e.g. initial state</Single>
+                                      </Single>
+                                      <Single Name="Identifier" Type="string">UNDEFINED</Single>
+                                      <Single Name="Value" Type="string">16#FF</Single>
+                                    </Single>
+                                  </Array>
+                                </Single>
+                              </List2>
+                            </Single>
+                            <Null Name="FilterFlags" />
+                            <Single Name="PositionId" Type="long">4124</Single>
+                            <Single Name="EditorPositionId" Type="long">4125</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">LastError</Single>
+                              <Single Name="Default" Type="string">Last Error</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">LastError</Single>
+                            <Single Name="TypeName" Type="string">LastErrorT</Single>
+                            <Single Name="LmStructTypeGuid" Type="System.Guid">583882d0-20a4-52a4-83ed-1cd969f384fb</Single>
+                          </Single>
+                        </List2>
+                      </Single>
+                      <Null Name="FilterFlags" />
+                      <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                      <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                      <Single Name="PositionId" Type="long">4112</Single>
+                      <Single Name="EditorPositionId" Type="long">4113</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Namespace" Type="string">local</Single>
+                        <Single Name="Identifier" Type="string">ServerDiag.Desc</Single>
+                        <Single Name="Default" Type="string">Server's diagnostic information</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Namespace" Type="string">local</Single>
+                        <Single Name="Identifier" Type="string">ServerDiag</Single>
+                        <Single Name="Default" Type="string">Server Diag</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">9200</Single>
+                      <Single Name="TypeName" Type="string">ServerDiagT</Single>
+                      <Single Name="LmStructTypeGuid" Type="System.Guid">2eb31634-5bdf-588d-8c32-ac7b9756f415</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">localTypes:ServerDiagT</Single>
+                    <Single Name="IndexInDevDesc" Type="long">5</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">9201</Single>
+                    <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                    <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                    <Single Name="DiagType" Type="{55948f0f-941b-4544-a1c2-3169f7256355}">Acknowledge</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Null Name="FilterFlags" />
+                      <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                      <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">None</Single>
+                      <Single Name="PositionId" Type="long">4132</Single>
+                      <Single Name="EditorPositionId" Type="long">4133</Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Namespace" Type="string">local</Single>
+                        <Single Name="Identifier" Type="string">DiagAck</Single>
+                        <Single Name="Default" Type="string">Confirm Diagnosis</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">9201</Single>
+                      <Single Name="Value" Type="string">FALSE</Single>
+                      <Single Name="Type" Type="string">BOOL</Single>
+                      <Single Name="Default" Type="string">FALSE</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:BOOL</Single>
+                    <Single Name="IndexInDevDesc" Type="long">6</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">17825792</Single>
+                    <Single Name="DalaElement" Type="{87130527-d8a8-4a3f-a43d-fabaec05f356}" Method="IArchivable">
+                      <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                        <List2 Name="elements">
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4282</Single>
+                            <Single Name="EditorPositionId" Type="long">4283</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.FunctionCode</Single>
+                              <Single Name="Default" Type="string">Function Code</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">FunctionCode</Single>
+                            <Single Name="Value" Type="string">3</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4284</Single>
+                            <Single Name="EditorPositionId" Type="long">4285</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.ReadOffset</Single>
+                              <Single Name="Default" Type="string">Read Offset</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ReadOffset</Single>
+                            <Single Name="Value" Type="string">16#01BD</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4286</Single>
+                            <Single Name="EditorPositionId" Type="long">4287</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.ReadLength</Single>
+                              <Single Name="Default" Type="string">Read Length</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ReadLength</Single>
+                            <Single Name="Value" Type="string">1</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4288</Single>
+                            <Single Name="EditorPositionId" Type="long">4289</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.WriteOffset</Single>
+                              <Single Name="Default" Type="string">Write Offset</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">WriteOffset</Single>
+                            <Single Name="Value" Type="string">0</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4290</Single>
+                            <Single Name="EditorPositionId" Type="long">4291</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.WriteLength</Single>
+                              <Single Name="Default" Type="string">Write Length</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">WriteLength</Single>
+                            <Single Name="Value" Type="string">0</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{4322e2a3-55e5-4e47-9fcd-b70eb1e6bfee}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4292</Single>
+                            <Single Name="EditorPositionId" Type="long">4293</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.Trigger</Single>
+                              <Single Name="Default" Type="string">Trigger</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">Trigger</Single>
+                            <Single Name="TypeName" Type="string">TriggerEnumType</Single>
+                            <Single Name="LmEnumTypeGuid" Type="System.Guid">ebf777d4-1643-59f3-bc03-b409c2dc4150</Single>
+                            <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                              <Single Name="PositionId" Type="long">4292</Single>
+                              <Single Name="EditorPositionId" Type="long">4293</Single>
+                              <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                <Single Name="Namespace" Type="string">local</Single>
+                                <Single Name="Identifier" Type="string">CHANNEL.Trigger</Single>
+                                <Single Name="Default" Type="string">Trigger</Single>
+                              </Single>
+                              <Single Name="Identifier" Type="string">Trigger</Single>
+                              <Single Name="Value" Type="string">5</Single>
+                              <Single Name="Type" Type="string">USINT</Single>
+                            </Single>
+                            <Array Name="Values" Type="{b955cc99-aa13-473b-b43f-7c76a865c138}">
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">TRIGGER_APP</Single>
+                                  <Single Name="Default" Type="string">APPLICATION</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">TRIGGER_APP</Single>
+                                <Single Name="Value" Type="string">0</Single>
+                              </Single>
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">TRIGGER_CYCLIC</Single>
+                                  <Single Name="Default" Type="string">CYCLIC</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">TRIGGER_CYCLIC</Single>
+                                <Single Name="Value" Type="string">5</Single>
+                              </Single>
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">TRIGGER_RISING_EDGE</Single>
+                                  <Single Name="Default" Type="string">RISING_EDGE</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">TRIGGER_RISING_EDGE</Single>
+                                <Single Name="Value" Type="string">6</Single>
+                              </Single>
+                            </Array>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4294</Single>
+                            <Single Name="EditorPositionId" Type="long">4295</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.CycleTime</Single>
+                              <Single Name="Default" Type="string">Cycle Time</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">CycleTime</Single>
+                            <Single Name="Value" Type="string">100</Single>
+                            <Single Name="Type" Type="string">DWORD</Single>
+                          </Single>
+                          <Single Type="{4322e2a3-55e5-4e47-9fcd-b70eb1e6bfee}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4296</Single>
+                            <Single Name="EditorPositionId" Type="long">4297</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.ErrorHandling</Single>
+                              <Single Name="Default" Type="string">Error Handling</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ErrorHandling</Single>
+                            <Single Name="TypeName" Type="string">ErrorHandlingEnumType</Single>
+                            <Single Name="LmEnumTypeGuid" Type="System.Guid">c2a5d845-4c0a-53b5-80f5-e7695d5619e2</Single>
+                            <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                              <Single Name="PositionId" Type="long">4296</Single>
+                              <Single Name="EditorPositionId" Type="long">4297</Single>
+                              <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                <Single Name="Namespace" Type="string">local</Single>
+                                <Single Name="Identifier" Type="string">CHANNEL.ErrorHandling</Single>
+                                <Single Name="Default" Type="string">Error Handling</Single>
+                              </Single>
+                              <Single Name="Identifier" Type="string">ErrorHandling</Single>
+                              <Single Name="Value" Type="string">true</Single>
+                              <Single Name="Type" Type="string">BOOL</Single>
+                            </Single>
+                            <Array Name="Values" Type="{b955cc99-aa13-473b-b43f-7c76a865c138}">
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">KeepLastValue</Single>
+                                  <Single Name="Default" Type="string">Keep last value</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">KeepLastValue</Single>
+                                <Single Name="Value" Type="string">true</Single>
+                              </Single>
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">SetZero</Single>
+                                  <Single Name="Default" Type="string">Set to zero</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">SetZero</Single>
+                                <Single Name="Value" Type="string">false</Single>
+                              </Single>
+                            </Array>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4298</Single>
+                            <Single Name="EditorPositionId" Type="long">4299</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.EnableRegisterBitMapping</Single>
+                              <Single Name="Default" Type="string">EnableRegisterBitMapping</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">EnableRegisterBitMapping</Single>
+                            <Single Name="Type" Type="string">BOOL</Single>
+                          </Single>
+                        </List2>
+                      </Single>
+                      <Single Name="PositionId" Type="long">4280</Single>
+                      <Single Name="EditorPositionId" Type="long">4281</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">ChannelConfig</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Baud Status</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">17825792</Single>
+                      <Single Name="TypeName" Type="string">CHANNEL_PACKED</Single>
+                      <Single Name="LmStructTypeGuid" Type="System.Guid">685eee48-485f-515d-a2ef-fd8271cc1389</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">localTypes:CHANNEL_PACKED</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">21234109</Single>
+                    <Single Name="ChannelType" Type="{abf9b454-3972-4b82-88a2-feef15a02f10}">Input</Single>
+                    <Single Name="DalaElement" Type="{916cbd6b-280d-4c54-a257-53519570b521}" Method="IArchivable">
+                      <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                        <List2 Name="elements">
+                          <Single Type="{bd387d12-7a68-42ff-9fa4-1e4e26e0dc37}" Method="IArchivable">
+                            <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                              <List2 Name="elements">
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4304</Single>
+                                  <Single Name="EditorPositionId" Type="long">4305</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit0</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_0</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit0</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_0</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4306</Single>
+                                  <Single Name="EditorPositionId" Type="long">4307</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit1</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_1</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit1</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_1</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4308</Single>
+                                  <Single Name="EditorPositionId" Type="long">4309</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit2</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_2</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit2</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_2</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4310</Single>
+                                  <Single Name="EditorPositionId" Type="long">4311</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit3</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_3</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit3</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_3</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4312</Single>
+                                  <Single Name="EditorPositionId" Type="long">4313</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit4</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_4</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit4</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_4</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4314</Single>
+                                  <Single Name="EditorPositionId" Type="long">4315</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit5</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_5</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit5</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_5</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4316</Single>
+                                  <Single Name="EditorPositionId" Type="long">4317</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit6</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_6</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit6</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_6</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4318</Single>
+                                  <Single Name="EditorPositionId" Type="long">4319</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit7</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_7</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit7</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_7</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4320</Single>
+                                  <Single Name="EditorPositionId" Type="long">4321</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit8</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_8</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit8</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_8</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4322</Single>
+                                  <Single Name="EditorPositionId" Type="long">4323</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit9</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_9</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit9</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_9</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4324</Single>
+                                  <Single Name="EditorPositionId" Type="long">4325</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit10</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_10</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit10</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_10</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4326</Single>
+                                  <Single Name="EditorPositionId" Type="long">4327</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit11</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_11</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit11</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_11</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4328</Single>
+                                  <Single Name="EditorPositionId" Type="long">4329</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit12</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_12</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit12</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_12</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4330</Single>
+                                  <Single Name="EditorPositionId" Type="long">4331</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit13</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_13</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit13</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_13</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4332</Single>
+                                  <Single Name="EditorPositionId" Type="long">4333</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit14</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_14</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit14</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_14</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4334</Single>
+                                  <Single Name="EditorPositionId" Type="long">4335</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit15</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">21234109_0_0_0_15</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Read Holding Registers</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit15</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">21234109_0_0_0_15</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                              </List2>
+                            </Single>
+                            <Single Name="PositionId" Type="long">4302</Single>
+                            <Single Name="EditorPositionId" Type="long">4303</Single>
+                            <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Default" Type="string">0x01BD</Single>
+                            </Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Default" Type="string">Baud Status</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">21234109_0_0_0</Single>
+                            <Single Name="BaseType" Type="string">WORD</Single>
+                          </Single>
+                        </List2>
+                      </Single>
+                      <Single Name="PositionId" Type="long">4300</Single>
+                      <Single Name="EditorPositionId" Type="long">4301</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Read Holding Registers</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Baud Status</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">21234109</Single>
+                      <Single Name="Dimenstion1LowerBorder" Type="string">0</Single>
+                      <Single Name="Dimenstion1UpperBorder" Type="string">0</Single>
+                      <Single Name="LmArrayTypeGuid" Type="System.Guid">0d03e03f-5fa8-5298-9507-b83f8ddde9f3</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:ARRAY[0..0] OF WORD</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">34603008</Single>
+                    <Single Name="DalaElement" Type="{87130527-d8a8-4a3f-a43d-fabaec05f356}" Method="IArchivable">
+                      <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                        <List2 Name="elements">
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4338</Single>
+                            <Single Name="EditorPositionId" Type="long">4339</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.FunctionCode</Single>
+                              <Single Name="Default" Type="string">Function Code</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">FunctionCode</Single>
+                            <Single Name="Value" Type="string">6</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4340</Single>
+                            <Single Name="EditorPositionId" Type="long">4341</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.ReadOffset</Single>
+                              <Single Name="Default" Type="string">Read Offset</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ReadOffset</Single>
+                            <Single Name="Value" Type="string">0</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4342</Single>
+                            <Single Name="EditorPositionId" Type="long">4343</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.ReadLength</Single>
+                              <Single Name="Default" Type="string">Read Length</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ReadLength</Single>
+                            <Single Name="Value" Type="string">0</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4344</Single>
+                            <Single Name="EditorPositionId" Type="long">4345</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.WriteOffset</Single>
+                              <Single Name="Default" Type="string">Write Offset</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">WriteOffset</Single>
+                            <Single Name="Value" Type="string">16#6002</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4346</Single>
+                            <Single Name="EditorPositionId" Type="long">4347</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.WriteLength</Single>
+                              <Single Name="Default" Type="string">Write Length</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">WriteLength</Single>
+                            <Single Name="Value" Type="string">1</Single>
+                            <Single Name="Type" Type="string">UINT</Single>
+                          </Single>
+                          <Single Type="{4322e2a3-55e5-4e47-9fcd-b70eb1e6bfee}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4348</Single>
+                            <Single Name="EditorPositionId" Type="long">4349</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.Trigger</Single>
+                              <Single Name="Default" Type="string">Trigger</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">Trigger</Single>
+                            <Single Name="TypeName" Type="string">TriggerEnumType</Single>
+                            <Single Name="LmEnumTypeGuid" Type="System.Guid">bbd94076-938c-560c-964c-cf69ccf569e2</Single>
+                            <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                              <Single Name="PositionId" Type="long">4348</Single>
+                              <Single Name="EditorPositionId" Type="long">4349</Single>
+                              <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                <Single Name="Namespace" Type="string">local</Single>
+                                <Single Name="Identifier" Type="string">CHANNEL.Trigger</Single>
+                                <Single Name="Default" Type="string">Trigger</Single>
+                              </Single>
+                              <Single Name="Identifier" Type="string">Trigger</Single>
+                              <Single Name="Value" Type="string">6</Single>
+                              <Single Name="Type" Type="string">USINT</Single>
+                            </Single>
+                            <Array Name="Values" Type="{b955cc99-aa13-473b-b43f-7c76a865c138}">
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">TRIGGER_APP</Single>
+                                  <Single Name="Default" Type="string">APPLICATION</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">TRIGGER_APP</Single>
+                                <Single Name="Value" Type="string">0</Single>
+                              </Single>
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">TRIGGER_CYCLIC</Single>
+                                  <Single Name="Default" Type="string">CYCLIC</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">TRIGGER_CYCLIC</Single>
+                                <Single Name="Value" Type="string">5</Single>
+                              </Single>
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">TRIGGER_RISING_EDGE</Single>
+                                  <Single Name="Default" Type="string">RISING_EDGE</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">TRIGGER_RISING_EDGE</Single>
+                                <Single Name="Value" Type="string">6</Single>
+                              </Single>
+                            </Array>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4350</Single>
+                            <Single Name="EditorPositionId" Type="long">4351</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.CycleTime</Single>
+                              <Single Name="Default" Type="string">Cycle Time</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">CycleTime</Single>
+                            <Single Name="Value" Type="string">100</Single>
+                            <Single Name="Type" Type="string">DWORD</Single>
+                          </Single>
+                          <Single Type="{4322e2a3-55e5-4e47-9fcd-b70eb1e6bfee}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4352</Single>
+                            <Single Name="EditorPositionId" Type="long">4353</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.ErrorHandling</Single>
+                              <Single Name="Default" Type="string">Error Handling</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">ErrorHandling</Single>
+                            <Single Name="TypeName" Type="string">ErrorHandlingEnumType</Single>
+                            <Single Name="LmEnumTypeGuid" Type="System.Guid">5d1e9b23-081d-5435-b879-a0a74a499a07</Single>
+                            <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                              <Single Name="PositionId" Type="long">4352</Single>
+                              <Single Name="EditorPositionId" Type="long">4353</Single>
+                              <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                <Single Name="Namespace" Type="string">local</Single>
+                                <Single Name="Identifier" Type="string">CHANNEL.ErrorHandling</Single>
+                                <Single Name="Default" Type="string">Error Handling</Single>
+                              </Single>
+                              <Single Name="Identifier" Type="string">ErrorHandling</Single>
+                              <Single Name="Value" Type="string">true</Single>
+                              <Single Name="Type" Type="string">BOOL</Single>
+                            </Single>
+                            <Array Name="Values" Type="{b955cc99-aa13-473b-b43f-7c76a865c138}">
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">KeepLastValue</Single>
+                                  <Single Name="Default" Type="string">Keep last value</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">KeepLastValue</Single>
+                                <Single Name="Value" Type="string">true</Single>
+                              </Single>
+                              <Single Type="{b955cc99-aa13-473b-b43f-7c76a865c138}" Method="IArchivable">
+                                <Single Name="Name" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                  <Single Name="Namespace" Type="string">local</Single>
+                                  <Single Name="Identifier" Type="string">SetZero</Single>
+                                  <Single Name="Default" Type="string">Set to zero</Single>
+                                </Single>
+                                <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable" />
+                                <Single Name="Identifier" Type="string">SetZero</Single>
+                                <Single Name="Value" Type="string">false</Single>
+                              </Single>
+                            </Array>
+                          </Single>
+                          <Single Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                            <Single Name="PositionId" Type="long">4354</Single>
+                            <Single Name="EditorPositionId" Type="long">4355</Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Namespace" Type="string">local</Single>
+                              <Single Name="Identifier" Type="string">CHANNEL.EnableRegisterBitMapping</Single>
+                              <Single Name="Default" Type="string">EnableRegisterBitMapping</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">EnableRegisterBitMapping</Single>
+                            <Single Name="Type" Type="string">BOOL</Single>
+                          </Single>
+                        </List2>
+                      </Single>
+                      <Single Name="PositionId" Type="long">4336</Single>
+                      <Single Name="EditorPositionId" Type="long">4337</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">ChannelConfig</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Trigger</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">34603008</Single>
+                      <Single Name="TypeName" Type="string">CHANNEL_PACKED</Single>
+                      <Single Name="LmStructTypeGuid" Type="System.Guid">11b5a1fb-44f5-5f66-a711-9af826f3bf27</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">localTypes:CHANNEL_PACKED</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">35651585</Single>
+                    <Single Name="ChannelType" Type="{abf9b454-3972-4b82-88a2-feef15a02f10}">Output</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Single Name="PositionId" Type="long">4356</Single>
+                      <Single Name="EditorPositionId" Type="long">4357</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Trigger variable</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Trigger</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">35651585</Single>
+                      <Single Name="Type" Type="string">BIT</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:BIT</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">42229762</Single>
+                    <Single Name="ChannelType" Type="{abf9b454-3972-4b82-88a2-feef15a02f10}">Output</Single>
+                    <Single Name="DalaElement" Type="{916cbd6b-280d-4c54-a257-53519570b521}" Method="IArchivable">
+                      <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                        <List2 Name="elements">
+                          <Single Type="{bd387d12-7a68-42ff-9fa4-1e4e26e0dc37}" Method="IArchivable">
+                            <Single Name="SubElements" Type="{45b6f676-61a0-4c78-a679-8c725851fa1e}" Method="IArchivable">
+                              <List2 Name="elements">
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4362</Single>
+                                  <Single Name="EditorPositionId" Type="long">4363</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit0</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_0</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit0</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_0</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4364</Single>
+                                  <Single Name="EditorPositionId" Type="long">4365</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit1</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_1</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit1</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_1</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4366</Single>
+                                  <Single Name="EditorPositionId" Type="long">4367</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit2</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_2</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit2</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_2</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4368</Single>
+                                  <Single Name="EditorPositionId" Type="long">4369</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit3</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_3</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit3</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_3</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4370</Single>
+                                  <Single Name="EditorPositionId" Type="long">4371</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit4</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_4</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit4</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_4</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4372</Single>
+                                  <Single Name="EditorPositionId" Type="long">4373</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit5</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_5</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit5</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_5</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4374</Single>
+                                  <Single Name="EditorPositionId" Type="long">4375</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit6</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_6</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit6</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_6</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4376</Single>
+                                  <Single Name="EditorPositionId" Type="long">4377</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit7</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_7</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit7</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_7</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4378</Single>
+                                  <Single Name="EditorPositionId" Type="long">4379</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit8</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_8</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit8</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_8</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4380</Single>
+                                  <Single Name="EditorPositionId" Type="long">4381</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit9</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_9</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit9</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_9</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4382</Single>
+                                  <Single Name="EditorPositionId" Type="long">4383</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit10</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_10</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit10</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_10</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4384</Single>
+                                  <Single Name="EditorPositionId" Type="long">4385</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit11</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_11</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit11</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_11</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4386</Single>
+                                  <Single Name="EditorPositionId" Type="long">4387</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit12</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_12</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit12</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_12</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4388</Single>
+                                  <Single Name="EditorPositionId" Type="long">4389</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit13</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_13</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit13</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_13</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4390</Single>
+                                  <Single Name="EditorPositionId" Type="long">4391</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit14</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_14</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit14</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_14</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                                <Single Type="{1944b378-8867-41f4-b1f4-6e5b1e6547ba}" Method="IArchivable">
+                                  <Single Name="PositionId" Type="long">4392</Single>
+                                  <Single Name="EditorPositionId" Type="long">4393</Single>
+                                  <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                    <Single Name="Default" Type="string">Bit15</Single>
+                                  </Single>
+                                  <Single Name="Identifier" Type="string">42229762_0_0_0_15</Single>
+                                  <Single Name="BaseType" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                                    <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Write Single Register</Single>
+                                    </Single>
+                                    <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                                      <Single Name="Default" Type="string">Bit15</Single>
+                                    </Single>
+                                    <Single Name="Identifier" Type="string">42229762_0_0_0_15</Single>
+                                    <Single Name="Value" Type="string">FALSE</Single>
+                                    <Single Name="Type" Type="string">BOOL</Single>
+                                    <Single Name="Default" Type="string">FALSE</Single>
+                                  </Single>
+                                  <Single Name="Type" Type="string">BOOL</Single>
+                                  <Single Name="Default" Type="string">FALSE</Single>
+                                  <Single Name="Value" Type="string">FALSE</Single>
+                                </Single>
+                              </List2>
+                            </Single>
+                            <Single Name="PositionId" Type="long">4360</Single>
+                            <Single Name="EditorPositionId" Type="long">4361</Single>
+                            <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Default" Type="string">0x6002</Single>
+                            </Single>
+                            <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                              <Single Name="Default" Type="string">Trigger</Single>
+                            </Single>
+                            <Single Name="Identifier" Type="string">42229762_0_0_0</Single>
+                            <Single Name="BaseType" Type="string">WORD</Single>
+                          </Single>
+                        </List2>
+                      </Single>
+                      <Single Name="PositionId" Type="long">4358</Single>
+                      <Single Name="EditorPositionId" Type="long">4359</Single>
+                      <Single Name="Description" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Write Single Register</Single>
+                      </Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Default" Type="string">Trigger</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">42229762</Single>
+                      <Single Name="Dimenstion1LowerBorder" Type="string">0</Single>
+                      <Single Name="Dimenstion1UpperBorder" Type="string">0</Single>
+                      <Single Name="LmArrayTypeGuid" Type="System.Guid">607dd232-6910-5edb-bb98-3870643ff060</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:ARRAY[0..0] OF WORD</Single>
+                  </Single>
+                  <Single Type="{8c994079-f3c6-4484-9643-9258628feecd}" Method="IArchivable">
+                    <Single Name="Id" Type="uint">1879052288</Single>
+                    <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                    <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                    <Single Name="DalaElement" Type="{08a69302-82ff-4bf9-a55d-a6014ee63990}" Method="IArchivable">
+                      <Null Name="FilterFlags" />
+                      <Single Name="OfflineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                      <Single Name="OnlineAccess" Type="{f7a1fdea-1444-4931-82ab-fdb68bf81bcf}">Read</Single>
+                      <Single Name="PositionId" Type="long">4134</Single>
+                      <Single Name="EditorPositionId" Type="long">4135</Single>
+                      <Single Name="VisibleName" Type="{35cf7b1a-a4cd-490b-8ebe-385e61fcc6d9}" Method="IArchivable">
+                        <Single Name="Namespace" Type="string">local</Single>
+                        <Single Name="Identifier" Type="string">Parameter.ConfigVersion</Single>
+                        <Single Name="Default" Type="string">ConfigVersion</Single>
+                      </Single>
+                      <Single Name="Identifier" Type="string">1879052288</Single>
+                      <Single Name="Value" Type="string">16#03050300</Single>
+                      <Single Name="Type" Type="string">UDINT</Single>
+                      <Single Name="Default" Type="string">16#03050300</Single>
+                    </Single>
+                    <Single Name="ParamType" Type="string">std:UDINT</Single>
+                    <Single Name="IndexInDevDesc" Type="long">4</Single>
+                  </Single>
+                </List2>
+                <Single Name="LmGuid" Type="System.Guid">e5ba2c49-e54b-5fcc-9a10-86abbd711966</Single>
+                <Null Name="Sections" />
+                <Single Name="InitOnOnlineChange" Type="bool">False</Single>
+                <Single Name="AlwaysMapping" Type="bool">False</Single>
+                <Null Name="EditorName" />
+                <Single Name="AlwaysMappingMode" Type="{9d1b24fb-5845-4978-8458-564ca7830fec}">OnlyIfUnused</Single>
+                <Single Name="CreateBitChannels" Type="bool">True</Single>
+              </Single>
+              <Single Name="BusCycleTaskGuid" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+              <Single Name="DriverInfo" Type="{4f958885-8d0a-4b58-83b6-29cfd1c9cfca}" Method="IArchivable">
+                <List Name="RequiredLibs" Type="System.Collections.ArrayList">
+                  <Single Type="{94d8f601-f8e4-4aaa-8f48-f3c3ec33bec1}" Method="IArchivable">
+                    <Single Name="LibName" Type="string">IoDrvModbus</Single>
+                    <Single Name="Vendor" Type="string">3S - Smart Software Solutions GmbH</Single>
+                    <Single Name="Version" Type="string">*</Single>
+                    <Single Name="Identifier" Type="string">IoDrvModbus</Single>
+                    <List Name="FbInstances" Type="System.Collections.ArrayList">
+                      <Single Type="{1a6d9caa-30e2-4c6c-aa84-7bcee3627153}" Method="IArchivable">
+                        <Single Name="FbName" Type="string">ModbusSlaveComPort</Single>
+                        <Single Name="BaseName" Type="string">$(DeviceName)</Single>
+                        <Single Name="Instance" Type="{47edf8ea-3f84-452c-b998-e18f878578d3}" Method="IArchivable">
+                          <Single Name="CreateVariable" Type="bool">True</Single>
+                          <Single Name="Variable" Type="string">Pump2</Single>
+                        </Single>
+                        <Single Name="InitMethod" Type="string">Initialize</Single>
+                        <List Name="CyclicCalls" Type="System.Collections.ArrayList" />
+                        <Single Name="Location" Type="{4da2c5bd-5291-436b-b8b0-6a4480112db7}">GVL</Single>
+                        <Single Name="FbNameDiag" Type="string">ModbusSlaveComPort_Diag</Single>
+                        <Single Name="PositionId" Type="long">-1</Single>
+                      </Single>
+                    </List>
+                    <Single Name="PlaceHolderLib" Type="string">IoDrvModbus</Single>
+                    <Single Name="loadAsSystemLibrary" Type="bool">True</Single>
+                    <Single Name="IsDiagnosisLib" Type="bool">False</Single>
+                    <Single Name="AddedByAP" Type="bool">True</Single>
+                    <Single Name="Client" Type="string"></Single>
+                  </Single>
+                </List>
+                <Null Name="RequiredTasks" />
+                <Single Name="NeedsBusCycle" Type="bool">False</Single>
+                <Single Name="BusCycleTask" Type="string"></Single>
+                <Single Name="IoApp" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+                <Single Name="IoAppSet" Type="bool">False</Single>
+                <Array Name="PositionIds" Type="long">BBAAAAAAAAAFEAAAAAAAAAYQAAAAAAAA</Array>
+                <Single Name="UseSlowestTask" Type="bool">False</Single>
+                <Single Name="NeedsBusCycleBeforeRead" Type="bool">False</Single>
+                <Single Name="GenerateForceVariables" Type="bool">False</Single>
+                <Single Name="EnableDiagnosis" Type="bool">False</Single>
+                <Single Name="AdditionalParameterSetting" Type="uint">0</Single>
+                <Single Name="ShowWarningsAsErrors" Type="bool">False</Single>
+                <Single Name="DiagnosisCheckboxMode" Type="{96a7290c-b036-44e1-a965-c279cddf134b}">Enabled</Single>
+                <Single Name="SkipOverlapCheck" Type="bool">False</Single>
+                <Single Name="SymbolicAccessMode" Type="{866ccdec-84a7-4590-aeab-383c7bd79437}">Disabled</Single>
+                <Single Name="OnlineChangeDevice" Type="{e1779e08-585f-4d22-83e1-f36476fd1df5}">Hidden</Single>
+                <Single Name="SupportOnlineChange" Type="bool">False</Single>
+                <Single Name="DeviceScanSupported" Type="bool">False</Single>
+                <Single Name="DeviceNominateSupported" Type="bool">False</Single>
+                <Single Name="DeviceIdentifySupported" Type="bool">False</Single>
+                <Single Name="DeviceUploadDescriptionSupported" Type="bool">False</Single>
+                <Single Name="UpdateIOsInStop" Type="bool">False</Single>
+                <Single Name="StopResetBehaviourSetting" Type="{f333ad6d-dc68-4baa-a3a3-20be74eb2e18}">KeepCurrentValues</Single>
+                <Single Name="StopResetBehaviourUserProgram" Type="string"></Single>
+                <Single Name="BusCycleTaskGuid" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+                <Single Name="PlcAlwaysMapping" Type="bool">False</Single>
+                <Single Name="PlCAlwaysMappingMode" Type="{9d1b24fb-5845-4978-8458-564ca7830fec}">OnlyIfUnused</Single>
+              </Single>
+              <List Name="CustomItems" Type="{7d23305a-7bb9-46e6-b58b-01ea5694add1}" />
+              <Single Name="ModuleId" Type="int">-1</Single>
+              <Null Name="IoUpdateTask" />
+              <List Name="AdditionalInterfaces" Type="System.Collections.ArrayList" />
+              <List Name="Constraints" Type="System.Collections.ArrayList" />
+              <Single Name="hideInStatusPage" Type="bool">False</Single>
+              <Single Name="updateAllowed" Type="bool">True</Single>
+              <Single Name="fixedInputAddress" Type="string"></Single>
+              <Single Name="fixedOutputAddress" Type="string"></Single>
+              <Single Name="DownloadParamsDevDescOrder" Type="bool">False</Single>
+              <List Name="AllowOnlyDevices" Type="System.Collections.ArrayList" />
+              <Single Name="InitialStatusFlag" Type="uint">1</Single>
+              <Single Name="UseBlobInitConst" Type="bool">False</Single>
+              <Single Name="AlwaysMappingMode" Type="{9d1b24fb-5845-4978-8458-564ca7830fec}">OnlyIfUnused</Single>
+              <Single Name="ConnectorGroup" Type="uint">0</Single>
+              <Array Name="AllowedPages" Type="string" />
+              <Single Name="AlwaysMapping" Type="bool">False</Single>
+              <Single Name="Client" Type="string"></Single>
+              <Single Name="MaxInputSize" Type="uint">0</Single>
+              <Single Name="MaxOutputSize" Type="uint">0</Single>
+              <Single Name="MaxInOutputSize" Type="uint">0</Single>
+              <Single Name="ClientTypeGuid" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+              <Single Name="ClientConnectorInterface" Type="string"></Single>
+              <Single Name="ClientConnectorId" Type="int">-1</Single>
+              <Single Name="AlwaysMappingDisabled" Type="bool">False</Single>
+            </Single>
+          </List>
+        </Single>
+        <Single Name="Attributes" Type="{1fdbedd8-b518-4ebd-99df-805f2f77c071}" Method="IArchivable">
+          <Dictionary Type="System.Collections.Hashtable" Name="Attributes" />
+        </Single>
+        <Single Name="CommunicationSettings" Type="{58f2b04d-505d-4589-9fcf-0ec83491f9b2}" Method="IArchivable">
+          <Single Name="SaveLocally" Type="bool">False</Single>
+          <Single Name="CommunicationSettingFilter" Type="int">1</Single>
+          <Single Name="CommunicationSettingSorting" Type="int">0</Single>
+          <Single Name="TrackingMode" Type="int">5</Single>
+          <Single Name="GatewayGuid" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+          <Null Name="Address" />
+          <Single Name="PromptAtLogin" Type="bool">False</Single>
+          <Single Name="SimulationMode" Type="bool">False</Single>
+          <Single Name="SecureOnlineMode" Type="bool">False</Single>
+          <Single Name="SecureOnlineModeExplicitelySet" Type="bool">False</Single>
+          <Single Name="Name" Type="string"></Single>
+          <Single Name="MonitoringIntervalMsec" Type="int">200</Single>
+          <Null Name="ScanInformation" />
+          <Single Name="IsCommunicationEncrypted" Type="bool">False</Single>
+          <Single Name="IsDefaultNameTrackingFromScanActive" Type="bool">False</Single>
+        </Single>
+        <Single Name="IoProviderBase" Type="{848f25ec-eecf-4290-8329-7f6500fd2e0f}" Method="IArchivable">
+          <Array Name="UserBaseAddress" Type="string">
+            <Null />
+            <Null />
+            <Null />
+          </Array>
+        </Single>
+        <Single Name="GuidBusCycleTask" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+        <Single Name="DriverInfo" Type="{4f958885-8d0a-4b58-83b6-29cfd1c9cfca}" Method="IArchivable">
+          <List Name="RequiredLibs" Type="System.Collections.ArrayList" />
+          <Null Name="RequiredTasks" />
+          <Single Name="NeedsBusCycle" Type="bool">False</Single>
+          <Single Name="BusCycleTask" Type="string"></Single>
+          <Single Name="IoApp" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+          <Single Name="IoAppSet" Type="bool">False</Single>
+          <Array Name="PositionIds" Type="long">ARAAAAAAAAACEAAAAAAAAAMQAAAAAAAA</Array>
+          <Single Name="UseSlowestTask" Type="bool">False</Single>
+          <Single Name="NeedsBusCycleBeforeRead" Type="bool">False</Single>
+          <Single Name="GenerateForceVariables" Type="bool">False</Single>
+          <Single Name="EnableDiagnosis" Type="bool">False</Single>
+          <Single Name="AdditionalParameterSetting" Type="uint">0</Single>
+          <Single Name="ShowWarningsAsErrors" Type="bool">False</Single>
+          <Single Name="DiagnosisCheckboxMode" Type="{96a7290c-b036-44e1-a965-c279cddf134b}">Enabled</Single>
+          <Single Name="SkipOverlapCheck" Type="bool">False</Single>
+          <Single Name="SymbolicAccessMode" Type="{866ccdec-84a7-4590-aeab-383c7bd79437}">Disabled</Single>
+          <Single Name="OnlineChangeDevice" Type="{e1779e08-585f-4d22-83e1-f36476fd1df5}">Hidden</Single>
+          <Single Name="SupportOnlineChange" Type="bool">False</Single>
+          <Single Name="DeviceScanSupported" Type="bool">False</Single>
+          <Single Name="DeviceNominateSupported" Type="bool">False</Single>
+          <Single Name="DeviceIdentifySupported" Type="bool">False</Single>
+          <Single Name="DeviceUploadDescriptionSupported" Type="bool">False</Single>
+          <Single Name="UpdateIOsInStop" Type="bool">False</Single>
+          <Single Name="StopResetBehaviourSetting" Type="{f333ad6d-dc68-4baa-a3a3-20be74eb2e18}">KeepCurrentValues</Single>
+          <Single Name="StopResetBehaviourUserProgram" Type="string"></Single>
+          <Single Name="BusCycleTaskGuid" Type="System.Guid">00000000-0000-0000-0000-000000000000</Single>
+          <Single Name="PlcAlwaysMapping" Type="bool">False</Single>
+          <Single Name="PlCAlwaysMappingMode" Type="{9d1b24fb-5845-4978-8458-564ca7830fec}">OnlyIfUnused</Single>
+        </Single>
+        <List Name="CustomItems" Type="{7d23305a-7bb9-46e6-b58b-01ea5694add1}" />
+        <Single Name="IoConfigGlobalsGuid" Type="System.Guid">15551ac8-143a-5e81-8963-9face2b2bf3f</Single>
+        <Single Name="IoConfigGlobalsMappingGuid" Type="System.Guid">170fd9f8-e540-5a5d-8b1c-21c4a995cc74</Single>
+        <Single Name="IoConfigVarConfigGuid" Type="System.Guid">ff849d8a-3069-549c-b064-bd5c834bfae7</Single>
+        <Single Name="IoConfigErrorPouGuid" Type="System.Guid">4a1e5535-2caf-52f8-b324-8667994924a8</Single>
+        <Single Name="ModuleId" Type="int">-1</Single>
+        <Null Name="IoUpdateTask" />
+        <Array Name="FunctionalChildren" Type="System.Guid" />
+        <Null Name="UserManagement" />
+        <Null Name="RightsManagement" />
+        <Single Name="showParamsInDevDescOrder" Type="bool">False</Single>
+        <Single Name="fixedInputAddress" Type="string"></Single>
+        <Single Name="fixedOutputAddress" Type="string"></Single>
+        <Single Name="HostObjectGuid" Type="System.Guid">ba048982-08fb-408b-a719-66e2afb5e49b</Single>
+        <Single Name="DownloadParamsDevDescOrder" Type="bool">False</Single>
+        <Single Name="CreateBitChannels" Type="bool">True</Single>
+        <Null Name="AdditionalStringTable" />
+        <Null Name="OnlineHelpUrl" />
+        <Single Name="InteractiveLoginMode" Type="int">-1</Single>
+        <Single Name="UseDeviceApplicationStructure" Type="bool">False</Single>
+        <Single Name="AllowSymbolicVarAccessInSyncWithIecCycle" Type="bool">False</Single>
+        <Single Name="LogicalDeviceList" Type="{ec1f8a3a-98c6-404c-883e-ce9e54b42542}" Method="IArchivable">
+          <List Name="InnerList" Type="System.Collections.ArrayList" />
+        </Single>
+        <Single Name="LogicalLanguageModelPositionId" Type="long">-1</Single>
+        <List Name="SupportedLogicalBusSystems" Type="System.Collections.ArrayList" />
+        <Single Name="MappingPossible" Type="bool">False</Single>
+        <Single Name="HidePropertiesDialog" Type="bool">False</Single>
+        <Null Name="PlaceholderResolution" />
+        <Null Name="RedirectedPlaceholderResolution" />
+      </Single>
+      <Single Name="ParentSVNodeGuid" Type="System.Guid">856b7b4b-59e2-4b6c-befe-24bf1fb8624c</Single>
+      <Array Name="Path" Type="string">
+        <Single Type="string">P2CDS622</Single>
+        <Single Type="string">Modbus_COM</Single>
+        <Single Type="string">Modbus_Master_COM_Port</Single>
+      </Array>
+      <Single Name="Index" Type="int">2</Single>
+    </Single>
+  </List2>
+  <Null Name="ProfileName" />
+</Single>  </StructuredView>
+</ExportFile>

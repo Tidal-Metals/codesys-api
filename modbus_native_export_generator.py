@@ -13,6 +13,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIR = os.path.join(SCRIPT_DIR, "templates")
 DEFAULT_EMPTY_TEMPLATE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_empty.export")
 DEFAULT_CHANNEL_SAMPLE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_channel_sample.export")
+DEFAULT_REAL_TEMPLATE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_real.export")
 
 SAMPLE_DEVICE_NAME = "TEST_SLAVE"
 SAMPLE_CHANNEL_NAME = "XML_GEN_SAMPLE"
@@ -28,6 +29,13 @@ def generate_modbus_slave_export(device_name, slave_address, channels, output_pa
         raise ValueError("device_name is required")
     if not output_path:
         raise ValueError("output_path is required")
+    if (
+        empty_template_path == DEFAULT_EMPTY_TEMPLATE
+        and channel_sample_path == DEFAULT_CHANNEL_SAMPLE
+        and os.path.exists(DEFAULT_REAL_TEMPLATE)
+    ):
+        return _generate_from_real_template(device_name, slave_address, channels, output_path, DEFAULT_REAL_TEMPLATE)
+
     if not os.path.exists(empty_template_path):
         raise ValueError("empty template not found: {0}".format(empty_template_path))
     if not os.path.exists(channel_sample_path):
@@ -69,6 +77,187 @@ def generate_modbus_slave_export(device_name, slave_address, channels, output_pa
         "slaveAddress": slave_address,
         "channelCount": len(normalized),
     }
+
+
+def _generate_from_real_template(device_name, slave_address, channels, output_path, template_path):
+    """Generate from a native export captured from a real CODESYS Modbus slave.
+
+    The older checked-in templates were hand-trimmed and can diverge from what
+    CODESYS actually exports. This path starts from a known-good native export,
+    removes its existing channel parameters, and clones the real channel
+    parameter shapes for the requested manifest channels.
+    """
+    normalized = [normalize_channel(channel) for channel in channels]
+    tree = ET.parse(template_path)
+    root = tree.getroot()
+
+    template_name = _exported_device_name(root) or "Pump2"
+    _replace_text(root, template_name, device_name)
+    _set_first_named_text(root, "Guid", str(uuid.uuid4()))
+    _set_slave_address_real(root, slave_address)
+
+    params = _host_params_list(root)
+    config_sample, io_sample = _load_real_channel_samples(params)
+    config_sample_name = _visible_name(config_sample)
+    io_sample_name = _visible_name(io_sample)
+    config_sample_id = _param_id(config_sample)
+    io_sample_id = _param_id(io_sample)
+
+    insert_index = _remove_real_channel_params(params)
+    position = _max_position_id(root) + 2
+
+    for index, channel in enumerate(normalized):
+        config_id = 17825792 + (index * 16777216)
+        io_id = config_id + 3407872
+        config_param = _build_real_channel_config_param(
+            config_sample,
+            channel,
+            config_id,
+            config_sample_id,
+            config_sample_name,
+        )
+        io_param = _build_real_io_param(
+            io_sample,
+            channel,
+            io_id,
+            io_sample_id,
+            io_sample_name,
+        )
+        position = _renumber_positions(config_param, position)
+        position = _renumber_positions(io_param, position)
+        params.insert(insert_index, config_param)
+        insert_index += 1
+        params.insert(insert_index, io_param)
+        insert_index += 1
+
+    _set_unique_id_generator(root, position)
+    _indent(root)
+    tree.write(output_path, encoding="utf-8", xml_declaration=False)
+    return {
+        "success": True,
+        "path": output_path,
+        "device": device_name,
+        "slaveAddress": slave_address,
+        "channelCount": len(normalized),
+        "template": template_path,
+    }
+
+
+def _exported_device_name(root):
+    for single in root.iter("Single"):
+        if single.attrib.get("Name") == "Name":
+            text = single.text.strip() if single.text else ""
+            if text:
+                return text
+    return None
+
+
+def _set_first_named_text(root, name, value):
+    for single in root.iter("Single"):
+        if single.attrib.get("Name") == name:
+            single.text = str(value)
+            return True
+    return False
+
+
+def _set_slave_address_real(root, slave_address):
+    for param in _host_params_list(root):
+        if _param_id(param) == "9100":
+            _set_child_text(param, "Single", "Value", str(slave_address))
+            return
+    raise ValueError("slave address parameter 9100 not found")
+
+
+def _load_real_channel_samples(params):
+    config = None
+    io = None
+    for param in list(params):
+        param_type = _child_text(param, "Single", "ParamType")
+        if param_type == "localTypes:CHANNEL_PACKED" and config is None:
+            config = copy.deepcopy(param)
+        elif param_type and param_type.startswith("std:ARRAY") and param_type.endswith("OF WORD") and io is None:
+            io = copy.deepcopy(param)
+    if config is None:
+        raise ValueError("real CHANNEL_PACKED sample parameter not found")
+    if io is None:
+        raise ValueError("real IO array sample parameter not found")
+    return config, io
+
+
+def _remove_real_channel_params(params):
+    children = list(params)
+    insert_index = len(children)
+    for index, param in enumerate(children):
+        if _param_id(param) == "1879052288":
+            insert_index = index
+            break
+
+    removed_before_insert = 0
+    for index, param in enumerate(children):
+        param_id = _param_id(param)
+        try:
+            numeric_id = int(param_id)
+        except (TypeError, ValueError):
+            continue
+        if 16000000 <= numeric_id < 1879052288:
+            params.remove(param)
+            if index < insert_index:
+                removed_before_insert += 1
+    return max(insert_index - removed_before_insert, 0)
+
+
+def _build_real_channel_config_param(sample, channel, config_id, sample_id, sample_name):
+    param = copy.deepcopy(sample)
+    _replace_text(param, sample_name, channel["name"])
+    _replace_text(param, sample_id, str(config_id))
+    _set_child_text(param, "Single", "Id", str(config_id))
+    _set_child_text(param, "Single", "Identifier", str(config_id))
+    _set_struct_field_value(param, "FunctionCode", channel["accessType"])
+    _set_struct_field_value(param, "ReadOffset", channel["readOffset"])
+    _set_struct_field_value(param, "ReadLength", channel["readLength"])
+    _set_struct_field_value(param, "WriteOffset", channel["writeOffset"])
+    _set_struct_field_value(param, "WriteLength", channel["writeLength"])
+    _set_struct_field_value(param, "Trigger", channel["trigger"])
+    _set_struct_field_value(param, "CycleTime", channel["cycleTime"])
+    _set_struct_field_value(param, "ErrorHandling", str(channel["errorHandling"]).lower())
+    return param
+
+
+def _build_real_io_param(sample, channel, io_id, sample_id, sample_name):
+    param = copy.deepcopy(sample)
+    length = _io_length(channel)
+    upper = max(length - 1, 0)
+    _replace_text(param, sample_name, channel["name"])
+    _replace_text(param, sample_id, str(io_id))
+    _set_child_text(param, "Single", "Id", str(io_id))
+    _set_child_text(param, "Single", "Identifier", str(io_id))
+    _set_child_text(param, "Single", "Dimenstion1UpperBorder", str(upper))
+    _set_child_text(param, "Single", "ParamType", "std:ARRAY[0..{0}] OF WORD".format(upper))
+    channel_type = "Output" if int(channel["accessType"]) in (5, 6, 15, 16) else "Input"
+    _set_child_text(param, "Single", "ChannelType", channel_type)
+    return param
+
+
+def _param_id(param):
+    return _child_text(param, "Single", "Id")
+
+
+def _visible_name(param):
+    for child in list(param):
+        if child.tag == "Single" and child.attrib.get("Name") == "DalaElement":
+            for dala_child in list(child):
+                if dala_child.tag != "Single" or dala_child.attrib.get("Name") != "VisibleName":
+                    continue
+                for visible_child in list(dala_child):
+                    if visible_child.tag == "Single" and visible_child.attrib.get("Name") == "Default" and visible_child.text:
+                        return visible_child.text
+    for single in param.iter("Single"):
+        if single.attrib.get("Name") != "VisibleName":
+            continue
+        for child in single.iter("Single"):
+            if child.attrib.get("Name") == "Default" and child.text:
+                return child.text
+    return ""
 
 
 def _load_channel_samples(path):
