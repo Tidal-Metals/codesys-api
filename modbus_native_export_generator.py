@@ -210,8 +210,7 @@ def _build_real_channel_config_param(sample, channel, config_id, sample_id, samp
     param = copy.deepcopy(sample)
     _replace_text(param, sample_name, channel["name"])
     _replace_text(param, sample_id, str(config_id))
-    _set_child_text(param, "Single", "Id", str(config_id))
-    _set_child_text(param, "Single", "Identifier", str(config_id))
+    _set_direct_child_text(param, "Single", "Id", str(config_id))
     _set_struct_field_value(param, "FunctionCode", channel["accessType"])
     _set_struct_field_value(param, "ReadOffset", channel["readOffset"])
     _set_struct_field_value(param, "ReadLength", channel["readLength"])
@@ -229,12 +228,12 @@ def _build_real_io_param(sample, channel, io_id, sample_id, sample_name):
     upper = max(length - 1, 0)
     _replace_text(param, sample_name, channel["name"])
     _replace_text(param, sample_id, str(io_id))
-    _set_child_text(param, "Single", "Id", str(io_id))
-    _set_child_text(param, "Single", "Identifier", str(io_id))
+    _set_direct_child_text(param, "Single", "Id", str(io_id))
     _set_child_text(param, "Single", "Dimenstion1UpperBorder", str(upper))
     _set_child_text(param, "Single", "ParamType", "std:ARRAY[0..{0}] OF WORD".format(upper))
     channel_type = "Output" if int(channel["accessType"]) in (5, 6, 15, 16) else "Input"
     _set_child_text(param, "Single", "ChannelType", channel_type)
+    _expand_io_array_elements(param, io_id, channel, length)
     return param
 
 
@@ -323,6 +322,7 @@ def _build_io_param(sample, channel, io_id, position):
 
     channel_type = "Output" if int(channel["accessType"]) in (5, 6, 15, 16) else "Input"
     _set_child_text(param, "Single", "ChannelType", channel_type)
+    _expand_io_array_elements(param, io_id, channel, length)
     position = _renumber_positions(param, position)
     return param, position
 
@@ -332,6 +332,89 @@ def _io_length(channel):
     if access_type in (5, 6, 15, 16):
         return int(channel["writeLength"])
     return int(channel["readLength"])
+
+
+def _expand_io_array_elements(param, io_id, channel, length):
+    elements = _io_word_elements_list(param)
+    if elements is None or length <= 0:
+        return
+
+    template_word = None
+    for child in list(elements):
+        if child.tag == "Single":
+            template_word = copy.deepcopy(child)
+            break
+    if template_word is None:
+        return
+
+    for child in list(elements):
+        elements.remove(child)
+
+    base_offset = _channel_base_offset(channel)
+    for index in range(length):
+        word = copy.deepcopy(template_word)
+        _set_word_identifier(word, io_id, index)
+        _set_word_description(word, base_offset, index)
+        elements.append(word)
+
+
+def _io_word_elements_list(param):
+    for child in list(param):
+        if child.tag != "Single" or child.attrib.get("Name") != "DalaElement":
+            continue
+        for dala_child in list(child):
+            if dala_child.tag != "Single" or dala_child.attrib.get("Name") != "SubElements":
+                continue
+            for sub_child in list(dala_child):
+                if sub_child.tag == "List2" and sub_child.attrib.get("Name") == "elements":
+                    return sub_child
+    return None
+
+
+def _set_word_identifier(word, io_id, index):
+    for single in word.iter("Single"):
+        if single.attrib.get("Name") != "Identifier" or not single.text:
+            continue
+        text = str(single.text)
+        if text.count("_") >= 4:
+            prefix, bit_index = text.rsplit("_", 1)
+            prefix_parts = prefix.split("_")
+            prefix_parts[-1] = str(index)
+            single.text = "_".join(prefix_parts) + "_" + bit_index
+        elif text.count("_") >= 3:
+            parts = text.split("_")
+            parts[-1] = str(index)
+            single.text = "_".join(parts)
+        elif text == str(io_id):
+            single.text = str(io_id)
+
+
+def _set_word_description(word, base_offset, index):
+    if base_offset is None:
+        return
+    for child in list(word):
+        if child.tag != "Single" or child.attrib.get("Name") != "Description":
+            continue
+        for nested in child.iter("Single"):
+            if nested.attrib.get("Name") == "Default":
+                nested.text = "0x{0:04X}".format(base_offset + index)
+                return
+
+
+def _channel_base_offset(channel):
+    access_type = int(channel["accessType"])
+    offset_text = channel["writeOffset"] if access_type in (5, 6, 15, 16) else channel["readOffset"]
+    try:
+        return _parse_codesys_offset(offset_text)
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_codesys_offset(value):
+    text = str(value).strip()
+    if text.lower().startswith("16#"):
+        return int(text[3:], 16)
+    return int(text, 10)
 
 
 def _set_slave_address(root, slave_address):
@@ -396,6 +479,14 @@ def _child_text(parent, tag, name):
 def _set_child_text(parent, tag, name, value):
     for child in parent.iter(tag):
         if child.attrib.get("Name") == name:
+            child.text = str(value)
+            return True
+    return False
+
+
+def _set_direct_child_text(parent, tag, name, value):
+    for child in list(parent):
+        if child.tag == tag and child.attrib.get("Name") == name:
             child.text = str(value)
             return True
     return False

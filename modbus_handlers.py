@@ -10,6 +10,7 @@ import logging
 import os
 import tempfile
 import uuid
+from urllib.parse import unquote
 
 import modbus_scripts
 from modbus_native_export_generator import generate_modbus_slave_export
@@ -71,7 +72,7 @@ def match_route(method, path):
             continue
         m = pattern.match(path)
         if m:
-            return handler, m.groupdict()
+            return handler, {key: unquote(value) for key, value in m.groupdict().items()}
     return None, None
 
 

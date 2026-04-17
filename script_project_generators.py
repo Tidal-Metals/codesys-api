@@ -221,13 +221,20 @@ import traceback
 try:
     print("Starting project save script")
     
+    project = None
+    try:
+        project = scriptengine.projects.primary
+    except Exception as primary_error:
+        print("Error reading scriptengine.projects.primary: " + str(primary_error))
+
+    if project is None and hasattr(session, 'active_project'):
+        project = session.active_project
+
     # Check if we have an active project
-    if not hasattr(session, 'active_project') or session.active_project is None:
-        print("No active project in session")
+    if project is None:
+        print("No active project available")
         result = {"success": False, "error": "No active project in session"}
     else:
-        # Get active project
-        project = session.active_project
         print("Got active project")
         
         # Check if project has save method
