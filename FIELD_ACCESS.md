@@ -19,16 +19,14 @@ On the PC running CODESYS. Requires Git, Python 3.11+, and access to the reposit
 
 3. **In the existing CODESYS IDE**, keep the field project open and online. Select **Tools → Scripting → Execute Script File**, then run `PERSISTENT_SESSION.py` from this repo folder.
 
-4. **Allow our PC through the firewall**. Run once in Administrator PowerShell; replace `192.168.50.108` if our diagnostic PC's address differs:
-
-   ```powershell
-   New-NetFirewallRule -DisplayName 'CODESYS diagnostics' -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8081 -RemoteAddress 192.168.50.108 -Profile Any
-   ```
-
-5. **Start the server** from the same repo folder in ordinary PowerShell:
+4. **Start the server** from the same repo folder in PowerShell:
 
    ```powershell
    py -3 field_api_server.py
    ```
 
+   If Windows shows a firewall prompt for **Python**, click **Allow access** for the network profile used by your LAN. Administrator rights are required.
+
 Leave the IDE script and server running. Send us the printed LAN URL and the API key privately. We'll verify the connection from here.
+
+If no prompt appears and we cannot connect, we'll check the firewall rules.
