@@ -14,6 +14,7 @@ from auth import ApiKeyManager
 from codesys_process import CodesysProcessManager
 from script_executor import ScriptExecutor
 from script_generator import ScriptGenerator
+from server_addresses import print_connection_addresses
 from server_config import (
     API_KEY_FILE,
     CODESYS_PATH,
@@ -49,7 +50,7 @@ def run_server():
     try:
         handler = create_handler(process_manager, script_executor, script_generator, api_key_manager)
         server = HTTPServer((SERVER_HOST, SERVER_PORT), handler)
-        print("Starting server on {0}:{1}".format(SERVER_HOST, SERVER_PORT))
+        print_connection_addresses(server.server_address)
         logger.info("Starting server on %s:%d", SERVER_HOST, SERVER_PORT)
         server.serve_forever()
     except KeyboardInterrupt:

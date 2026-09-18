@@ -38,8 +38,10 @@ This is the [documented CODESYS script menu](https://content.helpme-codesys.com/
 In ordinary PowerShell, from the same repository folder:
 
 ```powershell
-py -3 field_api_server.py --host 0.0.0.0 --port 8081
+py -3 field_api_server.py
 ```
+
+The server listens on all IPv4 interfaces at port `8081` by default and prints the available LAN/VPN URLs, such as `http://192.168.50.108:8081`. Choose the address reachable from the diagnostic computer. Use `--port 8082` to change the port, or `--host 127.0.0.1` for access only from this PC. Windows Firewall must also allow the connection as described below.
 
 Leave this window open. This launcher attaches through the script's request files. It does not use the configured CODESYS executable path, launch another IDE, terminate duplicate IDEs, or stop the IDE when the HTTP server exits. `Ctrl+C` stops only this HTTP server. Session stop/restart endpoints cannot manage the IDE through this launcher.
 

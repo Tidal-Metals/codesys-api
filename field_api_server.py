@@ -10,6 +10,7 @@ from HTTP_SERVER import create_handler
 from auth import ApiKeyManager
 from script_executor import ScriptExecutor
 from script_generator import ScriptGenerator
+from server_addresses import print_connection_addresses
 from server_config import (
     API_KEY_FILE, REQUEST_DIR, RESULT_DIR, STATUS_FILE, initialize_directories,
 )
@@ -56,12 +57,12 @@ def create_server(host, port):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--host", default="0.0.0.0", help="Listen address (default: all IPv4 interfaces).")
     parser.add_argument("--port", type=int, default=8081)
     args = parser.parse_args()
     server = create_server(args.host, args.port)
-    print("CODESYS API listening on %s:%s; start PERSISTENT_SESSION.py in the IDE."
-          % server.server_address, flush=True)
+    print_connection_addresses(server.server_address)
+    print("Start PERSISTENT_SESSION.py in the existing CODESYS IDE.", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
