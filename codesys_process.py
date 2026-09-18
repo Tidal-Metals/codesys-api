@@ -15,6 +15,16 @@ from server_config import (
     logger,
 )
 
+
+def _windows_creationflags():
+    flags = 0
+    if os.name == "nt":
+        flags |= getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+        flags |= getattr(subprocess, "DETACHED_PROCESS", 0)
+        flags |= getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    return flags
+
+
 class CodesysProcessManager:
     """Manages the CODESYS process."""
     
@@ -153,17 +163,21 @@ class CodesysProcessManager:
                         env["PYTHONPATH"] = script_lib_path
                     
                     logger.info("Starting CODESYS with PYTHONPATH: %s", env["PYTHONPATH"])
-                    # Use the exact command format that worked in pure_test.bat
-                    # Construct full command with proper quoting
-                    command = f"\"{self.codesys_path}\" --Profile=\"{CODESYS_PROFILE}\" --runscript=\"{self.script_path}\""
+                    command = [
+                        self.codesys_path,
+                        "--Profile={0}".format(CODESYS_PROFILE),
+                        "--runscript={0}".format(self.script_path),
+                    ]
                     
                     logger.info("Starting CODESYS with command: %s", command)
                     self.process = subprocess.Popen(
                         command,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
                         env=env,
-                        shell=True  # Use shell to handle the command as a string
+                        shell=False,
+                        close_fds=True,
+                        creationflags=_windows_creationflags(),
                     )
                 except subprocess.SubprocessError as se:
                     logger.error("SubprocessError starting CODESYS: %s", str(se))
@@ -184,13 +198,7 @@ class CodesysProcessManager:
                     
                     # Check if process is still running
                     if not self.is_running():
-                        try:
-                            stdout, stderr = self.process.communicate(timeout=1)
-                            stderr_text = stderr.decode('utf-8', errors='replace') if stderr else "No error output"
-                            stdout_text = stdout.decode('utf-8', errors='replace') if stdout else "No standard output"
-                            logger.error("CODESYS process failed to start:\nStderr: %s\nStdout: %s", stderr_text, stdout_text)
-                        except Exception as e:
-                            logger.error("Error communicating with failed process: %s", str(e))
+                        logger.error("CODESYS process failed to stay running during startup")
                         return False
                     
                     # Check if status file exists, indicating the script has started

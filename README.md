@@ -1,5 +1,7 @@
 # CODESYS REST API
 
+For LAN diagnostics using an already-open IDE, follow [Connect to an existing CODESYS IDE](FIELD_ACCESS.md). This uses `field_api_server.py`, which leaves IDE process management with the operator.
+
 ![CODESYS API Logo](https://via.placeholder.com/1200x300/0073CF/FFFFFF?text=CODESYS+REST+API)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
