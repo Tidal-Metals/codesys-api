@@ -1,0 +1,84 @@
+{
+  "devices": [
+    {
+      "name": "Unit1",
+      "unit": 1,
+      "holding": [
+        1234,
+        5678
+      ]
+    },
+    {
+      "name": "Unit2",
+      "unit": 2,
+      "holding": [
+        2222,
+        3333
+      ]
+    },
+    {
+      "name": "Unit3",
+      "unit": 3,
+      "holding": [
+        301,
+        302
+      ]
+    },
+    {
+      "name": "Unit4",
+      "unit": 4,
+      "holding": [
+        401,
+        402
+      ]
+    },
+    {
+      "name": "Unit5",
+      "unit": 5,
+      "holding": [
+        501,
+        502
+      ]
+    },
+    {
+      "name": "Unit6",
+      "unit": 6,
+      "holding": [
+        601,
+        602
+      ]
+    },
+    {
+      "name": "Unit7",
+      "unit": 7,
+      "holding": [
+        701,
+        702
+      ]
+    },
+    {
+      "name": "Unit8",
+      "unit": 8,
+      "holding": [
+        801,
+        802
+      ]
+    },
+    {
+      "name": "Unit9",
+      "unit": 9,
+      "holding": [
+        901,
+        902
+      ]
+    },
+    {
+      "name": "Unit10",
+      "unit": 10,
+      "holding": [
+        1001,
+        1002
+      ]
+    }
+  ]
+}

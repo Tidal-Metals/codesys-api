@@ -27,13 +27,14 @@ pip install requests pywin32
 
 ### 2. Configure the API Server
 
-1. Open `HTTP_SERVER.py` in a text editor
+1. Open `server_config.py` in a text editor
 2. Update the `CODESYS_PATH` variable to point to your CODESYS installation:
    ```python
-   CODESYS_PATH = r"C:\Program Files\CODESYS 3.5\CODESYS\CODESYS.exe"  # Update this path
+   CODESYS_PATH = r"C:\Program Files\CODESYS 3.5.22.10\CODESYS\Common\CODESYS.exe"  # Update this path
    ```
-3. Optionally, change the `SERVER_HOST` and `SERVER_PORT` variables if you need the server to listen on a different interface or port
-4. Save the changes
+3. Confirm `CODESYS_PROFILE` matches the installed version of CODESYS
+4. Optionally, change `SERVER_HOST` and `SERVER_PORT` if you need the server to listen on a different interface or port
+5. Save the changes
 
 ### 3. Set Up API Keys
 
@@ -83,11 +84,21 @@ The service will now start automatically when the system boots.
 ### 4. Test the Installation
 
 1. Open a Command Prompt or PowerShell window
-2. Use curl or a similar tool to make a request to the API:
+2. Use curl or a similar tool to verify the HTTP server:
    ```
    curl -H "Authorization: ApiKey admin" http://localhost:8080/api/v1/system/info
    ```
-3. If the API is functioning correctly, you should receive a JSON response with system information
+3. Start the persistent CODESYS session:
+   ```
+   curl -X POST -H "Authorization: ApiKey admin" -H "Content-Type: application/json" -d "{}" http://localhost:8080/api/v1/session/start
+   ```
+4. Verify session state:
+   ```
+   curl -H "Authorization: ApiKey admin" http://localhost:8080/api/v1/session/status
+   ```
+5. If the API is functioning correctly, you should receive JSON showing the HTTP server first, then an active CODESYS session after `session/start`
+
+If you changed `SERVER_PORT`, use that port in the URLs above.
 
 Alternatively, you can use the provided example client script:
 
@@ -110,9 +121,19 @@ If you prefer to run the API server manually without installing it as a service:
    ```
    start_server.bat
    ```
-4. The server will start and display a message indicating it's running
+4. Start the persistent CODESYS session:
+   ```
+   curl -X POST -H "Authorization: ApiKey admin" -H "Content-Type: application/json" -d "{}" http://localhost:8080/api/v1/session/start
+   ```
+5. The server will start the CODESYS process with `PERSISTENT_SESSION.py` on demand
 
 Press Ctrl+C to stop the server when running manually.
+
+If port `8080` is already in use, either change `SERVER_PORT` in `server_config.py` or launch with a temporary override:
+
+```
+python -c "import server_config; import HTTP_SERVER; server_config.SERVER_PORT = 8081; HTTP_SERVER.SERVER_PORT = 8081; HTTP_SERVER.run_server()"
+```
 
 ## Directory Structure
 
@@ -130,11 +151,11 @@ The API server creates and uses the following directories:
 ### Service Fails to Start
 
 1. Check the `codesys_api_service.log` file for error messages
-2. Verify the path to CODESYS.exe is correct in the server file (`HTTP_SERVER.py` or `HTTP_SERVER_PY3.py`)
+2. Verify the path to CODESYS.exe is correct in `server_config.py`
 3. Ensure all required Python packages are installed
 4. Check Windows Event Viewer for service-related errors
-5. Make sure you're using the correct Python version (2.7 or 3.x) with the appropriate scripts
-6. If using Python 3.x, ensure you're using `windows_service_py3.py` instead of `windows_service.py`
+5. Make sure you're using Python 3.x for the server and client scripts
+6. If the HTTP server starts but CODESYS is idle, call `POST /api/v1/session/start`
 
 ### API Returns Errors
 
@@ -142,9 +163,7 @@ The API server creates and uses the following directories:
 2. Check the `session.log` file for CODESYS session errors
 3. Verify CODESYS is installed and working correctly
 4. Try running the server manually to see any console output
-5. For Python 3.x compatibility issues, make sure you're using the correct version of files:
-   - Use `HTTP_SERVER_PY3.py` instead of `HTTP_SERVER.py`
-   - Use `example_client_py3.py` instead of `example_client.py`
+5. If you see `[WinError 10013]`, the configured port is already in use; change `SERVER_PORT` or use the override command above
 
 ### Authentication Issues
 

@@ -18,6 +18,116 @@ def _int_literal(value, default):
         return str(default)
 
 
+def _indent(text, spaces):
+    prefix = " " * spaces
+    return "\n".join(prefix + line if line else "" for line in text.strip("\n").splitlines())
+
+
+def _plc_application_common(extra_imports=""):
+    return """
+import scriptengine
+import sys
+import traceback
+@@EXTRA_IMPORTS@@
+
+def safe_text(value):
+    try:
+        if value is None:
+            return ""
+        return str(value)
+    except:
+        return ""
+
+def get_project():
+    project = scriptengine.projects.primary
+    if project is None and hasattr(session, 'active_project'):
+        project = session.active_project
+    return project
+
+def get_session_online_state(application_path):
+    if hasattr(session, 'get_online_application_state'):
+        return session.get_online_application_state(application_path)
+    return None
+
+def ensure_session_online_application(application_path, login_requested):
+    if hasattr(session, 'ensure_online_application'):
+        return session.ensure_online_application(application_path, login_requested)
+    return None
+
+def dispose_session_online_application(application_path, logout_first):
+    if hasattr(session, 'dispose_online_application'):
+        return session.dispose_online_application(application_path, logout_first)
+    return False
+
+def register_session_certificate_trust(application_path):
+    if hasattr(session, 'register_trusts_certificate_for_application'):
+        return session.register_trusts_certificate_for_application(application_path)
+    return None
+
+def try_register_session_certificate_trust(application_path):
+    try:
+        if hasattr(session, 'register_trusts_certificate_for_application'):
+            return {"success": True, "result": session.register_trusts_certificate_for_application(application_path)}
+        return {"success": True, "result": None}
+    except Exception as trust_error:
+        return {"success": False, "error": str(trust_error)}
+
+def find_application(project, wanted_path):
+    applications = []
+    stack = []
+    for child in project.get_children():
+        stack.append((child, ""))
+
+    while stack:
+        obj, parent_path = stack.pop(0)
+        try:
+            name = obj.get_name() if hasattr(obj, 'get_name') else str(obj)
+        except:
+            name = str(obj)
+        path = name if not parent_path else parent_path + "/" + name
+        is_application = hasattr(obj, 'create_boot_application') and hasattr(obj, 'build')
+        if is_application:
+            applications.append((obj, {"name": name, "path": path}))
+        if hasattr(obj, 'get_children'):
+            try:
+                for child in obj.get_children():
+                    stack.append((child, path))
+            except:
+                pass
+
+    if wanted_path:
+        matches = []
+        for obj, entry in applications:
+            if entry["path"] == wanted_path or entry["name"] == wanted_path:
+                matches.append((obj, entry))
+        if len(matches) == 1:
+            return matches[0][0], matches[0][1], applications
+        if len(matches) > 1:
+            raise Exception("Application path is ambiguous: " + wanted_path)
+        raise Exception("Application not found: " + wanted_path)
+
+    if len(applications) == 1:
+        return applications[0][0], applications[0][1], applications
+    raise Exception("applicationPath required; found " + str(len(applications)) + " applications")
+""".replace("@@EXTRA_IMPORTS@@", extra_imports)
+
+
+def _wrap_plc_script(body, error_label, extra_imports=""):
+    return """\
+@@COMMON@@
+
+try:
+@@BODY@@
+except Exception as e:
+    error_type, error_value, error_traceback = sys.exc_info()
+    print("@@ERROR_LABEL@@: " + str(error_value))
+    print(traceback.format_exc())
+    result = {"success": False, "error": str(error_value)}
+""".replace("@@COMMON@@", _plc_application_common(extra_imports)).replace(
+        "@@BODY@@", _indent(body, 4)
+    ).replace("@@ERROR_LABEL@@", error_label)
+
+
 def generate_plc_targets_script(params):
     """Generate script to list candidate devices and applications for deployment."""
     return """
@@ -289,161 +399,126 @@ def generate_plc_status_script(params):
     """Generate script to inspect application deploy/online status."""
     application_path = params.get("applicationPath", params.get("application", ""))
     login = params.get("login", params.get("connect", False))
+    logout_after = params.get("logoutAfter", params.get("logout_after", False))
     include_signatures = params.get("includeSignatures", False)
     if isinstance(login, str):
         login = login.lower() in ("1", "true", "yes")
+    if isinstance(logout_after, str):
+        logout_after = logout_after.lower() in ("1", "true", "yes")
     if isinstance(include_signatures, str):
         include_signatures = include_signatures.lower() in ("1", "true", "yes")
 
-    return """
-import scriptengine
-import sys
-import traceback
-from scriptengine import OnlineChangeOption
+    body = """
+application_path = @@APPLICATION_PATH@@.replace("\\\\", "/").strip("/")
+login_requested = @@LOGIN@@
+logout_after = @@LOGOUT_AFTER@@
+include_signatures = @@INCLUDE_SIGNATURES@@
 
-try:
-    application_path = @@APPLICATION_PATH@@.replace("\\\\", "/").strip("/")
-    login_requested = @@LOGIN@@
-    include_signatures = @@INCLUDE_SIGNATURES@@
+def read_bool(obj, property_name):
+    try:
+        return bool(getattr(obj, property_name))
+    except Exception as read_error:
+        return {"error": str(read_error)}
 
-    def safe_text(value):
+def collect_signatures(application):
+    signatures = []
+    stack = [(application, "")]
+    while stack:
+        obj, parent_path = stack.pop(0)
         try:
-            if value is None:
-                return ""
-            return str(value)
+            name = obj.get_name() if hasattr(obj, 'get_name') else str(obj)
         except:
-            return ""
-
-    def get_project():
-        project = scriptengine.projects.primary
-        if project is None and hasattr(session, 'active_project'):
-            project = session.active_project
-        return project
-
-    def find_application(project, wanted_path):
-        applications = []
-        stack = []
-        for child in project.get_children():
-            stack.append((child, ""))
-
-        while stack:
-            obj, parent_path = stack.pop(0)
+            name = str(obj)
+        path = name if not parent_path else parent_path + "/" + name
+        if hasattr(obj, 'get_signature_crc'):
             try:
-                name = obj.get_name() if hasattr(obj, 'get_name') else str(obj)
+                crc = obj.get_signature_crc(application, None)
+                if crc is not None:
+                    signatures.append({"name": name, "path": path, "signatureCrc": safe_text(crc)})
             except:
-                name = str(obj)
-            path = name if not parent_path else parent_path + "/" + name
-            is_application = hasattr(obj, 'create_boot_application') and hasattr(obj, 'build')
-            if is_application:
-                applications.append((obj, {"name": name, "path": path}))
-            if hasattr(obj, 'get_children'):
-                try:
-                    for child in obj.get_children():
-                        stack.append((child, path))
-                except:
-                    pass
+                pass
+        if hasattr(obj, 'get_children'):
+            try:
+                for child in obj.get_children():
+                    stack.append((child, path))
+            except:
+                pass
+    return signatures
 
-        if wanted_path:
-            matches = []
-            for obj, entry in applications:
-                if entry["path"] == wanted_path or entry["name"] == wanted_path:
-                    matches.append((obj, entry))
-            if len(matches) == 1:
-                return matches[0][0], matches[0][1], applications
-            if len(matches) > 1:
-                raise Exception("Application path is ambiguous: " + wanted_path)
-            raise Exception("Application not found: " + wanted_path)
+project = get_project()
+if project is None:
+    result = {"success": False, "error": "No active project in session"}
+else:
+    application, application_info, applications = find_application(project, application_path)
+    status = {
+        "success": True,
+        "application": application_info,
+        "online": {
+            "loginAttempted": False,
+            "cached": False,
+            "isLoggedIn": False,
+            "applicationState": "",
+            "operationState": ""
+        },
+        "build": {
+            "isUptodate": read_bool(application, "is_uptodate"),
+            "isOnlineChangePossible": read_bool(application, "is_online_change_possible")
+        },
+        "availableApplications": [entry for obj, entry in applications]
+    }
 
-        if len(applications) == 1:
-            return applications[0][0], applications[0][1], applications
-        raise Exception("applicationPath required; found " + str(len(applications)) + " applications")
+    if include_signatures:
+        status["signatures"] = collect_signatures(application)
 
-    def read_bool(obj, property_name):
+    cached_state = get_session_online_state(application_info["path"])
+    if cached_state is not None and "online" in cached_state:
+        status["online"] = cached_state["online"]
+
+    if login_requested:
+        online_app = None
+        owns_online_app = False
         try:
-            return bool(getattr(obj, property_name))
-        except Exception as read_error:
-            return {"error": str(read_error)}
-
-    def collect_signatures(application):
-        signatures = []
-        stack = [(application, "")]
-        while stack:
-            obj, parent_path = stack.pop(0)
-            try:
-                name = obj.get_name() if hasattr(obj, 'get_name') else str(obj)
-            except:
-                name = str(obj)
-            path = name if not parent_path else parent_path + "/" + name
-            if hasattr(obj, 'get_signature_crc'):
-                try:
-                    crc = obj.get_signature_crc(application, None)
-                    if crc is not None:
-                        signatures.append({"name": name, "path": path, "signatureCrc": safe_text(crc)})
-                except:
-                    pass
-            if hasattr(obj, 'get_children'):
-                try:
-                    for child in obj.get_children():
-                        stack.append((child, path))
-                except:
-                    pass
-        return signatures
-
-    project = get_project()
-    if project is None:
-        result = {"success": False, "error": "No active project in session"}
-    else:
-        application, application_info, applications = find_application(project, application_path)
-        status = {
-            "success": True,
-            "application": application_info,
-            "online": {
-                "loginAttempted": False,
-                "isLoggedIn": False,
-                "applicationState": "",
-                "operationState": ""
-            },
-            "build": {
-                "isUptodate": read_bool(application, "is_uptodate"),
-                "isOnlineChangePossible": read_bool(application, "is_online_change_possible")
-            },
-            "availableApplications": [entry for obj, entry in applications]
-        }
-
-        if include_signatures:
-            status["signatures"] = collect_signatures(application)
-
-        if login_requested:
-            online_app = None
-            try:
+            trust_result = try_register_session_certificate_trust(application_info["path"])
+            if trust_result.get("success") and trust_result.get("result") is not None:
+                status["online"]["certificateTrust"] = trust_result.get("result")
+            elif not trust_result.get("success"):
+                status["online"]["certificateTrustError"] = trust_result.get("error")
+            online_app = ensure_session_online_application(application_info["path"], True)
+            if online_app is None:
                 online_app = scriptengine.online.create_online_application(application)
+                owns_online_app = True
                 online_app.login(OnlineChangeOption.Keep, False)
-                status["online"]["loginAttempted"] = True
-                status["online"]["isLoggedIn"] = bool(online_app.is_logged_in)
-                status["online"]["applicationState"] = safe_text(online_app.application_state)
-                status["online"]["operationState"] = safe_text(online_app.operation_state)
-                status["build"]["isUptodate"] = read_bool(application, "is_uptodate")
-                status["build"]["isOnlineChangePossible"] = read_bool(application, "is_online_change_possible")
-            finally:
-                if online_app is not None:
-                    try:
-                        online_app.logout()
-                    except:
-                        pass
-                    try:
-                        online_app.Dispose()
-                    except:
-                        pass
+            status["online"]["loginAttempted"] = True
+            status["online"]["cached"] = not owns_online_app
+            status["online"]["isLoggedIn"] = bool(online_app.is_logged_in)
+            status["online"]["applicationState"] = safe_text(online_app.application_state)
+            status["online"]["operationState"] = safe_text(online_app.operation_state)
+            status["build"]["isUptodate"] = read_bool(application, "is_uptodate")
+            status["build"]["isOnlineChangePossible"] = read_bool(application, "is_online_change_possible")
+        finally:
+            if online_app is not None and logout_after and not owns_online_app:
+                dispose_session_online_application(application_info["path"], True)
+            elif online_app is not None and logout_after:
+                try:
+                    online_app.logout()
+                except:
+                    pass
+            if online_app is not None and owns_online_app:
+                try:
+                    online_app.Dispose()
+                except:
+                    pass
 
-        result = status
-except Exception as e:
-    error_type, error_value, error_traceback = sys.exc_info()
-    print("Error in PLC status script: " + str(error_value))
-    print(traceback.format_exc())
-    result = {"success": False, "error": str(error_value)}
-""".replace("@@APPLICATION_PATH@@", _literal(application_path)) \
-   .replace("@@LOGIN@@", _bool_literal(login)) \
-   .replace("@@INCLUDE_SIGNATURES@@", _bool_literal(include_signatures))
+    result = status
+"""
+    return _wrap_plc_script(
+        body.replace("@@APPLICATION_PATH@@", _literal(application_path))
+        .replace("@@LOGIN@@", _bool_literal(login))
+        .replace("@@LOGOUT_AFTER@@", _bool_literal(logout_after))
+        .replace("@@INCLUDE_SIGNATURES@@", _bool_literal(include_signatures)),
+        "Error in PLC status script",
+        "from scriptengine import OnlineChangeOption",
+    )
 
 
 def generate_plc_validate_deploy_script(params):
@@ -549,3 +624,297 @@ except Exception as e:
     result = {"success": False, "error": str(error_value)}
 """.replace("@@APPLICATION_PATH@@", _literal(application_path)) \
    .replace("@@DEVICE_PATH@@", _literal(device_path))
+
+
+def generate_plc_deploy_script(params):
+    """Generate script to login, download, and optionally start an application."""
+    application_path = params.get("applicationPath", params.get("application", ""))
+    start_app = params.get("start", True)
+    logout_after = params.get("logoutAfter", params.get("logout_after", False))
+    skip_save = params.get("skipSave", params.get("skip_save", False))
+    if isinstance(start_app, str):
+        start_app = start_app.lower() in ("1", "true", "yes")
+    if isinstance(logout_after, str):
+        logout_after = logout_after.lower() in ("1", "true", "yes")
+    if isinstance(skip_save, str):
+        skip_save = skip_save.lower() in ("1", "true", "yes")
+
+    body = """
+application_path = @@APPLICATION_PATH@@.replace("\\\\", "/").strip("/")
+start_requested = @@START@@
+logout_after = @@LOGOUT_AFTER@@
+skip_save = @@SKIP_SAVE@@
+
+project = get_project()
+if project is None:
+    result = {"success": False, "error": "No active project in session"}
+else:
+    application, application_info, applications = find_application(project, application_path)
+    deploy = {
+        "success": False,
+        "application": application_info,
+        "availableApplications": [entry for obj, entry in applications],
+        "steps": []
+    }
+
+    online_app = None
+    owns_online_app = False
+    try:
+        trust_result = try_register_session_certificate_trust(application_info["path"])
+        if trust_result.get("success") and trust_result.get("result") is not None:
+            deploy["certificateTrust"] = trust_result.get("result")
+        elif not trust_result.get("success"):
+            deploy["certificateTrustError"] = trust_result.get("error")
+
+        if skip_save:
+            deploy["steps"].append({"step": "save_project", "status": "skipped", "reason": "skipSave=true"})
+        else:
+            deploy["steps"].append({"step": "save_project", "status": "started"})
+            if not hasattr(project, 'save'):
+                raise Exception("Active project does not support save()")
+            project.save()
+            deploy["steps"][-1]["status"] = "ok"
+            try:
+                deploy["steps"][-1]["path"] = safe_text(project.path)
+            except:
+                pass
+            try:
+                deploy["steps"][-1]["dirty"] = bool(project.dirty)
+            except:
+                pass
+
+        deploy["steps"].append({"step": "create_online_application", "status": "started"})
+        online_app = ensure_session_online_application(application_info["path"], False)
+        if online_app is None:
+            online_app = scriptengine.online.create_online_application(application)
+            owns_online_app = True
+        deploy["steps"][-1]["status"] = "ok"
+        deploy["steps"][-1]["cached"] = not owns_online_app
+
+        deploy["steps"].append({"step": "login", "status": "started"})
+        if owns_online_app:
+            online_app.login(OnlineChangeOption.Keep, False)
+        else:
+            online_app = ensure_session_online_application(application_info["path"], True)
+        deploy["steps"][-1]["status"] = "ok"
+        deploy["steps"][-1]["isLoggedIn"] = bool(online_app.is_logged_in)
+        deploy["steps"][-1]["applicationState"] = safe_text(online_app.application_state)
+        deploy["steps"][-1]["operationState"] = safe_text(online_app.operation_state)
+
+        deploy["steps"].append({"step": "source_download", "status": "started"})
+        download_result = online_app.source_download()
+        deploy["steps"][-1]["status"] = "ok"
+        deploy["steps"][-1]["result"] = safe_text(download_result)
+        deploy["steps"][-1]["applicationState"] = safe_text(online_app.application_state)
+        deploy["steps"][-1]["operationState"] = safe_text(online_app.operation_state)
+
+        if start_requested:
+            deploy["steps"].append({"step": "start", "status": "started"})
+            current_state = safe_text(online_app.application_state).lower()
+            if current_state == "run":
+                deploy["steps"][-1]["status"] = "ok"
+                deploy["steps"][-1]["result"] = "already running"
+                deploy["steps"][-1]["applicationState"] = safe_text(online_app.application_state)
+                deploy["steps"][-1]["operationState"] = safe_text(online_app.operation_state)
+            else:
+                start_result = online_app.start()
+                deploy["steps"][-1]["status"] = "ok"
+                deploy["steps"][-1]["result"] = safe_text(start_result)
+                deploy["steps"][-1]["applicationState"] = safe_text(online_app.application_state)
+                deploy["steps"][-1]["operationState"] = safe_text(online_app.operation_state)
+
+        deploy["online"] = {
+            "isLoggedIn": bool(online_app.is_logged_in),
+            "applicationState": safe_text(online_app.application_state),
+            "operationState": safe_text(online_app.operation_state)
+        }
+        deploy["success"] = True
+        result = deploy
+    except Exception as deploy_error:
+        deploy["error"] = str(deploy_error)
+        if online_app is not None:
+            try:
+                deploy["online"] = {
+                    "isLoggedIn": bool(online_app.is_logged_in),
+                    "applicationState": safe_text(online_app.application_state),
+                    "operationState": safe_text(online_app.operation_state)
+                }
+            except:
+                pass
+        result = deploy
+    finally:
+        if online_app is not None and logout_after and not owns_online_app:
+            dispose_session_online_application(application_info["path"], True)
+        elif online_app is not None and logout_after:
+            try:
+                online_app.logout()
+            except:
+                pass
+        if online_app is not None and owns_online_app:
+            try:
+                online_app.Dispose()
+            except:
+                pass
+"""
+    return _wrap_plc_script(
+        body.replace("@@APPLICATION_PATH@@", _literal(application_path))
+        .replace("@@START@@", _bool_literal(start_app))
+        .replace("@@LOGOUT_AFTER@@", _bool_literal(logout_after))
+        .replace("@@SKIP_SAVE@@", _bool_literal(skip_save)),
+        "Error in PLC deploy script",
+        "from scriptengine import OnlineChangeOption",
+    )
+
+
+def generate_plc_login_script(params):
+    """Generate script to login an online application without downloading or logging out."""
+    application_path = params.get("applicationPath", params.get("application", ""))
+
+    body = """
+application_path = @@APPLICATION_PATH@@.replace("\\\\", "/").strip("/")
+
+project = get_project()
+if project is None:
+    result = {"success": False, "error": "No active project in session"}
+else:
+    application, application_info, applications = find_application(project, application_path)
+    login_result = {
+        "success": False,
+        "application": application_info,
+        "availableApplications": [entry for obj, entry in applications],
+        "online": {
+            "cached": False,
+            "isLoggedIn": False,
+            "applicationState": "",
+            "operationState": ""
+        }
+    }
+    try:
+        trust_result = try_register_session_certificate_trust(application_info["path"])
+        if trust_result.get("success") and trust_result.get("result") is not None:
+            login_result["certificateTrust"] = trust_result.get("result")
+        elif not trust_result.get("success"):
+            login_result["certificateTrustError"] = trust_result.get("error")
+
+        before_state = get_session_online_state(application_info["path"])
+        if before_state is not None and "online" in before_state:
+            login_result["online"]["beforeLogin"] = before_state["online"]
+
+        online_app = ensure_session_online_application(application_info["path"], False)
+        if online_app is None:
+            online_app = scriptengine.online.create_online_application(application)
+            login_result["online"]["cached"] = False
+        else:
+            login_result["online"]["cached"] = True
+
+        if "beforeLogin" not in login_result["online"]:
+            login_result["online"]["beforeLogin"] = {
+                "cached": login_result["online"]["cached"],
+                "isLoggedIn": bool(online_app.is_logged_in),
+                "applicationState": safe_text(online_app.application_state),
+                "operationState": safe_text(online_app.operation_state)
+            }
+
+        if login_result["online"]["cached"]:
+            online_app = ensure_session_online_application(application_info["path"], True)
+        else:
+            online_app.login(OnlineChangeOption.Keep, False)
+
+        if not login_result["online"]["cached"]:
+            try:
+                online_app.Dispose()
+            except:
+                pass
+            online_app = ensure_session_online_application(application_info["path"], False)
+
+        login_result["success"] = True
+        login_result["loggedIn"] = True
+        login_result["online"] = {
+            "cached": True,
+            "isLoggedIn": bool(online_app.is_logged_in),
+            "applicationState": safe_text(online_app.application_state),
+            "operationState": safe_text(online_app.operation_state)
+        }
+        result = login_result
+    except Exception as login_error:
+        login_result["error"] = str(login_error)
+        current_state = get_session_online_state(application_info["path"])
+        if current_state is not None and "online" in current_state:
+            login_result["online"] = current_state["online"]
+        result = login_result
+"""
+    return _wrap_plc_script(
+        body.replace("@@APPLICATION_PATH@@", _literal(application_path)),
+        "Error in PLC login script",
+        "from scriptengine import OnlineChangeOption",
+    )
+
+
+def generate_plc_logout_script(params):
+    """Generate script to logout an online application without downloading."""
+    application_path = params.get("applicationPath", params.get("application", ""))
+
+    body = """
+application_path = @@APPLICATION_PATH@@.replace("\\\\", "/").strip("/")
+
+project = get_project()
+if project is None:
+    result = {"success": False, "error": "No active project in session"}
+else:
+    application, application_info, applications = find_application(project, application_path)
+    logout_result = {
+        "success": True,
+        "application": application_info,
+        "availableApplications": [entry for obj, entry in applications],
+        "online": {
+            "cached": False,
+            "isLoggedIn": False,
+            "applicationState": "",
+            "operationState": ""
+        }
+    }
+    before_state = get_session_online_state(application_info["path"])
+    if before_state is not None and "online" in before_state:
+        logout_result["online"]["beforeLogout"] = before_state["online"]
+        logout_result["online"] = before_state["online"]
+
+    _disposed = bool(dispose_session_online_application(application_info["path"], True))
+    logout_result["disposedCachedHandle"] = _disposed
+    logout_result["loggedOut"] = _disposed
+
+    _force_logout = False
+    if not _disposed:
+        try:
+            _online_app = scriptengine.online.create_online_application(application)
+            try:
+                if bool(_online_app.is_logged_in):
+                    _online_app.logout()
+                    _force_logout = True
+            finally:
+                try:
+                    _online_app.Dispose()
+                except:
+                    pass
+        except Exception as force_logout_error:
+            logout_result["forceLogoutError"] = str(force_logout_error)
+
+    if _force_logout:
+        logout_result["loggedOut"] = True
+
+    after_state = get_session_online_state(application_info["path"])
+    if after_state is not None and "online" in after_state:
+        logout_result["online"] = after_state["online"]
+    else:
+        logout_result["online"] = {
+            "cached": False,
+            "isLoggedIn": False,
+            "applicationState": "",
+            "operationState": ""
+        }
+
+    result = logout_result
+"""
+    return _wrap_plc_script(
+        body.replace("@@APPLICATION_PATH@@", _literal(application_path)),
+        "Error in PLC logout script",
+    )

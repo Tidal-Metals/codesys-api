@@ -28,6 +28,25 @@ def indent(block, spaces=4):
     return "\n".join(prefix + line if line else "" for line in lines)
 
 
+def normalize_modbus_offset(value, default):
+    """Normalize offsets to the CODESYS-style hex literal format."""
+    if value is None:
+        return default
+
+    text = str(value).strip()
+    if not text:
+        return default
+
+    lowered = text.lower()
+    if lowered.startswith("0x"):
+        return "16#" + text[2:].upper()
+
+    if lowered.startswith("16#"):
+        return "16#" + text[3:].upper()
+
+    return text
+
+
 def normalize_channel(channel):
     """Normalize REST channel payloads for IronPython literal generation."""
     def get(camel_key, snake_key=None, default=None):
@@ -40,9 +59,9 @@ def normalize_channel(channel):
     return {
         "name": get("name", default="Channel"),
         "accessType": get("accessType", "access_type", 3),
-        "readOffset": get("readOffset", "read_offset", "16#0000"),
+        "readOffset": normalize_modbus_offset(get("readOffset", "read_offset", "16#0000"), "16#0000"),
         "readLength": get("readLength", "read_length", 1),
-        "writeOffset": get("writeOffset", "write_offset", "0"),
+        "writeOffset": normalize_modbus_offset(get("writeOffset", "write_offset", "0"), "0"),
         "writeLength": get("writeLength", "write_length", "0"),
         "trigger": get("trigger", default=5),
         "cycleTime": get("cycleTime", "cycle_time", 100),

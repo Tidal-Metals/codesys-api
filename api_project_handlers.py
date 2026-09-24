@@ -7,6 +7,13 @@ from server_config import logger
 
 
 class ProjectHandlersMixin:
+    @staticmethod
+    def _normalize_path(path):
+        try:
+            return os.path.normcase(os.path.abspath(str(path)))
+        except Exception:
+            return str(path)
+
     def handle_project_create(self, params):
         """Handle project/create endpoint."""
         if "path" not in params:
@@ -72,9 +79,58 @@ class ProjectHandlersMixin:
                 "error": "Missing required parameter: path"
             }, 400)
             return
-        
+
         path = params.get("path", "")
         logger.info("Project open request for path: %s (executing script in CODESYS)", path)
+
+        current_script = """
+import scriptengine
+import os
+
+try:
+    project = None
+    if hasattr(scriptengine, 'projects') and hasattr(scriptengine.projects, 'primary'):
+        try:
+            project = scriptengine.projects.primary
+        except:
+            project = None
+    if project is None and hasattr(session, 'active_project'):
+        project = session.active_project
+
+    if project is None:
+        result = {"success": True, "project": None}
+    else:
+        project_path = ""
+        project_dirty = False
+        if hasattr(project, 'path'):
+            try:
+                project_path = str(project.path)
+            except:
+                project_path = ""
+        if hasattr(project, 'dirty'):
+            try:
+                project_dirty = bool(project.dirty)
+            except:
+                project_dirty = False
+        result = {"success": True, "project": {"path": project_path, "dirty": project_dirty}}
+except:
+    import sys
+    error_type, error_value, error_traceback = sys.exc_info()
+    result = {"success": False, "error": str(error_value)}
+"""
+        current_result = self.script_executor.execute_script(current_script, timeout=15)
+        current_project = current_result.get("project") if current_result.get("success", False) else None
+        if current_project and current_project.get("path"):
+            current_path = self._normalize_path(current_project.get("path", ""))
+            requested_path = self._normalize_path(path)
+            if current_path == requested_path:
+                logger.info("Requested project is already active; skipping reopen")
+                self.send_json_response({
+                    "success": True,
+                    "project": current_project,
+                    "already_open": True,
+                })
+                return
         
         # Generate and execute project open script
         script = self.script_generator.generate_project_open_script(params)
@@ -168,7 +224,7 @@ class ProjectHandlersMixin:
         else:
             error_msg = result.get("error", "Unknown error")
             logger.error("Error compiling project: %s", error_msg)
-            self.send_json_response({
-                "success": False,
-                "error": error_msg
-            }, 500)
+            failure_payload = dict(result)
+            failure_payload["success"] = False
+            failure_payload["error"] = error_msg
+            self.send_json_response(failure_payload, 500)

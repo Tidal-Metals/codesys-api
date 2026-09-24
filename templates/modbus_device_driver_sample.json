@@ -1,0 +1,141 @@
+{
+  "serial": {
+    "port": "COM9",
+    "baudrate": 9600,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1,
+    "timeout": 1.0
+  },
+  "plc": {
+    "masterPath": "Modbus_COM.Modbus_Client_COM_Port"
+  },
+  "devices": [
+    {
+      "name": "SIM_DEVICE_7",
+      "unit": 7,
+      "slaveAddress": 7,
+      "responseTimeout": 1000,
+      "holding": [1234, 5678, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [1234, 5678, 0, 0, 0, 0, 0, 0],
+      "channels": [
+        {
+          "name": "SIM7_REG_0",
+          "accessType": 3,
+          "readOffset": "0x0000",
+          "readLength": 1,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        },
+        {
+          "name": "SIM7_REG_1",
+          "accessType": 3,
+          "readOffset": "0x0001",
+          "readLength": 1,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        }
+      ],
+      "mappings": [
+        {
+          "channel": "SIM7_REG_0",
+          "variable": "GVL.mbReg0"
+        },
+        {
+          "channel": "SIM7_REG_1",
+          "variable": "GVL.mbReg1"
+        }
+      ]
+    },
+    {
+      "name": "SIM_DEVICE_8",
+      "unit": 8,
+      "slaveAddress": 8,
+      "responseTimeout": 1000,
+      "holding": [2222, 3333, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [2222, 3333, 0, 0, 0, 0, 0, 0],
+      "channels": [
+        {
+          "name": "SIM8_REG_0",
+          "accessType": 3,
+          "readOffset": "0x0000",
+          "readLength": 1,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        },
+        {
+          "name": "SIM8_REG_1",
+          "accessType": 3,
+          "readOffset": "0x0001",
+          "readLength": 1,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        }
+      ],
+      "mappings": [
+        {
+          "channel": "SIM8_REG_0",
+          "variable": "GVL.mbReg2"
+        },
+        {
+          "channel": "SIM8_REG_1",
+          "variable": "GVL.mbReg3"
+        }
+      ]
+    },
+    {
+      "name": "SIM_DEVICE_9",
+      "unit": 9,
+      "slaveAddress": 9,
+      "responseTimeout": 1000,
+      "holding": [4444, 5555, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [4444, 5555, 0, 0, 0, 0, 0, 0],
+      "channels": [
+        {
+          "name": "SIM9_REG_0",
+          "accessType": 3,
+          "readOffset": "0x0000",
+          "readLength": 1,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        },
+        {
+          "name": "SIM9_REG_1",
+          "accessType": 3,
+          "readOffset": "0x0001",
+          "readLength": 1,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        }
+      ],
+      "mappings": [
+        {
+          "channel": "SIM9_REG_0",
+          "variable": "GVL.mbReg4"
+        },
+        {
+          "channel": "SIM9_REG_1",
+          "variable": "GVL.mbReg5"
+        }
+      ]
+    }
+  ]
+}

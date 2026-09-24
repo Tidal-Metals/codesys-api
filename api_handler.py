@@ -9,6 +9,7 @@ from api_pou_handlers import PouHandlersMixin
 from api_project_handlers import ProjectHandlersMixin
 from api_session_handlers import SessionHandlersMixin
 from api_system_handlers import SystemHandlersMixin
+from api_variable_handlers import VariableHandlersMixin
 from modbus_handlers import ModbusHandler, match_route as modbus_match
 from openapi import load_openapi_schema, swagger_ui_html
 
@@ -28,6 +29,7 @@ class CodesysApiHandler(
     PouHandlersMixin,
     PlcHandlersMixin,
     SystemHandlersMixin,
+    VariableHandlersMixin,
     BaseHTTPRequestHandler,
 ):
     """HTTP request handler for CODESYS API."""
@@ -87,6 +89,8 @@ class CodesysApiHandler(
                 self.handle_pou_list(params)
             elif path == "api/v1/pou/code":
                 self.handle_pou_code_get(params)
+            elif path == "api/v1/variables":
+                self.handle_variable_list(params)
             elif path == "api/v1/plc/targets":
                 self.handle_plc_targets(params)
             elif path == "api/v1/plc/gateways":
@@ -162,8 +166,16 @@ class CodesysApiHandler(
                 self.handle_pou_create(params)
             elif path == "api/v1/pou/code":
                 self.handle_pou_code(params)
+            elif path == "api/v1/variables/upsert":
+                self.handle_variable_upsert(params)
             elif path == "api/v1/plc/validate-deploy":
                 self.handle_plc_validate_deploy(params)
+            elif path == "api/v1/plc/deploy":
+                self.handle_plc_deploy(params)
+            elif path == "api/v1/plc/login":
+                self.handle_plc_login(params)
+            elif path == "api/v1/plc/logout":
+                self.handle_plc_logout(params)
             elif path == "api/v1/plc/scan":
                 self.handle_plc_scan(params)
             elif path == "api/v1/plc/status":
@@ -207,7 +219,10 @@ class CodesysApiHandler(
                 return
 
             if not self.try_modbus_route(method, path, params):
-                self.send_error(404, "Not Found")
+                if method == "DELETE" and path == "api/v1/variables":
+                    self.handle_variable_delete(params)
+                else:
+                    self.send_error(404, "Not Found")
         except (ConnectionAbortedError, BrokenPipeError, ConnectionResetError) as e:
             logger.warning("Connection error during %s request: %s", method, str(e))
         except Exception as e:

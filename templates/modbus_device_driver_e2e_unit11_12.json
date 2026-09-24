@@ -1,0 +1,16 @@
+{
+  "devices": [
+    {
+      "name": "SIM_DEVICE_11",
+      "unit": 11,
+      "holding": [1111, 1112, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [1111, 1112, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "SIM_DEVICE_12",
+      "unit": 12,
+      "holding": [1211, 1212, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [1211, 1212, 0, 0, 0, 0, 0, 0]
+    }
+  ]
+}

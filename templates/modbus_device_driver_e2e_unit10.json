@@ -1,0 +1,47 @@
+{
+  "serial": {
+    "port": "COM9",
+    "baudrate": 9600,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1,
+    "timeout": 1.0
+  },
+  "plc": {
+    "masterPath": "Modbus_COM.Modbus_Client_COM_Port"
+  },
+  "devices": [
+    {
+      "name": "SIM_DEVICE_7",
+      "unit": 7,
+      "slaveAddress": 7,
+      "responseTimeout": 1000,
+      "holding": [1234, 5678, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [1234, 5678, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "SIM_DEVICE_8",
+      "unit": 8,
+      "slaveAddress": 8,
+      "responseTimeout": 1000,
+      "holding": [2222, 3333, 8888, 0, 0, 0, 0, 0],
+      "inputRegisters": [2222, 3333, 8888, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "SIM_DEVICE_9",
+      "unit": 9,
+      "slaveAddress": 9,
+      "responseTimeout": 1000,
+      "holding": [4444, 5555, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [4444, 5555, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "SIM_DEVICE_10",
+      "unit": 10,
+      "slaveAddress": 10,
+      "responseTimeout": 1000,
+      "holding": [6666, 7777, 0, 0, 0, 0, 0, 0],
+      "inputRegisters": [6666, 7777, 0, 0, 0, 0, 0, 0]
+    }
+  ]
+}

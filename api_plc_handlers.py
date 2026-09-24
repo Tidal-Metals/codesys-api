@@ -4,6 +4,30 @@ from server_config import logger
 
 
 class PlcHandlersMixin:
+    def handle_plc_login(self, params):
+        """Handle plc/login endpoint."""
+        logger.info("PLC login requested")
+        script = self.script_generator.generate_plc_login_script(params)
+        timeout = int(params.get("timeout", 60))
+        result = self.script_executor.execute_script(script, timeout=timeout)
+        self._send_plc_result(result, "logging in to PLC application")
+
+    def handle_plc_logout(self, params):
+        """Handle plc/logout endpoint."""
+        logger.info("PLC logout requested")
+        script = self.script_generator.generate_plc_logout_script(params)
+        timeout = int(params.get("timeout", 30))
+        result = self.script_executor.execute_script(script, timeout=timeout)
+        self._send_plc_result(result, "logging out PLC application")
+
+    def handle_plc_deploy(self, params):
+        """Handle plc/deploy endpoint."""
+        logger.info("PLC deploy requested")
+        script = self.script_generator.generate_plc_deploy_script(params)
+        timeout = int(params.get("timeout", 180))
+        result = self.script_executor.execute_script(script, timeout=timeout)
+        self._send_plc_result(result, "deploying PLC application")
+
     def handle_plc_targets(self, params):
         """Handle plc/targets endpoint."""
         logger.info("PLC target discovery requested")

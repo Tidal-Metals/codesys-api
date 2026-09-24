@@ -54,3 +54,13 @@ tmp/
 .DS_Store
 Thumbs.db
 **/.claude/settings.local.json
+
+# Bench runtime artifacts (simulator manager state, generated per-port
+# configs and worker logs, scratch exports and captures)
+modbus_simulator_state.json
+templates/modbus_simulator_COM*.json
+modbus_sim_*_managed_*.log
+modbus_fault_cycle.json
+field_live/
+tmp_native_diff/
+tmp_*.csv

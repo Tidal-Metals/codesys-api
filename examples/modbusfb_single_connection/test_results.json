@@ -1,0 +1,1772 @@
+{
+  "date": "2026-09-21",
+  "bench_plc": "P2CDS-622-DEV",
+  "gateway": "NE2-D11P",
+  "gateway_firmware": "FW-9167-0-14",
+  "serial_format": "8N1",
+  "unit_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "function_code": 3,
+  "address": 0,
+  "quantity": 2,
+  "results": [
+    {
+      "baud": 9600,
+      "task_interval_ms": 50,
+      "request_gap_ms": 100,
+      "plc_monitor_seconds": 60.879150390625,
+      "serial_requests": 123,
+      "serial_replies": 123,
+      "median_device_poll_seconds": 5.259,
+      "healthy_error_count_delta": 0,
+      "stable_single_tcp_connection": true
+    },
+    {
+      "baud": 9600,
+      "task_interval_ms": 50,
+      "request_gap_ms": 0,
+      "plc_monitor_seconds": 60.93548583984375,
+      "serial_requests": 154,
+      "serial_replies": 154,
+      "median_device_poll_seconds": 4.201,
+      "healthy_error_count_delta": 0,
+      "stable_single_tcp_connection": true
+    },
+    {
+      "baud": 38400,
+      "healthy_seconds": 61.08940124511719,
+      "requests": 160,
+      "replies": 160,
+      "median_device_poll_seconds": 4.048,
+      "healthy_error_count_delta": 0,
+      "stable_single_tcp_connection": true,
+      "missing_device_did_not_disconnect_tcp": true,
+      "other_nine_devices_continued": true,
+      "all_ten_recovered": true,
+      "task_interval_ms": 50,
+      "request_gap_ms": 0
+    },
+    {
+      "baud": 115200,
+      "healthy_seconds": 61.055335998535156,
+      "requests": 160,
+      "replies": 160,
+      "median_device_poll_seconds": 4.038,
+      "healthy_error_count_delta": 0,
+      "stable_single_tcp_connection": true,
+      "missing_device_did_not_disconnect_tcp": true,
+      "other_nine_devices_continued": true,
+      "all_ten_recovered": true,
+      "task_interval_ms": 50,
+      "request_gap_ms": 0
+    },
+    {
+      "baud": 115200,
+      "task_interval_ms": 5,
+      "healthy_seconds": 61.21710968017578,
+      "requests": 927,
+      "replies": 927,
+      "median_device_poll_seconds": 0.696,
+      "healthy_error_count_delta": 0,
+      "stable_single_tcp_connection": true,
+      "missing_device_did_not_disconnect_tcp": true,
+      "other_nine_devices_continued": true,
+      "all_ten_recovered": true,
+      "request_gap_ms": 0
+    }
+  ],
+  "final_configuration": {
+    "baud": 115200,
+    "task_interval_ms": 5,
+    "request_gap_ms": 0,
+    "socketA_connections": 1,
+    "socketB_connections": 0
+  },
+  "notes": [
+    "Serial counts include a few seconds around the PLC monitoring window.",
+    "Polling periods are medians between consecutive RTU requests to the same unit.",
+    "Missing-device tests temporarily changed slot 5 to absent unit ID 251; unit 5 was restored afterward.",
+    "The prior ten-module project polled each unit approximately once per second with channel intervals configured to 1000 ms; its maximum throughput was not tested."
+  ],
+  "configurable_gateway_test": {
+    "date": "2026-09-21",
+    "gateway_mode": 4,
+    "baud": 115200,
+    "format": "8N1",
+    "plc_task_ms": 5,
+    "plc_request_gap_ms": 0,
+    "gateway_rtu_timeout_ms": 1000,
+    "gateway_retention_seconds": 10,
+    "command_table": [
+      [
+        1,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        2,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        3,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        4,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        5,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        6,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        7,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        8,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        9,
+        3,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        10,
+        3,
+        0,
+        0,
+        0,
+        2
+      ]
+    ],
+    "comparisons": [
+      {
+        "mode": "Multi Host forwarding",
+        "gateway_interval_ms": null,
+        "keep_seconds": null,
+        "plc_mean_ten_device_round_ms": 675.76,
+        "serial_median_device_refresh_ms": 671.0,
+        "pc_median_reply_ms": 32.772,
+        "pc_p95_reply_ms": 49.299,
+        "pc_median_ten_device_round_ms": 331.065,
+        "plc_monitor_seconds": 41.19689178466797,
+        "serial_requests": {
+          "1": 63,
+          "2": 63,
+          "3": 63,
+          "4": 63,
+          "5": 63,
+          "6": 62,
+          "7": 62,
+          "8": 63,
+          "9": 63,
+          "10": 63
+        },
+        "serial_replies": {
+          "1": 63,
+          "2": 63,
+          "3": 63,
+          "4": 63,
+          "5": 63,
+          "6": 62,
+          "7": 62,
+          "8": 63,
+          "9": 63,
+          "10": 63
+        },
+        "new_tcp_connections_during_measurement": 0,
+        "new_tcp_errors_during_measurement": 0
+      },
+      {
+        "mode": "Configurable gateway",
+        "gateway_interval_ms": 100,
+        "keep_seconds": 10,
+        "plc_mean_ten_device_round_ms": 495.77,
+        "serial_median_device_refresh_ms": 1268.0,
+        "pc_median_reply_ms": 12.656,
+        "pc_p95_reply_ms": 18.058,
+        "pc_median_ten_device_round_ms": 114.982,
+        "plc_monitor_seconds": 41.304779052734375,
+        "serial_requests": {
+          "1": 34,
+          "2": 34,
+          "3": 34,
+          "4": 33,
+          "5": 33,
+          "6": 33,
+          "7": 33,
+          "8": 33,
+          "9": 33,
+          "10": 33
+        },
+        "serial_replies": {
+          "1": 34,
+          "2": 34,
+          "3": 34,
+          "4": 33,
+          "5": 33,
+          "6": 33,
+          "7": 33,
+          "8": 33,
+          "9": 33,
+          "10": 33
+        },
+        "new_tcp_connections_during_measurement": 0,
+        "new_tcp_errors_during_measurement": 0
+      },
+      {
+        "mode": "Configurable gateway",
+        "gateway_interval_ms": 0,
+        "keep_seconds": 10,
+        "plc_mean_ten_device_round_ms": 495.0,
+        "serial_median_device_refresh_ms": 298.0,
+        "pc_median_reply_ms": 12.734,
+        "pc_p95_reply_ms": 19.191,
+        "pc_median_ten_device_round_ms": 117.94,
+        "plc_monitor_seconds": 41.22398376464844,
+        "serial_requests": {
+          "1": 143,
+          "2": 143,
+          "3": 143,
+          "4": 142,
+          "5": 142,
+          "6": 143,
+          "7": 143,
+          "8": 143,
+          "9": 143,
+          "10": 143
+        },
+        "serial_replies": {
+          "1": 143,
+          "2": 143,
+          "3": 143,
+          "4": 142,
+          "5": 142,
+          "6": 143,
+          "7": 143,
+          "8": 143,
+          "9": 143,
+          "10": 143
+        },
+        "new_tcp_connections_during_measurement": 0,
+        "new_tcp_errors_during_measurement": 0
+      },
+      {
+        "mode": "Configurable gateway",
+        "gateway_interval_ms": 0,
+        "keep_seconds": 1,
+        "plc_mean_ten_device_round_ms": 543.34,
+        "serial_median_device_refresh_ms": 280.0,
+        "pc_median_reply_ms": 14.59,
+        "pc_p95_reply_ms": 57.355,
+        "pc_median_ten_device_round_ms": 140.743,
+        "plc_monitor_seconds": 30.37358856201172,
+        "serial_requests": {
+          "1": 116,
+          "2": 114,
+          "3": 114,
+          "4": 115,
+          "5": 115,
+          "6": 115,
+          "7": 116,
+          "8": 117,
+          "9": 114,
+          "10": 113
+        },
+        "serial_replies": {
+          "1": 116,
+          "2": 114,
+          "3": 114,
+          "4": 115,
+          "5": 115,
+          "6": 115,
+          "7": 116,
+          "8": 117,
+          "9": 114,
+          "10": 113
+        },
+        "new_tcp_connections_during_measurement": 0,
+        "new_tcp_errors_during_measurement": 0
+      }
+    ],
+    "silent_device_test": {
+      "duration_seconds": 41.144554138183594,
+      "unit": 5,
+      "rtu_requests": 33,
+      "rtu_replies": 0,
+      "plc_successful_read_count_increase": 79,
+      "plc_valid_true_in_every_sample": true,
+      "counter_deltas": {
+        "aErrorCount[10]": 0,
+        "aErrorCount[9]": 0,
+        "aErrorCount[8]": 0,
+        "udiConnectionCount": 0,
+        "aErrorCount[3]": 0,
+        "aErrorCount[2]": 0,
+        "aErrorCount[1]": 0,
+        "aErrorCount[7]": 0,
+        "aErrorCount[6]": 0,
+        "aErrorCount[5]": 0,
+        "aErrorCount[4]": 0,
+        "udiConnectionErrorCount": 0
+      },
+      "other_devices_refresh_ms": 1285.5,
+      "conclusion": "Cached success concealed a silent RTU device for the whole observation window; no maximum stale lifetime established."
+    },
+    "autonomous_polling": {
+      "requests": {
+        "1": 59,
+        "2": 59,
+        "3": 59,
+        "4": 58,
+        "5": 58,
+        "6": 58,
+        "7": 58,
+        "8": 58,
+        "9": 58,
+        "10": 59
+      },
+      "replies": {
+        "1": 59,
+        "2": 59,
+        "3": 59,
+        "4": 58,
+        "5": 58,
+        "6": 58,
+        "7": 58,
+        "8": 58,
+        "9": 58,
+        "10": 59
+      },
+      "median_refresh_ms": 294.0,
+      "per_unit_refresh_ms": {
+        "1": 296.5,
+        "2": 284.5,
+        "3": 282.5,
+        "4": 295.0,
+        "5": 296.0,
+        "6": 292.0,
+        "7": 284.0,
+        "8": 285.0,
+        "9": 295.0,
+        "10": 296.0
+      },
+      "after_retention_expired": {
+        "requests": {
+          "1": 17,
+          "2": 17,
+          "3": 17,
+          "4": 17,
+          "5": 16,
+          "6": 16,
+          "7": 16,
+          "8": 16,
+          "9": 17,
+          "10": 17
+        },
+        "replies": {
+          "1": 17,
+          "2": 17,
+          "3": 17,
+          "4": 17,
+          "5": 16,
+          "6": 16,
+          "7": 16,
+          "8": 16,
+          "9": 17,
+          "10": 17
+        },
+        "median_refresh_ms": 309.0,
+        "per_unit_refresh_ms": {
+          "1": 303.0,
+          "2": 303.5,
+          "3": 313.5,
+          "4": 311.0,
+          "5": 296.0,
+          "6": 295.0,
+          "7": 308.0,
+          "8": 310.0,
+          "9": 316.5,
+          "10": 313.0
+        }
+      }
+    },
+    "restored_original_multi_host": true,
+    "restored_plc_round_ms": 697.78,
+    "measurement_notes": [
+      "PLC round is elapsed time divided by completed-sweep delta across first/last online samples.",
+      "RTU refresh is median spacing between serial requests to the same device.",
+      "PC latency uses a separate raw TCP client with PLC polling disabled, 200 reads after 10 warm-up reads.",
+      "Configuration changes rebooted the gateway; intentional setup reconnections are outside measurement windows.",
+      "The first fault fixture returned RTU exception 04 rather than silence; the final fixture suppressed all unit 5 responses and logged each suppression."
+    ],
+    "keep_time_followup": {
+      "keep_1_second_healthy": {
+        "label": "keep1_controlled_healthy",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5792",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#117",
+                "udiCompletedSweeps": "UDINT#5816",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.80511474609375
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5796",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#155",
+                "udiCompletedSweeps": "UDINT#5820",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.9875564575195312
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5800",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#194",
+                "udiCompletedSweeps": "UDINT#5824",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.1481170654296875
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5804",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#234",
+                "udiCompletedSweeps": "UDINT#5828",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.332427978515625
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5808",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#274",
+                "udiCompletedSweeps": "UDINT#5832",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.505172729492188
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5812",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#316",
+                "udiCompletedSweeps": "UDINT#5836",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 12.684898376464844
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5816",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#359",
+                "udiCompletedSweeps": "UDINT#5840",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 14.834724426269531
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5820",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#398",
+                "udiCompletedSweeps": "UDINT#5844",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 17.027633666992188
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5824",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#439",
+                "udiCompletedSweeps": "UDINT#5848",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 19.180862426757812
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5828",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#479",
+                "udiCompletedSweeps": "UDINT#5852",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 21.343589782714844
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5832",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#521",
+                "udiCompletedSweeps": "UDINT#5856",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 23.515182495117188
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5836",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#559",
+                "udiCompletedSweeps": "UDINT#5860",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 25.689697265625
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5840",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#596",
+                "udiCompletedSweeps": "UDINT#5864",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 27.87549591064453
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5844",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#638",
+                "udiCompletedSweeps": "UDINT#5868",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 30.05877685546875
+            }
+          ],
+          "elapsed": 30.37358856201172,
+          "request_id": "a6ab4612-0a99-4aab-a7a8-5565200222d8",
+          "execution_time": 1790026591.8162918,
+          "success": true
+        },
+        "plc_mean_round_ms": 543.34,
+        "plc_rounds": 52,
+        "serial": {
+          "requests": {
+            "1": 116,
+            "2": 114,
+            "3": 114,
+            "4": 115,
+            "5": 115,
+            "6": 115,
+            "7": 116,
+            "8": 117,
+            "9": 114,
+            "10": 113
+          },
+          "replies": {
+            "1": 116,
+            "2": 114,
+            "3": 114,
+            "4": 115,
+            "5": 115,
+            "6": 115,
+            "7": 116,
+            "8": 117,
+            "9": 114,
+            "10": 113
+          },
+          "median_refresh_ms": 280.0,
+          "per_unit_refresh_ms": {
+            "1": 281.0,
+            "2": 281.0,
+            "3": 282.0,
+            "4": 281.0,
+            "5": 279.0,
+            "6": 278.5,
+            "7": 278.0,
+            "8": 278.5,
+            "9": 268.0,
+            "10": 280.0
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 0
+      },
+      "keep_1_second_silent": {
+        "label": "keep1_controlled_silent",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#730",
+                "udiCompletedSweeps": "UDINT#5878",
+                "aErrorCount[5]": "UDINT#26",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.822662353515625
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#736",
+                "udiCompletedSweeps": "UDINT#5879",
+                "aErrorCount[5]": "UDINT#27",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.9694366455078125
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#745",
+                "udiCompletedSweeps": "UDINT#5880",
+                "aErrorCount[5]": "UDINT#27",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.153106689453125
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#754",
+                "udiCompletedSweeps": "UDINT#5881",
+                "aErrorCount[5]": "UDINT#28",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.336051940917969
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#757",
+                "udiCompletedSweeps": "UDINT#5881",
+                "aErrorCount[5]": "UDINT#29",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.501548767089844
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#763",
+                "udiCompletedSweeps": "UDINT#5882",
+                "aErrorCount[5]": "UDINT#30",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 12.678787231445312
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#772",
+                "udiCompletedSweeps": "UDINT#5883",
+                "aErrorCount[5]": "UDINT#30",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 14.874076843261719
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#781",
+                "udiCompletedSweeps": "UDINT#5883",
+                "aErrorCount[5]": "UDINT#31",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 17.052879333496094
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#789",
+                "udiCompletedSweeps": "UDINT#5884",
+                "aErrorCount[5]": "UDINT#32",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 19.24756622314453
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#792",
+                "udiCompletedSweeps": "UDINT#5885",
+                "aErrorCount[5]": "UDINT#33",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 21.450485229492188
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#799",
+                "udiCompletedSweeps": "UDINT#5886",
+                "aErrorCount[5]": "UDINT#33",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 23.623428344726562
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#799",
+                "udiCompletedSweeps": "UDINT#5886",
+                "aErrorCount[5]": "UDINT#34",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 25.81237030029297
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#808",
+                "udiCompletedSweeps": "UDINT#5887",
+                "aErrorCount[5]": "UDINT#35",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 27.975082397460938
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5853",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#817",
+                "udiCompletedSweeps": "UDINT#5887",
+                "aErrorCount[5]": "UDINT#35",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 30.123397827148438
+            }
+          ],
+          "elapsed": 30.43871307373047,
+          "request_id": "88534c9f-7cd2-42f6-8002-1b4107e77be9",
+          "execution_time": 1790026625.8839035,
+          "success": true
+        },
+        "plc_mean_round_ms": 3144.53,
+        "plc_rounds": 9,
+        "serial": {
+          "requests": {
+            "1": 17,
+            "2": 17,
+            "3": 17,
+            "4": 18,
+            "5": 27,
+            "6": 19,
+            "7": 19,
+            "8": 18,
+            "9": 18,
+            "10": 19
+          },
+          "replies": {
+            "1": 17,
+            "2": 17,
+            "3": 17,
+            "4": 18,
+            "5": 0,
+            "6": 19,
+            "7": 19,
+            "8": 18,
+            "9": 18,
+            "10": 19
+          },
+          "median_refresh_ms": 1492.0,
+          "per_unit_refresh_ms": {
+            "1": 2254.5,
+            "2": 2249.5,
+            "3": 2249.5,
+            "4": 1447.0,
+            "5": 1228.0,
+            "6": 2248.5,
+            "7": 2249.0,
+            "8": 2275.0,
+            "9": 2273.0,
+            "10": 2229.0
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 9
+      },
+      "keep_1_second_counter_deltas": {
+        "aErrorCount[10]": 0,
+        "aErrorCount[9]": 0,
+        "aErrorCount[8]": 0,
+        "udiConnectionCount": 0,
+        "aErrorCount[3]": 0,
+        "aErrorCount[2]": 0,
+        "aErrorCount[1]": 0,
+        "aErrorCount[7]": 0,
+        "aErrorCount[6]": 0,
+        "aErrorCount[5]": 10,
+        "aErrorCount[4]": 0,
+        "udiConnectionErrorCount": 0
+      },
+      "keep_1_second_recovered": {
+        "label": "keep1_controlled_recovered",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5857",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#865",
+                "udiCompletedSweeps": "UDINT#5892",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.7165374755859375
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5861",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#905",
+                "udiCompletedSweeps": "UDINT#5896",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.8908538818359375
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5865",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#944",
+                "udiCompletedSweeps": "UDINT#5900",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.0597381591796875
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5868",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#982",
+                "udiCompletedSweeps": "UDINT#5903",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.264999389648438
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5872",
+                "udiConnectionCount": "UDINT#10",
+                "client.udiNumMsgReply": "UDINT#1021",
+                "udiCompletedSweeps": "UDINT#5908",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.436042785644531
+            }
+          ],
+          "elapsed": 10.750099182128906,
+          "request_id": "deb57276-ddc7-40a4-beb0-c6fbc24b23a6",
+          "execution_time": 1790026641.7035675,
+          "success": true
+        },
+        "plc_mean_round_ms": 544.97,
+        "plc_rounds": 16,
+        "serial": {
+          "requests": {
+            "1": 40,
+            "2": 40,
+            "3": 39,
+            "4": 38,
+            "5": 40,
+            "6": 39,
+            "7": 39,
+            "8": 38,
+            "9": 37,
+            "10": 38
+          },
+          "replies": {
+            "1": 40,
+            "2": 40,
+            "3": 39,
+            "4": 38,
+            "5": 40,
+            "6": 39,
+            "7": 39,
+            "8": 38,
+            "9": 37,
+            "10": 38
+          },
+          "median_refresh_ms": 295.0,
+          "per_unit_refresh_ms": {
+            "1": 293.0,
+            "2": 295.0,
+            "3": 294.0,
+            "4": 297.0,
+            "5": 295.0,
+            "6": 295.0,
+            "7": 293.0,
+            "8": 297.0,
+            "9": 304.0,
+            "10": 298.0
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 0
+      },
+      "keep_0_healthy": {
+        "label": "mode_4_keep_0_healthy",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5730",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#30",
+                "udiCompletedSweeps": "UDINT#5749",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.6989822387695312
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5733",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#56",
+                "udiCompletedSweeps": "UDINT#5751",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.8951950073242188
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5735",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#82",
+                "udiCompletedSweeps": "UDINT#5754",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.045417785644531
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5738",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#107",
+                "udiCompletedSweeps": "UDINT#5756",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.243354797363281
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5740",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#133",
+                "udiCompletedSweeps": "UDINT#5759",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.448089599609375
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5743",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#159",
+                "udiCompletedSweeps": "UDINT#5762",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 12.630699157714844
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5746",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#183",
+                "udiCompletedSweeps": "UDINT#5764",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 14.817626953125
+            }
+          ],
+          "elapsed": 15.134674072265625,
+          "request_id": "e9295bde-1942-4049-9517-d29c4fb6e51f",
+          "execution_time": 1790026491.1068954,
+          "success": true
+        },
+        "plc_mean_round_ms": 874.58,
+        "plc_rounds": 15,
+        "serial": {
+          "requests": {
+            "1": 57,
+            "2": 57,
+            "3": 57,
+            "4": 57,
+            "5": 56,
+            "6": 56,
+            "7": 55,
+            "8": 55,
+            "9": 56,
+            "10": 56
+          },
+          "replies": {
+            "1": 57,
+            "2": 57,
+            "3": 57,
+            "4": 57,
+            "5": 56,
+            "6": 56,
+            "7": 55,
+            "8": 55,
+            "9": 56,
+            "10": 56
+          },
+          "median_refresh_ms": 296.0,
+          "per_unit_refresh_ms": {
+            "1": 281.5,
+            "2": 295.5,
+            "3": 272.5,
+            "4": 288.0,
+            "5": 310.0,
+            "6": 326.0,
+            "7": 312.5,
+            "8": 296.5,
+            "9": 295.0,
+            "10": 283.0
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 0
+      },
+      "keep_0_silent": {
+        "label": "cache_0_mode_4_keep_0",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#241",
+                "udiCompletedSweeps": "UDINT#5770",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.7154312133789062
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#245",
+                "udiCompletedSweeps": "UDINT#5771",
+                "aErrorCount[5]": "UDINT#20",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.9056243896484375
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#250",
+                "udiCompletedSweeps": "UDINT#5771",
+                "aErrorCount[5]": "UDINT#21",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.097434997558594
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#254",
+                "udiCompletedSweeps": "UDINT#5772",
+                "aErrorCount[5]": "UDINT#21",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.309295654296875
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#259",
+                "udiCompletedSweeps": "UDINT#5772",
+                "aErrorCount[5]": "UDINT#22",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.490982055664062
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#263",
+                "udiCompletedSweeps": "UDINT#5773",
+                "aErrorCount[5]": "UDINT#22",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 12.681480407714844
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#269",
+                "udiCompletedSweeps": "UDINT#5774",
+                "aErrorCount[5]": "UDINT#23",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 14.862907409667969
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#272",
+                "udiCompletedSweeps": "UDINT#5774",
+                "aErrorCount[5]": "UDINT#24",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 17.035354614257812
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "FALSE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "FALSE",
+                "aReadCount[5]": "UDINT#5751",
+                "udiConnectionCount": "UDINT#9",
+                "client.udiNumMsgReply": "UDINT#281",
+                "udiCompletedSweeps": "UDINT#5775",
+                "aErrorCount[5]": "UDINT#24",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 19.208740234375
+            }
+          ],
+          "elapsed": 19.51971435546875,
+          "request_id": "ca7c7b71-adcc-409f-96df-3eeca1546aed",
+          "execution_time": 1790026515.06382,
+          "success": true
+        },
+        "plc_mean_round_ms": 3498.66,
+        "plc_rounds": 5,
+        "serial": {
+          "requests": {
+            "1": 15,
+            "2": 16,
+            "3": 16,
+            "4": 16,
+            "5": 16,
+            "6": 16,
+            "7": 15,
+            "8": 14,
+            "9": 15,
+            "10": 15
+          },
+          "replies": {
+            "1": 15,
+            "2": 16,
+            "3": 16,
+            "4": 16,
+            "5": 0,
+            "6": 16,
+            "7": 15,
+            "8": 14,
+            "9": 15,
+            "10": 15
+          },
+          "median_refresh_ms": 1289.0,
+          "per_unit_refresh_ms": {
+            "1": 1233.0,
+            "2": 1258.0,
+            "3": 1271.0,
+            "4": 1244.0,
+            "5": 1244.0,
+            "6": 1407.0,
+            "7": 1411.0,
+            "8": 1355.0,
+            "9": 1323.5,
+            "10": 1304.0
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 4
+      },
+      "keep_2_healthy": {
+        "label": "mode_4_keep_2_healthy",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5947",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#57",
+                "udiCompletedSweeps": "UDINT#5982",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.720001220703125
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5952",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#100",
+                "udiCompletedSweeps": "UDINT#5987",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.8791961669921875
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5956",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#143",
+                "udiCompletedSweeps": "UDINT#5991",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.07440185546875
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5960",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#187",
+                "udiCompletedSweeps": "UDINT#5995",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.267532348632812
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5965",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#231",
+                "udiCompletedSweeps": "UDINT#6000",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.434791564941406
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5969",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#273",
+                "udiCompletedSweeps": "UDINT#6004",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 12.653732299804688
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5973",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#318",
+                "udiCompletedSweeps": "UDINT#6008",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 14.866584777832031
+            }
+          ],
+          "elapsed": 15.178634643554688,
+          "request_id": "bcbcc441-bef3-4944-9ada-3d44c5b0f55d",
+          "execution_time": 1790026713.9524002,
+          "success": true
+        },
+        "plc_mean_round_ms": 505.64,
+        "plc_rounds": 26,
+        "serial": {
+          "requests": {
+            "1": 52,
+            "2": 52,
+            "3": 53,
+            "4": 53,
+            "5": 53,
+            "6": 53,
+            "7": 53,
+            "8": 53,
+            "9": 52,
+            "10": 52
+          },
+          "replies": {
+            "1": 52,
+            "2": 52,
+            "3": 53,
+            "4": 53,
+            "5": 53,
+            "6": 53,
+            "7": 53,
+            "8": 53,
+            "9": 52,
+            "10": 52
+          },
+          "median_refresh_ms": 296.0,
+          "per_unit_refresh_ms": {
+            "1": 293.0,
+            "2": 296.0,
+            "3": 297.0,
+            "4": 302.5,
+            "5": 301.5,
+            "6": 297.5,
+            "7": 296.0,
+            "8": 294.5,
+            "9": 290.0,
+            "10": 293.0
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 0
+      },
+      "keep_2_silent": {
+        "label": "cache_0_mode_4_keep_2",
+        "plc": {
+          "executed_by": "CODESYS PersistentSession",
+          "samples": [
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5986",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#448",
+                "udiCompletedSweeps": "UDINT#6021",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 1.7114486694335938
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5991",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#491",
+                "udiCompletedSweeps": "UDINT#6026",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 3.8746871948242188
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5995",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#535",
+                "udiCompletedSweeps": "UDINT#6030",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 6.065185546875
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#5999",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#578",
+                "udiCompletedSweeps": "UDINT#6034",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 8.228195190429688
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#6004",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#622",
+                "udiCompletedSweeps": "UDINT#6039",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 10.412605285644531
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#6008",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#664",
+                "udiCompletedSweeps": "UDINT#6043",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 12.582435607910156
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#6012",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#707",
+                "udiCompletedSweeps": "UDINT#6047",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 14.751937866210938
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#6017",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#751",
+                "udiCompletedSweeps": "UDINT#6052",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 16.912307739257812
+            },
+            {
+              "values": {
+                "xAllDevicesHealthy": "TRUE",
+                "client.xConnected": "TRUE",
+                "aValid[5]": "TRUE",
+                "aReadCount[5]": "UDINT#6021",
+                "udiConnectionCount": "UDINT#12",
+                "client.udiNumMsgReply": "UDINT#795",
+                "udiCompletedSweeps": "UDINT#6056",
+                "aErrorCount[5]": "UDINT#37",
+                "udiConnectionErrorCount": "UDINT#0"
+              },
+              "t": 19.08965301513672
+            }
+          ],
+          "elapsed": 19.404685974121094,
+          "request_id": "a7f9d80f-6fd0-4999-a818-1abab19ab1aa",
+          "execution_time": 1790026737.7966309,
+          "success": true
+        },
+        "plc_mean_round_ms": 496.52,
+        "plc_rounds": 35,
+        "serial": {
+          "requests": {
+            "1": 15,
+            "2": 15,
+            "3": 15,
+            "4": 15,
+            "5": 15,
+            "6": 15,
+            "7": 15,
+            "8": 15,
+            "9": 15,
+            "10": 15
+          },
+          "replies": {
+            "1": 15,
+            "2": 15,
+            "3": 15,
+            "4": 15,
+            "5": 0,
+            "6": 15,
+            "7": 15,
+            "8": 15,
+            "9": 15,
+            "10": 15
+          },
+          "median_refresh_ms": 1276.0,
+          "per_unit_refresh_ms": {
+            "1": 1270.5,
+            "2": 1276.0,
+            "3": 1270.0,
+            "4": 1276.0,
+            "5": 1277.5,
+            "6": 1276.5,
+            "7": 1283.0,
+            "8": 1285.5,
+            "9": 1277.0,
+            "10": 1277.5
+          }
+        },
+        "connections_delta": 0,
+        "connection_errors_delta": 0,
+        "unit5_errors_delta": 0
+      }
+    }
+  }
+}

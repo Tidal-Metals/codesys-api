@@ -1,0 +1,226 @@
+CODESYS Modbus TCP generator handoff
+
+24 September 2026 · Review draft · For the scada-greenfield-rewrite agent
+
+Generate native Modbus TCP device-tree modules first. Use the bench below to prove configuration, mappings, communication and recovery. The receiving agent owns how this information fits its generator.
+
+Generation
+Bench
+Remote access
+Verification
+Footguns
+ModbusFB
+Download examples + native exports
+
+The ZIP contains the known bench subtree and one-device native exports, simulator scripts and manifest, the standalone TCP read tool, complete ModbusFB example, and test evidence. These are local working copies; do not assume an ordinary repository clone includes them. Native subtree exports are reference templates, not a complete controller project.
+
+Bench health at handoff: Current bench is working. After the user reseated the original USB adapter, COM18 received traffic again once its stale serial handle was reopened. COM11 independently observed valid requests and replies for every original unit. The new COM11 responder (unit 11) was then verified through the gateway alongside COM18 units 1, 2 and 10. Both adapters and the gateway now use 38400/8N1 with multidrop filtering. A subsequent 60.8-second CODESYS watch passed: 612 requests/replies, correct values for all ten native RTU devices, zero new error/bad-value counts, stable five-A/five-B connections, and a healthy PC TCP path. Project and boot application saved; LAN API attached. Earlier physical receive loss was not conclusively isolated, but a separate USB disconnect failure was captured: ClearCommError caused the serial reader to stop while the process stayed alive. Reopen the simulator after USB reseating. COM18 remains manually managed with diagnostic logging; COM11 is managed through the API.
+1. Generate a working native device
+
+A working result needs four pieces: the Ethernet/client/server device tree, configured Modbus channels, typed ST storage, and I/O mappings linking those channels to that storage. Generating ST alone does not create native Modbus communication.
+
+CODESYS calls the PLC-side parent a Modbus TCP Client and each remote-device child a Modbus TCP Server. Each native server child establishes an outbound TCP connection. Multiple channels under that child share its unit ID; separate unit IDs use separate children and connections in this tested configuration.
+
+Tree level	Device type	ID	Installed version
+P2CDS622 controller	4096	1767 0001	1.1.13.0
+Ethernet: ETH2_LAN	110	0000 0002	4.2.0.0
+Modbus_TCP_Client	88	0000 0003	4.5.0.0
+Remote server child	89	0000 0005	4.5.0.0
+
+Bench IDE: CODESYS V3.5 SP22 Patch 1 (3.5.22.10). Pin compatible installed device descriptions and libraries. The numeric parameters and reflection example below are verified against these versions, not a universal CODESYS API.
+
+Start from the approved controller base. Preserve NetConfig and unrelated modules. Bind the Ethernet node to the intended physical port; the tested native tree uses ETH2. Adding an Ethernet tree node does not itself configure the physical port address.
+Create or reuse Ethernet → TCP Client → remote server. Prefer the bundled GatewayUnit1_20260924.export as the known-good channel template. The larger ETH2NativeBench_20260924.export contains the parent tree, ten gateway nodes and one PC node. Import into a disposable project first, preserve unique names/identities and rebind every mapping.
+Set endpoint and channel. For unit 1: gateway 192.168.50.151:502, response timeout 2000 ms; FC03, zero-based register offset 0, count 2, cyclic interval 1000 ms. A gateway endpoint and a logical unit are different concepts. Register documentation using 40001 notation must be translated to protocol offsets explicitly.
+Declare and map raw storage. Map the complete two-word input channel to Application.PLC_PRG.GatewayRegisters. Generate decoding/scaling separately and preserve signedness, byte/word order and quality. Keep the owning POU in an active task; the native bench uses a 50 ms task.
+Rebuild and inspect the result. Assert zero compiler errors, read back parameters and mappings, then save. Download/start only the authorized bench application. Verify the online application matches the project; save a boot application when the tested result should survive power loss.
+PROGRAM PLC_PRG
+VAR
+    GatewayRegisters : ARRAY[0..1] OF WORD;
+    GatewayValuesMatch : BOOL;
+END_VAR
+
+GatewayValuesMatch := (GatewayRegisters[0] = 1234)
+                 AND (GatewayRegisters[1] = 5678);
+(* Native I/O mapping supplies the array; no polling FB call is needed. *)
+IDE scripting: native import, parameters and mapping
+
+Run these fragments inside the IDE's persistent IronPython session, with the bench project backed up and logged out for structural edits. They illustrate separate steps, not an unattended deployment script. Resolve full paths and assert unique matches before mutation.
+
+# Existing master selected under the intended Ethernet node:
+master.import_native(template_path)
+# Then resolve the imported node; rename and remap before using it.
+
+# Alternative: empty child creation. Channels and mapping metadata
+# still have to be generated after this call.
+did = scriptengine.device_repository.create_device_identification(
+    89, '0000 0005', '4.5.0.0')
+master.add('Gateway_RTU_Server', did)
+
+params = dict((int(q.id), q)
+              for c in node.connectors for q in c.host_parameters)
+params[9100].value = '1'                  # Unit ID
+params[9101].value = '2000'               # Response timeout, ms
+params[9102].value = '[192,168,50,151]'    # IPv4
+params[9103].value = '502'                # TCP port
+
+# Readback of the first configured channel (parameter 17825792):
+# {3, 16#0000, 2, 0, 0, 5, 1000, false, }
+# FC, read offset/count, write offset/count, cyclic trigger=5,
+# interval ms, error handling, remaining vendor field.
+# This value alone does NOT create its I/O parameter metadata.
+
+The existing channel/native-export helpers in codesys-api are useful references, but parts assume serial Modbus. In particular, generic device creation defaults to a serial device, not type 89, and generic updates do not provide a complete typed TCP endpoint contract.
+
+# Verified mapping adapter for the installed device description.
+import clr
+clr.AddReference('DeviceObject')
+parent = node.connectors[0].host_parameters.parent
+iface = [i for i in parent.GetType().GetInterfaces()
+         if 'IParameterSetContainer' in i.Name][0]
+ps = iface.GetProperty('ParameterSet').GetValue(parent, None)
+matches = [q for q in ps if q.VisibleName == 'GateRead'
+           and str(q.ChannelType) == 'Input']
+assert len(matches) == 1
+channel = matches[0]
+assert channel.SubElements.Count == 2
+stack = [channel]
+while stack:
+    sub = stack.pop()
+    maps = sub.IoMapping.VariableMappings
+    while maps.Count:
+        maps.RemoveAt(0)
+    if sub.HasSubElements:
+        stack.extend(list(sub.SubElements))
+channel.IoMapping.VariableMappings.AddMapping(
+    'Application.PLC_PRG.GatewayRegisters', False)
+
+# Native export of an existing configured node:
+project.export_native([node], fresh_output_path, True, False, None, None)
+
+Isolate this version-specific adapter. Direct mapping changes have previously failed to invalidate compiled output; a full rebuild and live mapping verification are required. The repair script also toggled a normal response-timeout parameter 2000 → 2001 → 2000 to invalidate configuration. Do not rely on “saved successfully” as proof of updated runtime I/O.
+
+Information the generator must represent
+
+Keep physical Ethernet binding, endpoint IP/port, unit ID, channel function, zero-based offset, quantity, cyclic period, response timeout, access policy, variable mapping and data decoding explicit. Define device quality/error handling independently from value storage. Validate register widths, unique generated names and gateway connection capacity. A repeat generation should update owned objects without duplicating them or modifying unrelated modules. This is a checklist, not a prescribed schema.
+
+2. Bench topology and fixtures
+Other agent on LAN
+HTTP API :8081
+Bench PC: .108 API / .155 TCP
+COM18 RTU simulator
+NE2-D11P .151
+A:502 / B:1502 → RS485
+P2CDS-622-DEV
+ETH2 .125 · native clients
+LAN TCP
+
+All shortened addresses above are 192.168.50.x. USB Ethernet is now on the main LAN, not the former isolated 192.168.3 network. The gateway's RS485 cable terminates at the FTDI adapter on the same bench PC.
+
+Component	Address / identity	Role / configuration
+Bench PC	DeviceJoin-B68005JF91456
+192.168.50.108	Onboard LAN; CODESYS IDE and API port 8081. Separate PC TCP simulator also available on .108:502.
+USB Ethernet	192.168.50.155/24
+ASIX, Ethernet 2, ifIndex 8
+MAC 6C-1F-F7-6A-FC-3F	DHCP; PC server bound to .155:502, unit 1. Can bind outbound client to .155. Verify lease after reconnect; old static .3.100 removed.
+Bench PLC	P2CDS-622-DEV
+ETH2 192.168.50.125	ETH1 and ETH2 connected to LAN; only ETH2 is the tested native Modbus tree. ETH1 historically .123; do not use it as the gateway address.
+Gateway	192.168.50.151
+NE2-D11P / FW-9167-0-14
+MAC B0-CB-D8-4E-88-BB	DHCP, Multi Host, TCP→RTU enabled. A=502; B=1502. 38400 baud, 8N1; RTU timeout 1000 ms; serial packing 2 ms. Current mode is forwarding, not autonomous cached polling.
+RS485 simulator	COM18
+FTDI serial BG01GGR2
+VID 0403 / PID 6001	38400, 8 data bits, no parity, 1 stop bit. Unit IDs 1–10. One process must own COM18; multidrop filtering enabled.
+Second RS485 responder	COM11
+FTDI serial BG00XX03	Daisy-chained A/B/GND. 38400/8N1, unit 11 only, holding offsets 0–1 = 1101/1102. Managed by the simulator API with multidrop: true.
+
+Active project: C:\Users\KevinTritz\projects\codesys_projects\modbus_tcp_bench\modbus_tcp_bench.project. Tools/examples: C:\Users\KevinTritz\projects\codesys-api. Do not select TM_Press or the field gateway 192.168.0.69.
+
+All fixture reads use FC03, offset 0, count 2. Unit 1 returns [1234,5678]; unit 2 [2222,3333]; units 3–10 return [100×unit+1,100×unit+2]. Native unit nodes 1–5 use socket A; 6–10 use B. The extra PC server child uses .155:502, unit 1, returning 1234/5678. A healthy native master therefore reports 11 connected children. The extra physical responder on COM11 uses unit 11 and returns [1101,1102]; it was verified by a PC client through the gateway and is not an additional native PLC child.
+
+Local simulator and direct-read commands
+
+Run on the bench PC from codesys-api, after checking existing owners. These commands are reference launch commands, not an instruction to start duplicates. Installed versions: Python 3.13, pymodbus 3.15.0, pyserial 3.5. The TCP simulator imports support code from the bundled RTU simulator, so keep them together.
+
+python modbus_tcp_slave_sim.py --host 192.168.50.155 --port 502 --unit 1
+
+python modbus_rtu_slave_sim.py --port COM18 --baudrate 38400 --bytesize 8 --parity N --stopbits 1 --multidrop --manifest examples/modbusfb_single_connection/rtu_devices.json
+
+python modbus_rtu_slave_sim.py --port COM11 --baudrate 38400 --multidrop --unit 11 --holding 1101,1102
+
+# Only after releasing a gateway connection slot:
+python examples/modbus_tcp_read.py --host 192.168.50.151 --port 502 --source 192.168.50.155 --unit 1
+
+The installed PyModbus 3.15.0 requires --multidrop when separate physical responders share the bus; this mode supports at most 38400 baud. Both adapters must filter foreign unit IDs. The earlier single-adapter 115200 tests remain valid historical results. The last command binds a source IP; verify the actual interface/peer traffic when proving the USB adapter path on a multihomed Windows PC. LAN peers can directly reach .155:502 without an additional Ethernet proxy service.
+
+3. Access from another computer
+
+Existing control plane: http://192.168.50.108:8081, listening on LAN. Authenticate with Authorization: ApiKey <token>. Obtain the token separately; none is included here. Use /docs and /openapi.json to inspect the available API. Port 8080 belongs to another process.
+
+Existing endpoint	Purpose / limitation
+GET /api/v1/session/status	Check API and persistent IDE attachment before work.
+POST /api/v1/script/execute	Body {"script":"..."}. Executes IronPython inside CODESYS, not ordinary CPython on the host. Use it for guarded project inspection and generation.
+GET /api/v1/modbus/simulator/status	Managed RTU process inventory. “Running” means PID present; it does not prove serial requests/replies.
+POST /api/v1/modbus/simulator/apply	Launch/reconfigure managed RTU buses. Existing manually launched COM18 process is not adopted automatically. Resolve ownership first.
+Existing RTU apply request shape
+{
+  "buses": [{
+    "pcPort": "COM18", "baudrate": 38400, "multidrop": true,
+    "bytesize": 8, "parity": "N", "stopbits": 1, "timeout": 1.0,
+    "devices": [
+      {"unit": 1, "name": "Unit1", "holdingMap": {"0": 1234, "1": 5678}},
+      {"unit": 2, "name": "Unit2", "holdingMap": {"0": 2222, "1": 3333}}
+    ]
+  }]
+}
+
+Supply all ten fixtures when replacing the ten-device simulator. The API default baud is 9600, so always specify 38400 for the current two-adapter bench. The current manager tracks its own PID records, stops those recorded processes and starts replacements. It does not reliably prove device ownership, traffic health or successful termination; improve these checks before using it as an unattended bench controller.
+
+Recommended extension, not implemented: extend the authenticated bench service with resource inventory, exclusive test ownership, safe start/stop/reconfigure for RTU and TCP simulators, register-value and silent-unit controls, source-bound TCP probes, and traffic counters with last RX/TX timestamps. Identify the FTDI adapter by serial number and the ASIX by MAC, then resolve current COM/IP assignments. Verify command/device identity before stopping a recorded PID. No raw serial-over-TCP tunnel is needed for the primary test: the service runs the RTU simulator beside COM18 and exposes configuration/results over HTTP.
+
+Keep IDE mutations serialized. A persistent-session script should use one shared execution namespace when defining helpers, for example scope = dict(globals()); exec(code, scope, scope). A timed-out HTTP call may still execute later; inspect the project before retrying a non-idempotent operation.
+
+4. Verification sequence
+Inventory and isolate. Check API attachment, active project and PLC identity; resolve DHCP addresses and serial ownership. Back up the project. Use a separate generated bench project or clearly owned test subtree; do not edit unrelated modules.
+Prove TCP and native mapping first. Generate one child targeting PC .155:502, unit 1, FC03/0/2. Rebuild/download/run. Require values 1234/5678, no server xError, and repeated requests visible at the PC. This bypasses gateway and RS485.
+Prove gateway forwarding. Once COM18 traffic is healthy, test one unit through .151:502, then all ten with five children on each socket. Match every unit's distinct data and record actual request/reply counts.
+Measure a steady interval. After startup/recovery settles, sample at least 60 seconds: correct values, stable connection tuples, advancing per-unit traffic, no new error/bad-value counter increments. Compare counter deltas, not historical totals. For the restored project, use ValuesMatch, AllTenRTUValuesMatch, AllTenRTUHealthy and per-unit TenErrorCycles/TenBadValueCycles.
+Fault and recover deliberately. Silence one simulated unit while leaving the other nine responding. Require that unit to become invalid/error, continued good data from the others, and recovery when restored. Separately test TCP peer loss and recovery. Report any reconnects, including native-driver behavior, rather than assuming a serial timeout must preserve TCP.
+Persist the verified result. Save generated artifacts, compiler result, actual parameters/mappings, traffic evidence and quality behavior. Save/download the intended boot application and release simulator/test ownership.
+5. Common footguns
+Connection limits: this firmware was tested with five connections on A and five on B. A sixth on one socket can connect at the TCP layer but receive ASCII “Sorry,Limited number of connections” instead of Modbus. Ten PLC children occupy every tested slot; release the relevant PLC connections before a PC probe. The master’s xStop can pause polling while healthy sockets remain open; verify an actual free slot. For this test, pausing the PLC and restarting only the bench gateway released them. Do not assume xStop alone disconnects. B adds TCP slots, not another RS485 bus.
+Gateway mode: Multi Host is required for the tested multiple-client arrangement. Simple mode caused field trouble when separate native children opened multiple connections. Do not silently replace it with configurable/cached polling mode; cached success can hide a missing RTU device.
+Two physical responders: separate unit IDs alone are insufficient with this simulator. Use --multidrop (API multidrop: true) on both ports, at 38400 baud or lower. Without it, the second simulator can emit exceptions for the other device’s requests or replies. A regression test now exercises the actual framer against captured foreign traffic.
+USB reconnection: an unplug/reseat invalidated COM18’s handle and produced ClearCommError: Access is denied. PyModbus’s background reader stopped while its process remained alive. Reopen/restart the port owner after a USB reconnect; a live PID is not sufficient proof of health.
+Physical and process health: previous loose RS485 wiring and the recent stuck COM18 process both broke tests. TX LEDs, a live PID or a successful TCP connection are insufficient; require valid serial replies and expected PLC data. Do not assign every TCP_COMMUNICATION_ERROR to the IP network.
+Mappings: CSV import can leave an unmapped or wrongly mapped channel. Map the complete input array once; clear competing root/leaf mappings. Correct channel structure, declared variable type, task execution and I/O update behavior all matter.
+IDE dialogs and stale builds: file-in-use, overwrite and update dialogs block the persistent script. Close all export/CSV handles; use fresh filenames. Inspect native mappings after import and rebuild before download. GUI warning icons may lag actual runtime status.
+Addresses and routes: .151 is the bench gateway, .155 the USB Ethernet lease; .123 is not the gateway. Both PLC Ethernet ports are on the same subnet in this bench, so record which interface actually carries traffic. Do not generalize this topology into an unverified deployment default.
+Timing and representation: distinguish task period, channel cycle, response timeout, gateway RTU timeout and data age. The ModbusFB timeout inputs in the included example use microseconds; native response/channel parameters here use milliseconds. Verify zero-based offsets, signed values, register widths and word order.
+6. Alternative: ten unit IDs over one connection
+
+The included FB_ModbusTenUnits.st owns one ModbusFB.ClientTCP and reuses ClientRequestReadHoldingRegisters sequentially with a different uiUnitId. Keep the ID and buffer fixed until each request completes, reset xExecute between requests, update per-unit validity, and move on after a timeout. A request error does not automatically require closing the shared TCP connection. This option replaces the ten native server children; it is not the primary generator scope.
+
+Use ModbusFB 4.5.0.0 and Standard, import ModbusTenUnits.export, and call its POU cyclically. The tested fast version uses a 5 ms task, no added request gap, 115200/8N1, gateway A:502. Complete code is in the ZIP.
+
+Measured configuration	TCP connections	Per-device poll interval
+Native modules, 1000 ms channels, 50 ms task	10 (5 A + 5 B)	Approximately 1 second; maximum throughput not tested
+Shared FB, 115200 baud, 50 ms task, zero gap	1	4.038 seconds median
+Shared FB, 115200 baud, 5 ms task, zero gap	1	0.696 seconds median
+
+These are observed configurations, not a controlled maximum-speed ranking. Task scheduling dominated the original FB example's latency. The historical FB tests also kept TCP connected with a missing unit while the other nine continued. See the full bench report for baud-rate comparisons and cached-mode failure tests.
+
+Evidence and next-agent starting point
+
+The bundled exports were captured from the actual bench on 24 September. Parameter/mapping and USB Ethernet evidence comes from that session; FB timing data is from 21 September. Source code in codesys-api is the operational reference. The local scada-greenfield-rewrite checkout inspected was 25e5e91; its active generator was TypeScript under apps/api/src/plc-generator. This document intentionally leaves schema and integration decisions to the receiving agent.
+
+Official references: native project import/export API; native export versus PLCopen XML; native remote-server connection behavior; ModbusFB ClientTCP; ClientRequest.
+
+Scope settled: native modules first; ModbusFB is an alternative. Other-agent hostname and internal generator schema are not prerequisites for this general handoff. Before remote testing, that agent still needs the API token separately, an exclusive bench window and a fresh health/address check.
+
+Copy agent prompt
+Copy bench JSON
+Copy inventory CSV
+Copy document text
+
+Copied ✓

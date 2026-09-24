@@ -45,6 +45,7 @@ def generate_pou_code_script(params):
 
 def _generate_pou_code_script(pou_path, declaration, implementation, save, verify, write):
     pou_name = _pou_leaf_name(pou_path)
+    normalized_pou_path = pou_path.replace("\\", "/").strip("/")
     declaration_present = declaration is not None
     implementation_present = implementation is not None
 
@@ -56,6 +57,8 @@ import traceback
 try:
     pou_path = @@POU_PATH@@
     pou_name = @@POU_NAME@@
+    normalized_pou_path = @@NORMALIZED_POU_PATH@@
+    normalized_pou_path_lower = normalized_pou_path.lower()
     declaration_input = @@DECLARATION@@
     implementation_input = @@IMPLEMENTATION@@
     declaration_present = @@DECLARATION_PRESENT@@
@@ -74,19 +77,52 @@ try:
     else:
         pou = None
         matches = []
+        exact_path_match = None
 
         if hasattr(session, 'created_pous') and pou_name in session.created_pous:
             pou = session.created_pous[pou_name]
             matches = [pou]
         else:
-            try:
-                exact_matches = project.find(pou_path, recursive=True)
-                if exact_matches:
-                    matches = list(exact_matches)
-            except:
-                matches = []
+            if normalized_pou_path:
+                stack = []
+                try:
+                    root_children = project.get_children()
+                except:
+                    root_children = []
+                for child in root_children:
+                    stack.append((child, ""))
 
-            if not matches:
+                while stack and exact_path_match is None:
+                    current, parent_path = stack.pop(0)
+                    current_name = ""
+                    try:
+                        current_name = current.get_name()
+                    except:
+                        current_name = str(current)
+                    current_path = current_name if not parent_path else parent_path + "/" + current_name
+                    current_path_normalized = current_path.replace("\\\\", "/").strip("/")
+                    if current_path_normalized.lower() == normalized_pou_path_lower:
+                        exact_path_match = current
+                        break
+                    if hasattr(current, 'get_children'):
+                        try:
+                            for child in current.get_children():
+                                stack.append((child, current_path_normalized))
+                        except:
+                            pass
+
+            if exact_path_match is not None:
+                pou = exact_path_match
+
+            if pou is None:
+                try:
+                    exact_matches = project.find(pou_path, recursive=True)
+                    if exact_matches:
+                        matches = list(exact_matches)
+                except:
+                    matches = []
+
+            if pou is None and not matches:
                 try:
                     leaf_matches = project.find(pou_name, recursive=True)
                     if leaf_matches:
@@ -94,7 +130,7 @@ try:
                 except:
                     matches = []
 
-            if not matches and hasattr(project, 'active_application') and project.active_application:
+            if pou is None and not matches and hasattr(project, 'active_application') and project.active_application:
                 try:
                     app_matches = project.active_application.find(pou_name, recursive=True)
                     if app_matches:
@@ -102,9 +138,9 @@ try:
                 except:
                     matches = []
 
-            if len(matches) == 1:
+            if pou is None and len(matches) == 1:
                 pou = matches[0]
-            elif len(matches) > 1:
+            elif pou is None and len(matches) > 1:
                 result = {
                     "success": False,
                     "error": "Ambiguous POU path: " + pou_path,
@@ -234,6 +270,7 @@ except Exception as e:
     result = {"success": False, "error": str(error_value)}
 """.replace("@@POU_PATH@@", _literal(pou_path)) \
    .replace("@@POU_NAME@@", _literal(pou_name)) \
+   .replace("@@NORMALIZED_POU_PATH@@", _literal(normalized_pou_path)) \
    .replace("@@DECLARATION@@", _literal(declaration)) \
    .replace("@@IMPLEMENTATION@@", _literal(implementation)) \
    .replace("@@DECLARATION_PRESENT@@", "True" if declaration_present else "False") \

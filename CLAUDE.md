@@ -10,8 +10,10 @@ This is a CODESYS REST API wrapper that provides HTTP endpoints for interacting 
 
 ### Starting the Server
 - **Main server**: `python HTTP_SERVER.py` or `run_server.bat`
+- **Alternate port without editing files**: `python -c "import server_config; import HTTP_SERVER; server_config.SERVER_PORT = 8081; HTTP_SERVER.SERVER_PORT = 8081; HTTP_SERVER.run_server()"`
 - **Test server** (no CODESYS): `python test_server.py` or `run_test_server.bat`
 - **Debug mode**: Use `simple_test.bat` for interactive debugging and testing
+- After the HTTP server is up, start the real persistent CODESYS session with `POST /api/v1/session/start`
 
 ### Testing
 - **Example client**: `python example_client.py` (demonstrates full workflow)
@@ -59,11 +61,12 @@ This is a CODESYS REST API wrapper that provides HTTP endpoints for interacting 
 
 ## Configuration
 
-### Server Settings (HTTP_SERVER.py:44-47)
+### Server Settings (`server_config.py`)
 ```python
 SERVER_HOST = '0.0.0.0'
 SERVER_PORT = 8080
-CODESYS_PATH = r"C:\Program Files\CODESYS 3.5.21.0\CODESYS\Common\CODESYS.exe"
+CODESYS_PATH = r"C:\Program Files\CODESYS 3.5.22.10\CODESYS\Common\CODESYS.exe"
+CODESYS_PROFILE = "CODESYS V3.5 SP22 Patch 1"
 ```
 
 ### API Keys
@@ -100,6 +103,7 @@ All endpoints prefixed with `/api/v1/`:
 - Result files: Corresponding UUID-named JSON files in `results/`
 - Status tracking via `session_status.json`
 - Termination via `terminate.signal` file
+- `PERSISTENT_SESSION.py` is the script passed to CODESYS via `--runscript=...`
 
 ### Error Handling
 - Server logs to `codesys_api_server.log`

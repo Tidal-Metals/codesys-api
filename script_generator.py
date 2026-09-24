@@ -8,7 +8,10 @@ from script_pou_code_generators import (
 from script_pou_create_generators import generate_pou_create_script
 from script_pou_list_generators import generate_pou_list_script
 from script_plc_generators import (
+    generate_plc_deploy_script,
     generate_plc_gateways_script,
+    generate_plc_login_script,
+    generate_plc_logout_script,
     generate_plc_scan_script,
     generate_plc_status_script,
     generate_plc_targets_script,
@@ -49,7 +52,10 @@ class ScriptGenerator:
     generate_pou_list_script = staticmethod(generate_pou_list_script)
     generate_plc_bind_ip_script = staticmethod(generate_plc_bind_ip_script)
     generate_plc_bindings_script = staticmethod(generate_plc_bindings_script)
+    generate_plc_deploy_script = staticmethod(generate_plc_deploy_script)
     generate_plc_gateways_script = staticmethod(generate_plc_gateways_script)
+    generate_plc_login_script = staticmethod(generate_plc_login_script)
+    generate_plc_logout_script = staticmethod(generate_plc_logout_script)
     generate_plc_scan_script = staticmethod(generate_plc_scan_script)
     generate_plc_status_script = staticmethod(generate_plc_status_script)
     generate_plc_targets_script = staticmethod(generate_plc_targets_script)
