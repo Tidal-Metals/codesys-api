@@ -67,6 +67,15 @@ For detailed installation instructions, see the [Installation Guide](INSTALLATIO
 
 ## 📖 API Documentation
 
+### Managed RTU simulators
+
+`POST /api/v1/modbus/simulator/apply` starts one simulator per PC serial port, and
+`GET /api/v1/modbus/simulator/status` reports them. Add `"backend": "go"` to a bus
+to use `build/rtu-sim.exe` in place of PyModbus. The Go backend supports multidrop
+above 38,400 baud, can find its adapter by `usbSerial`, recovers from USB unplugs, and
+supports `"silent": true` devices for timeout tests. See
+[`tools/modbus-rtu-sim/README.md`](tools/modbus-rtu-sim/README.md).
+
 ### Authentication
 
 All API requests require an API key in the header:

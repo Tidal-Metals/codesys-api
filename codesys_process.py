@@ -15,6 +15,10 @@ from server_config import (
     logger,
 )
 
+# Helper commands (powershell, taskkill) must not open console windows when the
+# server itself runs without a console.
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
 
 def _windows_creationflags():
     flags = 0
@@ -50,7 +54,7 @@ class CodesysProcessManager:
         ]
 
         try:
-            output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
+            output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True, creationflags=NO_WINDOW)
         except Exception as e:
             logger.warning("Unable to enumerate CODESYS persistent sessions: %s", str(e))
             return []
@@ -96,6 +100,7 @@ class CodesysProcessManager:
                     ["powershell", "-NoProfile", "-Command", "Stop-Process -Id %s -Force" % int(pid)],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
+                    creationflags=NO_WINDOW,
                 )
             except Exception as e:
                 logger.warning("Failed to stop duplicate CODESYS PID %s: %s", pid, str(e))
@@ -290,6 +295,7 @@ class CodesysProcessManager:
                                         ["powershell", "-NoProfile", "-Command", "Stop-Process -Id %s -Force" % int(pid)],
                                         stdout=subprocess.DEVNULL,
                                         stderr=subprocess.DEVNULL,
+                                        creationflags=NO_WINDOW,
                                     )
                     except Exception as e:
                         logger.warning("Error terminating process: %s", str(e))
@@ -311,6 +317,7 @@ class CodesysProcessManager:
                                             ["powershell", "-NoProfile", "-Command", "Stop-Process -Id %s -Force" % int(pid)],
                                             stdout=subprocess.DEVNULL,
                                             stderr=subprocess.DEVNULL,
+                                            creationflags=NO_WINDOW,
                                         )
                         except Exception as e:
                             logger.error("Error killing process: %s", str(e))
