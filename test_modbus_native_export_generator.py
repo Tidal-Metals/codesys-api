@@ -127,7 +127,10 @@ class NativeExportGeneratorTests(unittest.TestCase):
             _config_param, io_param = _generated_params(root)
 
             self.assertEqual(_child_text(io_param, "ParamType"), "std:ARRAY[0..1] OF WORD")
-            self.assertEqual(sorted(_word_identifiers(io_param)), ["21233664_0_0_0", "21233664_0_0_1"])
+            # CODESYS's own export (templates/modbus_serial_slave_canonical.export) encodes
+            # slot, family and register offset in the IO Id (channel 2 at offset 1 is
+            # 0x2440001) and numbers array words in the second field (38010881_1_0_0).
+            self.assertEqual(sorted(_word_identifiers(io_param)), ["21237776_0_0_0", "21237776_1_0_0"])
 
 
 if __name__ == "__main__":
