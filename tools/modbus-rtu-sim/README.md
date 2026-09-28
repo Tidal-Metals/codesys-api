@@ -76,4 +76,6 @@ count, and host-side reply latency. A quiet bus does not trigger a port reset.
 already be paused. The script sets the gateway baud and reboots it if that is needed to
 free a socket. It checks every reply and records worker counter deltas in
 `temp/field_live/go_rtu/`. `temp/go_rtu_buses.py` holds the bench bus definitions:
-COM18/BG01GGR2 serves IDs 1–10 and COM11/BG00XX03 serves ID 11.
+COM18/BG01GGR2 serves IDs 1–10 and COM11/BG00XX03 serves ID 11. Those results were measured
+with both adapters on the NE2's bus. Since 2026-09-25, COM11 is wired to the NA111-E instead; see
+[`docs/modbus-bench.md`](../../docs/modbus-bench.md) for the current topology and results.

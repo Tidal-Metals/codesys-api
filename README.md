@@ -110,7 +110,7 @@ Important:
 
 ### P2CDS-622 Modbus bench (verified 2026-09-18)
 
-Gateway driver profiles and current setup requirements: [NE2-D11P](docs/gateways/ebyte-ne2-d11p.md) and [NA111-E](docs/gateways/ebyte-na111-e.md). The bench narrative below records earlier configurations; consult the profiles before using its historical IP addresses, baud rates or simulator commands.
+Current bench topology, procedures and verified limits: [`docs/modbus-bench.md`](docs/modbus-bench.md). Gateway driver profiles and current setup requirements: [NE2-D11P](docs/gateways/ebyte-ne2-d11p.md) and [NA111-E](docs/gateways/ebyte-na111-e.md). The bench narrative below records earlier configurations; consult the profiles before using its historical IP addresses, baud rates or simulator commands.
 
 The separate CODESYS project is `../codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project`.
 It targets **P2CDS-622-DEV** through `Gateway-1`. Its two Modbus TCP targets read unit **1**,

@@ -1,0 +1,162 @@
+# PLC Modbus TCP/RTU bench — agent guide
+
+How the CODESYS PLC, the Ebyte TCP-to-RTU gateways, the PC's RS485 simulators and this API fit
+together, and how to test or change them without breaking another agent's run. Updated
+2026-09-28. The state below comes from recorded tests; verify it live before relying on it.
+
+Gateway internals (web API, enums, save sequence, client limits) live in the device profiles and
+are not repeated here:
+
+- [NE2-D11P profile](https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-ne2-d11p/README.md): two server sockets, 5 + 5 clients
+- [NA111-E profile](https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-na111-e/README.md): one server socket, 6 clients
+
+Other references: [Go RTU simulator](../tools/modbus-rtu-sim/README.md),
+[ten-unit ModbusFB example](../examples/modbusfb_single_connection/README.md),
+[native generation handoff](https://docs.local.tidalmetals.org/documents/projects/scada-greenfield-rewrite/modbus-tcp-generator-handoff/latest/),
+[remote IDE access](../FIELD_ACCESS.md). The README's "P2CDS-622 Modbus bench" section is history;
+its addresses and baud rates are out of date.
+
+## Topology (last verified 2026-09-25)
+
+```
+PLC P2CDS-622-DEV  ETH1 .123 / ETH2 .125 (bench traffic uses ETH2)
+ ├─ Modbus TCP → PC TCP simulator   192.168.50.155:502  unit 1     (modbus_tcp_slave_sim.py)
+ └─ Modbus TCP → NE2-D11P           192.168.50.151 A:502 units 1–5, B:1502 units 6–10
+                    └─ RS485 115200 8N1 → COM18 (FTDI BG01GGR2) Go worker, units 1–10
+PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
+                    └─ RS485 115200 8N1 → COM11 (FTDI BG00XX03) Go worker, unit 11
+```
+
+| Item | Value |
+|---|---|
+| PC LAN (API server, TCP sim `.108`) | Realtek, `192.168.50.108` |
+| PC USB Ethernet (bench test source) | ASIX, `192.168.50.155` DHCP |
+| API | `serve_on_port.py --port 8081`; `Authorization: ApiKey <key from api_keys.json>` |
+| PLC project | `../codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project` |
+| Unit values | COM18: `examples/modbusfb_single_connection/rtu_devices.json` (unit 1 = `[1234,5678]`, unit *n* = `[n01,n02]`); COM11 unit 11 = `[1101,1102]` |
+
+Until 2026-09-25, COM11 shared the NE2's bus as a second multidrop responder. On 2026-09-28 the NE2
+was not reachable at `.151` (not in ARP) and neither adapter had received traffic since 09-25.
+Find the gateway by MAC `B0-CB-D8-4E-88-BB` before assuming an address.
+
+## Ownership rules
+
+- **One process per COM port.** A second opener fails or, worse, steals the port. Before touching
+  COM11/COM18, check `GET /api/v1/modbus/simulator/status` or
+  `logs/rtu_sim_<port>_status.json`. Other agents may be mid-test; the status row's
+  `pausedFor`/`stoppedAt` fields and a recent heartbeat show that.
+- Start and replace simulators only through the manager (`POST /api/v1/modbus/simulator/apply`
+  or `modbus_simulator_control.apply_simulator`). It records PID plus create time and command
+  line, and it never kills a process it didn't start.
+- Health is three separate facts: `running` (our process), `portOpen`, and **counters moving**
+  (`framer.requests`, per-unit `replies`). A live PID is not serial health.
+- The PLC holds gateway sockets even while paused. Count every client (PLC, PC scripts, other
+  agents) against the gateway limit.
+
+## Procedures
+
+### Start the bench simulators
+
+```json
+POST /api/v1/modbus/simulator/apply
+{"buses": [
+  {"backend": "go", "pcPort": "COM18", "usbSerial": "BG01GGR2", "baudrate": 115200, "multidrop": true,
+   "devices": [{"unit": 1, "holdingMap": {"0": 1234, "1": 5678}}, "... units 2-10 from rtu_devices.json"]},
+  {"backend": "go", "pcPort": "COM11", "usbSerial": "BG00XX03", "baudrate": 115200, "multidrop": true,
+   "devices": [{"unit": 11, "holdingMap": {"0": 1101, "1": 1102}}]}
+]}
+```
+
+Use `backend: "go"`. The PyModbus backend rejects multidrop above 38,400 baud and does not
+recover from USB unplugs. `"silent": true` on a device makes it ignore requests, for timeout tests.
+The simulator baud must equal the gateway's serial setting.
+
+### Read through a gateway from the PC
+
+```powershell
+python examples/modbus_tcp_read.py --host 192.168.50.151 --source 192.168.50.155 --port 502 --unit 1 --address 0 --count 2
+```
+
+Bind to `.155` explicitly. The expected values are above; confirm the worker's counters rose by
+the same amount. If the gateway's sockets are full, pause PLC polling. If the slots stay held
+(native clients keep their sockets open), reboot the NE2 while the PLC is paused; see the profile.
+For sustained tests, `temp/go_rtu_gateway_test.py` cycles units, verifies every reply, and
+records latency plus worker counter deltas. It lives in `temp/` and is not in git.
+
+### Pause, resume and check the PLC
+
+These require the IDE session with `modbus_tcp_bench.project` open and **logged in online**
+(`session.bench_online`). A fresh IDE session has neither; open the project and log in first.
+Use Keep for the online-change option and do not download. `run_ide_script.py` submits scripts
+to the session.
+
+- Pause and resume: write `Modbus_TCP_Client.xStop` TRUE/FALSE as a prepared value. Record the
+  value you found and restore it; another agent may have paused polling on purpose.
+- Health: `PLC_PRG.AllTenRTUHealthy`, `AllTenRTUValuesMatch`, `BothPathsPass` (PC TCP plus
+  gateway), `Modbus_TCP_Client.uiConnectedSlaves` (11 when healthy), per-unit
+  `Gateway_RTU_Unit<n>.xError`.
+- Counters: `TenErrorCycles[1..10]` and `TenBadValueCycles[1..10]` count scans while
+  `TenMonitorEnable` is TRUE. Judge by **deltas** over a window that starts after polling has
+  settled (about 15 s after resume). A just-reconnected unit briefly counts bad values.
+- `python verify_modbus_bench.py --duration 40` checks both paths for up to 45 s.
+- `uiConnectedSlaves` = 10 with the gateway healthy usually means the PC TCP simulator on `.155`
+  is not running. That path is unrelated to RTU.
+
+### Change the NE2 baud
+
+Change the simulators first, then the gateway: complete save sequence, reboot, readback. The
+`uart_baud` values are enums (6 = 38400, 8 = 115200); the profile has the sequence. A reboot drops
+every client, and the PLC reconnects on its own.
+
+### Restart the API server without killing CODESYS
+
+Terminate the `serve_on_port.py` process hard (psutil `terminate()`), never with Ctrl+C: its
+`finally` block stops the CODESYS session. Relaunch with `CREATE_NO_WINDOW` only. A
+`DETACHED_PROCESS` server opens a visible console window for every helper subprocess. Startup's
+`ensure_singleton` leaves one existing IDE session alone. Afterwards confirm the CODESYS PID is
+unchanged and `GET /api/v1/session/status` still shows the session attached.
+
+A restarted IDE picks up the current `PERSISTENT_SESSION.py`. The PLC keeps polling without the
+IDE, but online reads need the project reopened and logged in.
+
+## Native PLC configuration rules
+
+- Native device tree: Ethernet → Modbus TCP Client → one Modbus TCP Server child per unit ID. Each
+  child opens its own TCP connection, so connection limits cap the child count: 10 on the NE2
+  (5 on A, 5 on B), 6 on the NA111-E, minus any other clients.
+- Past that limit, use one `ModbusFB.ClientTCP` and change the unit per request (the example
+  polls ten units over one connection). It needs application code for scheduling, validity and
+  reconnection.
+- Channels: FC03, zero-based offset, map the input words to typed ST storage. ST alone creates no
+  communication.
+- Generated native exports (`modbus_native_export_generator.py`) follow CODESYS's own canonical
+  export: config ID `0xSS100000` and IO ID `0xSSFFOOOO` (slot, family byte, register offset),
+  with array words numbered in the second field (`38010881_1_0_0`). The canonical templates in
+  `templates/modbus_serial_slave_canonical*.export` are required at run time.
+
+## Verified results
+
+| Test | Result | Evidence (local, not in git) |
+|---|---|---|
+| PC → NE2 → COM18 + COM11 multidrop, 115200, 15 min | 52,249/52,249 reads; median 16.5 ms, p95 26.7 ms; zero discards or stale replies | `temp/field_live/go_rtu/soak_115200.json` |
+| Unplug and replug both adapters under load | Detected in about 1 s, reopened by USB serial; failures only while unplugged | `temp/field_live/go_rtu/replug_115200.json` |
+| One silent unit (5) | Only unit 5 timed out; the other 10 stayed at 100% | `temp/field_live/go_rtu/silent5_115200.json` |
+| PLC polling units 1–10 through the NE2, 2 min | 0 new error or bad-value cycles, 11 connections | `temp/field_live/go_rtu/plc_end_to_end_115200.json` |
+| NE2 native modules, 5 A + 5 B | 612/612 in 60.8 s | `temp/native_repair_20260924/recovered/summary.json` |
+| NA111-E, 6 concurrent clients → COM11 | 600/600, median about 11.8 ms; a 7th client is accepted then closed | `temp/na111_setup/client_limit_results.json` |
+| ModbusFB, one connection, ten units | 0.696 s round at a 5 ms task vs 4.04 s at 50 ms (115200) | `examples/modbusfb_single_connection/test_results.json` |
+
+## Pitfalls
+
+- The PLC task interval, not baud, dominated the round time. Raising baud from 38,400 to
+  115,200 barely changed a 50 ms-task round.
+- A cached gateway polling mode can report stale data as valid while a unit is silent (keep time
+  10 s and 2 s hid failures; 1 s exposed them). Multi Host mode, used on this bench, forwards
+  requests live.
+- A TCP handshake does not prove a usable slot; excess clients connect and are then dropped.
+- FTDI serials appear with an `A` suffix in Windows (`BG01GGR2A`). The Go worker accepts either
+  form.
+- The USB adapters here do not echo their own transmissions, and foreign replies arrive combined
+  with the next request in one read. The Go framer handles both.
+- Scripts under `temp/` (`multihost_bench.py` gateway helper, `go_rtu_*.py`) are local tools, not
+  versioned; read them before reuse.

@@ -52,6 +52,12 @@ This is a CODESYS REST API wrapper that provides HTTP endpoints for interacting 
 - `results/` - Operation results (JSON files)
 - `ScriptLib/Stubs/scriptengine/` - CODESYS API type stubs and documentation
 
+## Modbus Bench
+
+Before testing or changing the PLC, gateways, RS485 simulators or COM ports, read
+`docs/modbus-bench.md`. It covers topology, port ownership, safe API/IDE restarts and verified
+limits. Other agents may be running tests; never open a COM port the simulator manager owns.
+
 ## Python Version Compatibility
 
 - **HTTP_SERVER.py**: Python 3.x only
