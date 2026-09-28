@@ -11,6 +11,7 @@ import threading
 import time
 
 import bench_inventory
+import ide_health
 import modbus_simulator_control
 import script_plc_online_generators as online
 from script_plc_online_generators import application_path, as_bool
@@ -185,8 +186,18 @@ class BenchHandlersMixin:
 
     # --- snapshot -----------------------------------------------------------
 
+    def ide_unavailable(self):
+        """A 503 body if the CODESYS window is hung, else None: queued work would only time out."""
+        health = ide_health.ide_health()
+        if health["notResponding"]:
+            return {"success": False, "code": "ide_not_responding", "ide": health,
+                    "error": "The CODESYS IDE is not responding (a stalled operation such as a download?). "
+                             "Resolve it in the IDE, then retry."}
+        return None
+
     def bench_bench_snapshot(self, params, groups):
         session = read_session_status()
+        ide = ide_health.ide_health()
         simulators = modbus_simulator_control.get_simulator_status().get("simulators", [])
         adapters = bench_inventory.describe_adapters(owners=simulators)
         gateways = bench_inventory.describe_gateways(refresh=as_bool(params.get("refresh", False)))["gateways"]
@@ -195,6 +206,10 @@ class BenchHandlersMixin:
         for row in simulators:
             if row.get("backend") == "go" and row.get("running") and row.get("heartbeatStale"):
                 warnings.append(f"Simulator {row['port']} is running but its heartbeat is stale")
+        if not ide["running"]:
+            warnings.append("CODESYS IDE is not running")
+        elif ide["notResponding"]:
+            warnings.append("CODESYS IDE window is not responding; online and PLC calls return 503 until it recovers")
         age = session.get("fileAgeSeconds")
         if age is None or age > HEARTBEAT_STALE_SECONDS:
             warnings.append(f"IDE session heartbeat is {age} s old; the session may be stopped or blocked")
@@ -202,6 +217,7 @@ class BenchHandlersMixin:
             "success": True,
             "time": time.time(),
             "session": {k: session.get(k) for k in ("state", "timestamp", "fileAgeSeconds", "project", "request", "progress")},
+            "ide": ide,
             "reservations": self.bench.reservations.list(),
             "jobs": {"counts": self.bench.jobs.counts(), "recent": self.bench.jobs.list(5)},
             "simulators": [_simulator_summary(row) for row in simulators],
@@ -214,6 +230,9 @@ class BenchHandlersMixin:
     # --- online PLC ---------------------------------------------------------
 
     def run_online_script(self, script, timeout):
+        unavailable = self.ide_unavailable()
+        if unavailable:
+            return unavailable, 503
         result = self.script_executor.execute_script(wrap_shared_namespace(script), timeout=timeout)
         if result.get("timeout"):
             return result, 504

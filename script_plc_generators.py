@@ -829,12 +829,18 @@ else:
 
         login_result["success"] = True
         login_result["loggedIn"] = True
+        before_login = login_result["online"].get("beforeLogin")
         login_result["online"] = {
             "cached": True,
             "isLoggedIn": bool(online_app.is_logged_in),
             "applicationState": safe_text(online_app.application_state),
-            "operationState": safe_text(online_app.operation_state)
+            "operationState": safe_text(online_app.operation_state),
+            # Kept so callers can tell a stop they caused from one they found.
+            "beforeLogin": before_login
         }
+        login_result["note"] = ("Login uses OnlineChangeOption.Keep (no application download), but the IDE "
+                                "may still transfer download information afterwards; check the IDE status "
+                                "bar and GET /api/v1/bench before the next online operation.")
         result = login_result
     except Exception as login_error:
         login_result["error"] = str(login_error)

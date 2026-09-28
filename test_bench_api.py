@@ -241,6 +241,9 @@ class LiveServerTests(unittest.TestCase):
         cls.status_path = os.path.join(cls.tmp.name, "session_status.json")
         cls.status_patch = mock.patch.object(bench_services, "STATUS_FILE", cls.status_path)
         cls.status_patch.start()
+        cls.ide_state = {"running": True, "pids": [1], "notResponding": False, "windows": []}
+        cls.ide_patch = mock.patch("ide_health.ide_health", side_effect=lambda: dict(cls.ide_state))
+        cls.ide_patch.start()
         cls.executor = FakeExecutor()
         bench = BenchServices(JobManager(os.path.join(cls.tmp.name, "jobs"), bench_services.read_session_status),
                               ReservationManager(os.path.join(cls.tmp.name, "res.json")))
@@ -256,6 +259,7 @@ class LiveServerTests(unittest.TestCase):
         cls.server.shutdown()
         cls.server.server_close()
         cls.status_patch.stop()
+        cls.ide_patch.stop()
         cls.tmp.cleanup()
 
     def call(self, method, path, body=None, token=None):
@@ -358,6 +362,21 @@ class LiveServerTests(unittest.TestCase):
             self.assertEqual(status, 202)
         finally:
             self.call("DELETE", "/api/v1/bench/reservations/" + held["reservation"]["id"], token=held["reservation"]["token"])
+
+    def test_hung_ide_refuses_online_and_plc_calls_and_warns(self):
+        self.ide_state["notResponding"] = True
+        try:
+            before = len(self.executor.calls)
+            status, body = self.call("POST", "/api/v1/plc/online/read", {"names": ["a"]})
+            self.assertEqual((status, body["code"]), (503, "ide_not_responding"))
+            status, _ = self.call("POST", "/api/v1/plc/login", {})
+            self.assertEqual(status, 503)
+            self.assertEqual(len(self.executor.calls), before, "nothing may be queued behind a hung IDE")
+            with mock.patch("bench_inventory.describe_adapters", return_value=[]),                     mock.patch("bench_inventory.describe_gateways", return_value={"gateways": []}):
+                _, snapshot = self.call("GET", "/api/v1/bench")
+            self.assertTrue(any("not responding" in w for w in snapshot["warnings"]))
+        finally:
+            self.ide_state["notResponding"] = False
 
     def test_busy_session_status_answers_from_heartbeat(self):
         with open(self.status_path, "w") as handle:

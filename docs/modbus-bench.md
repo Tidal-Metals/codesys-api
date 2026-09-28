@@ -117,6 +117,12 @@ IDE session has neither and returns 409 with `code` `no_project` or `not_logged_
 project, then `POST /api/v1/plc/login` (OnlineChangeOption.Keep, no download) or pass
 `login: true`.
 
+- **Login is not free.** On 2026-09-28 a `/plc/login` (Keep, reported as no download) was
+  followed by the IDE stalling at "Sending download info … 91%", leaving CODESYS Not
+  Responding. The login response now includes `online.beforeLogin`, the application state
+  before you logged in. `/bench` shows `ide.notResponding`, and while that is true, online
+  and PLC-changing calls return 503 `ide_not_responding`. Log in only when you need online
+  access, and check the IDE afterwards.
 - Pause and resume: `POST /api/v1/plc/online/write` `{"values": {"Modbus_TCP_Client.xStop": "TRUE"}}`.
   The response's `previous` is the value you found; restore it, or pass `restoreAfterSeconds`.
   Another agent may have paused polling on purpose.

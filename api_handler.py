@@ -161,6 +161,8 @@ class CodesysApiHandler(
             # Route request
             if path in PLC_MUTATING_PATHS and not self.guard(["plc"]):
                 pass
+            elif path in PLC_MUTATING_PATHS and self.ide_unavailable():
+                self.send_json_response(self.ide_unavailable(), 503)
             elif self.try_bench_route("POST", path, params):
                 pass
             elif path == "api/v1/session/start":
