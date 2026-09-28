@@ -13,7 +13,7 @@
     "B0-CB-D8-4E-88-BB": {
       "label": "Bench NE2-D11P (PLC ten-module path)",
       "model": "NE2-D11P",
-      "expectedIp": "192.168.50.151",
+      "expectedIp": "192.168.50.153",
       "ports": [502, 1502],
       "profileUrl": "https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-ne2-d11p/README.md"
     },

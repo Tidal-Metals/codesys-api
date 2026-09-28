@@ -16,12 +16,12 @@ Other references: [Go RTU simulator](../tools/modbus-rtu-sim/README.md),
 [remote IDE access](../FIELD_ACCESS.md). The README's "P2CDS-622 Modbus bench" section is history;
 its addresses and baud rates are out of date.
 
-## Topology (last verified 2026-09-25)
+## Topology (last verified 2026-09-28)
 
 ```
 PLC P2CDS-622-DEV  ETH1 .123 / ETH2 .125 (bench traffic uses ETH2)
  ├─ Modbus TCP → PC TCP simulator   192.168.50.155:502  unit 1     (modbus_tcp_slave_sim.py)
- └─ Modbus TCP → NE2-D11P           .151 configured (lease now .153) A:502 units 1–5, B:1502 units 6–10
+ └─ Modbus TCP → NE2-D11P           192.168.50.153 A:502 units 1–5, B:1502 units 6–10
                     └─ RS485 115200 8N1 → COM18 (FTDI BG01GGR2) Go worker, units 1–10
 PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
                     └─ RS485 115200 8N1 → COM11 (FTDI BG00XX03) Go worker, unit 11
@@ -37,10 +37,15 @@ PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
 
 Until 2026-09-25, COM11 shared the NE2's bus as a second multidrop responder.
 
-**By 2026-09-28 the NE2's DHCP lease had moved to `192.168.50.153`** (MAC `B0-CB-D8-4E-88-BB`).
-The PLC's gateway modules still target `.151`, so the PLC's RTU path is down until the lease is
-reserved or the modules are re-pointed; neither adapter had received traffic since 09-25. Always
-find a gateway by MAC (`arp -a` after a ping, or its profile's identity check) before using an address.
+**On 2026-09-28 the NE2's DHCP lease had moved from `.151` to `192.168.50.153`** (MAC
+`B0-CB-D8-4E-88-BB`), and the PLC application was found stopped. The ten gateway modules were
+re-pointed to `.153` (project backup `modbus_tcp_bench.project.before-ip-153-20260928-141217`),
+downloaded, started and saved as the boot application. A 60 s check afterwards: 11/11 slaves
+connected, all ten units at 1 Hz, 0 new error or bad-value cycles. **The lease is still not
+reserved**, so if it moves again the PLC path breaks; `/bench` warns when the gateway's address
+differs from `expectedIp`. Always find a gateway by MAC before using an address. A download resets
+`PLC_PRG.TenMonitorEnable` to FALSE, which makes the error counters read 0 regardless; set it
+TRUE before judging them.
 
 ## Bench API for agents
 
