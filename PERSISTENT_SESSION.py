@@ -19,6 +19,7 @@ import os
 import sys
 import time
 import json
+import threading
 import traceback
 import warnings
 
@@ -36,6 +37,10 @@ RESULT_DIR = os.path.join(SCRIPT_DIR, "results")
 TERMINATION_SIGNAL_FILE = os.path.join(SCRIPT_DIR, "terminate.signal")
 STATUS_FILE = os.path.join(SCRIPT_DIR, "session_status.json")
 LOG_FILE = os.path.join(SCRIPT_DIR, "session.log")
+# While a script runs, a background thread refreshes the status file this often
+# so the API can tell "busy" from "gone". It only writes the file; every
+# scriptengine call stays on the main thread.
+HEARTBEAT_SECONDS = 2.0
 
 # Ensure directories exist
 for directory in [REQUEST_DIR, RESULT_DIR]:
@@ -52,6 +57,10 @@ class CodesysPersistentSession(object):
         self.trust_certificate_callbacks = {}
         self.running = True
         self.init_success = False
+        self.status_lock = threading.Lock()
+        self.current_request = None
+        self.current_progress = None
+        self.cached_project_path = None
 
     def _safe_text(self, value):
         try:
@@ -510,6 +519,7 @@ class CodesysPersistentSession(object):
         try:
             self.log("Entering main loop")
             self.log("Processing requests on the main thread to avoid STA/OLE UI access issues")
+            self.start_heartbeat()
 
             while self.running:
                 # Check for termination signal
@@ -617,7 +627,14 @@ class CodesysPersistentSession(object):
                 
             # Execute script
             self.log("Starting script execution...")
-            result = self.execute_script(script_path)
+            self.current_request = {"id": request_id, "startedAt": time.time()}
+            self.current_progress = None
+            self.write_busy_status()
+            try:
+                result = self.execute_script(script_path)
+            finally:
+                self.current_request = None
+                self.current_progress = None
             self.log("Script execution completed")
             
             # Add request_id to result for tracing
@@ -710,11 +727,12 @@ class CodesysPersistentSession(object):
                     "traceback": traceback.format_exc()
                 }
                 
-            # Execute script
+            # Execute script in one namespace so its top-level functions can
+            # call each other (separate locals hide them from function bodies).
             self.log("Executing script code...")
-            local_vars = {}
+            local_vars = globals_dict
             try:
-                exec(script_code, globals_dict, local_vars)
+                exec(script_code, globals_dict)
                 self.log("Script execution completed successfully")
             except Exception, exec_e:
                 self.log("Error executing script: %s" % str(exec_e))
@@ -757,6 +775,32 @@ class CodesysPersistentSession(object):
                 "executed_by": "CODESYS PersistentSession"
             }
             
+    def start_heartbeat(self):
+        """Keep the status file fresh while a long script blocks the main loop."""
+        def beat():
+            while self.running:
+                if self.current_request is not None:
+                    self.write_busy_status()
+                time.sleep(HEARTBEAT_SECONDS)
+        thread = threading.Thread(target=beat, name="session-heartbeat")
+        thread.daemon = True
+        thread.start()
+
+    def write_busy_status(self):
+        self.update_status({
+            "state": "busy",
+            "timestamp": time.time(),
+            "project": self.cached_project_path,
+            "request": self.current_request,
+            "progress": self.current_progress
+        })
+
+    def report_progress(self, progress):
+        """Scripts call session.report_progress({...}); jobs expose it while running."""
+        self.current_progress = progress
+        if self.current_request is not None:
+            self.write_busy_status()
+
     def periodic_tasks(self):
         """Perform periodic tasks."""
         # Update session status
@@ -766,6 +810,7 @@ class CodesysPersistentSession(object):
                 project_path = self.active_project.path
             except:
                 project_path = "Unknown"
+        self.cached_project_path = project_path
                 
         self.update_status({
             "state": "running",
@@ -810,10 +855,11 @@ class CodesysPersistentSession(object):
         self.log("Cleanup complete")
         
     def update_status(self, status):
-        """Update session status file."""
+        """Update session status file (main loop and heartbeat thread share it)."""
         try:
-            with open(STATUS_FILE, 'w') as f:
-                f.write(json.dumps(status))
+            with self.status_lock:
+                with open(STATUS_FILE, 'w') as f:
+                    f.write(json.dumps(status))
         except Exception, e:
             self.log("Error updating status: %s" % str(e))
             

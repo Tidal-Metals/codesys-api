@@ -1,0 +1,28 @@
+{
+  "adapters": {
+    "BG01GGR2": {
+      "label": "Bench RS485 adapter on the NE2-D11P bus (simulated units 1-10)",
+      "wiredTo": "B0-CB-D8-4E-88-BB"
+    },
+    "BG00XX03": {
+      "label": "Bench RS485 adapter on the NA111-E bus (simulated unit 11)",
+      "wiredTo": "0C-3D-5E-88-FD-2A"
+    }
+  },
+  "gateways": {
+    "B0-CB-D8-4E-88-BB": {
+      "label": "Bench NE2-D11P (PLC ten-module path)",
+      "model": "NE2-D11P",
+      "expectedIp": "192.168.50.151",
+      "ports": [502, 1502],
+      "profileUrl": "https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-ne2-d11p/README.md"
+    },
+    "0C-3D-5E-88-FD-2A": {
+      "label": "Bench NA111-E",
+      "model": "NA111-E",
+      "expectedIp": "192.168.50.67",
+      "ports": [502],
+      "profileUrl": "https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-na111-e/README.md"
+    }
+  }
+}

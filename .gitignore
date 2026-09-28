@@ -64,3 +64,5 @@ modbus_fault_cycle.json
 field_live/
 tmp_native_diff/
 tmp_*.csv
+bench_reservations.json
+bench_inventory.json

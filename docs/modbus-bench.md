@@ -42,6 +42,30 @@ The PLC's gateway modules still target `.151`, so the PLC's RTU path is down unt
 reserved or the modules are re-pointed; neither adapter had received traffic since 09-25. Always
 find a gateway by MAC (`arp -a` after a ping, or its profile's identity check) before using an address.
 
+## Bench API for agents
+
+Start every session with `GET /api/v1/bench`. It returns the IDE session heartbeat, active
+reservations, running jobs, simulators, adapters by USB serial, gateways by MAC, and warnings
+(for example a gateway whose address no longer matches what the PLC is configured for). The
+schema is at `/openapi.json` and `/docs`.
+
+| Need | Endpoint |
+|---|---|
+| Claim equipment | `POST /api/v1/bench/reservations` `{holder, purpose, scope:["plc","adapter:BG01GGR2","gateway:B0-CB-D8-4E-88-BB"], ttlSeconds}`; send the returned token as `X-Bench-Reservation` on changes; renew with `PUT`, release with `DELETE` |
+| Anything over a few seconds | `POST /api/v1/jobs` `{script, timeoutSeconds ≤ 3600}` → 202; poll `GET /api/v1/jobs/{id}` |
+| Find adapters and gateways | `GET /api/v1/inventory/adapters`, `GET /api/v1/inventory/gateways?refresh=true`; label with `PUT` |
+| Read PLC values | `POST /api/v1/plc/online/read` `{names:[...]}` |
+| Write PLC values | `POST /api/v1/plc/online/write` `{values:{"Modbus_TCP_Client.xStop":"TRUE"}, restoreAfterSeconds?}` (returns previous values) |
+| Watch counters | `POST /api/v1/plc/online/watch` `{names, intervalMs, durationSeconds}` → job with samples and per-name `delta` |
+| Modbus health | `GET /api/v1/plc/online/diagnostics` (every Modbus master/slave's `xError`, `uiConnectedSlaves`) |
+| Start/stop the app | `POST /api/v1/plc/app/start` or `/stop` |
+
+Reservations are advisory for unclaimed equipment: an unreserved scope is open to everyone. A
+reserved one returns 423 to anyone without its token on simulator apply, PLC login/logout/
+deploy/bind-ip, online write and app start/stop. Reads never need a token. `/script/execute`
+honors `timeout` (up to 300 s) and runs scripts in one namespace, so their functions can call
+each other.
+
 ## Ownership rules
 
 - **One process per COM port.** A second opener fails or, worse, steals the port. Before touching
@@ -88,20 +112,21 @@ records latency plus worker counter deltas. It lives in `temp/` and is not in gi
 
 ### Pause, resume and check the PLC
 
-These require the IDE session with `modbus_tcp_bench.project` open and **logged in online**
-(`session.bench_online`). A fresh IDE session has neither; open the project and log in first.
-Use Keep for the online-change option and do not download. `run_ide_script.py` submits scripts
-to the session.
+Online calls need the IDE session with `modbus_tcp_bench.project` open and **logged in**. A fresh
+IDE session has neither and returns 409 with `code` `no_project` or `not_logged_in`. Open the
+project, then `POST /api/v1/plc/login` (OnlineChangeOption.Keep, no download) or pass
+`login: true`.
 
-- Pause and resume: write `Modbus_TCP_Client.xStop` TRUE/FALSE as a prepared value. Record the
-  value you found and restore it; another agent may have paused polling on purpose.
+- Pause and resume: `POST /api/v1/plc/online/write` `{"values": {"Modbus_TCP_Client.xStop": "TRUE"}}`.
+  The response's `previous` is the value you found; restore it, or pass `restoreAfterSeconds`.
+  Another agent may have paused polling on purpose.
 - Health: `PLC_PRG.AllTenRTUHealthy`, `AllTenRTUValuesMatch`, `BothPathsPass` (PC TCP plus
   gateway), `Modbus_TCP_Client.uiConnectedSlaves` (11 when healthy), per-unit
-  `Gateway_RTU_Unit<n>.xError`.
+  `Gateway_RTU_Unit<n>.xError`; `GET /api/v1/plc/online/diagnostics` reads the device flags.
 - Counters: `TenErrorCycles[1..10]` and `TenBadValueCycles[1..10]` count scans while
-  `TenMonitorEnable` is TRUE. Judge by **deltas** over a window that starts after polling has
-  settled (about 15 s after resume). A just-reconnected unit briefly counts bad values.
-- `python verify_modbus_bench.py --duration 40` checks both paths for up to 45 s.
+  `TenMonitorEnable` is TRUE. Watch them with `POST /api/v1/plc/online/watch` and judge by the
+  summary's **delta**, over a window that starts after polling has settled (about 15 s after
+  resume). A just-reconnected unit briefly counts bad values.
 - `uiConnectedSlaves` = 10 with the gateway healthy usually means the PC TCP simulator on `.155`
   is not running. That path is unrelated to RTU.
 
@@ -119,7 +144,9 @@ Terminate the `serve_on_port.py` process hard (psutil `terminate()`), never with
 `ensure_singleton` leaves one existing IDE session alone. Afterwards confirm the CODESYS PID is
 unchanged and `GET /api/v1/session/status` still shows the session attached.
 
-A restarted IDE picks up the current `PERSISTENT_SESSION.py`. The PLC keeps polling without the
+A restarted IDE picks up the current `PERSISTENT_SESSION.py`. Since 2026-09-28 the session
+writes a `busy` heartbeat while a script runs, so `session/status` answers without queuing, and
+`session.report_progress({...})` shows as a job's progress. An older loaded session lacks both. The PLC keeps polling without the
 IDE, but online reads need the project reopened and logged in.
 
 ## Native PLC configuration rules

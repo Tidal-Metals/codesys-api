@@ -411,7 +411,7 @@
       "post": {
         "tags": ["Script"],
         "summary": "Execute an arbitrary CODESYS script",
-        "description": "Administrative escape hatch. Prefer dedicated endpoints for production workflows.",
+        "description": "Administrative escape hatch. Prefer dedicated endpoints for production workflows. Runs with one shared namespace, so top-level functions can call each other.",
         "requestBody": {
           "$ref": "#/components/requestBodies/ScriptExecute"
         },
@@ -436,6 +436,786 @@
         "responses": {
           "200": { "$ref": "#/components/responses/JsonResponse" }
         }
+      }
+    },
+    "/api/v1/bench": {
+      "get": {
+        "tags": [
+          "Bench"
+        ],
+        "summary": "One-call bench snapshot",
+        "description": "Session heartbeat, reservations, running jobs, simulators, adapters by USB serial, gateways by MAC (from the ARP cache) and aggregated warnings, such as a gateway whose address no longer matches its expected IP.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Sweep the gateways' /24 networks first to repopulate the ARP cache (a few seconds)"
+          }
+        ]
+      }
+    },
+    "/api/v1/bench/reservations": {
+      "get": {
+        "tags": [
+          "Bench"
+        ],
+        "summary": "List active reservations",
+        "description": "Tokens are never returned after creation.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bench"
+        ],
+        "summary": "Reserve bench scopes",
+        "description": "Scopes: bench (everything), plc, adapter:<USB serial>, gateway:<MAC>. An overlapping active reservation returns 409. The returned token authorizes changes via X-Bench-Reservation. Unreserved scopes stay open to everyone.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "201": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "holder": {
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ttlSeconds": {
+                    "type": "integer",
+                    "description": "10-14400, default 1800"
+                  }
+                },
+                "required": [
+                  "holder",
+                  "scope"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bench/reservations/{rid}": {
+      "put": {
+        "tags": [
+          "Bench"
+        ],
+        "summary": "Renew a reservation",
+        "description": "Needs the reservation's token.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ttlSeconds": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation id"
+          },
+          {
+            "name": "X-Bench-Reservation",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation token. Required when another holder has reserved a scope this call changes; otherwise the call returns 423."
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Bench"
+        ],
+        "summary": "Release a reservation",
+        "description": "Needs the reservation's token.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation id"
+          },
+          {
+            "name": "X-Bench-Reservation",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation token. Required when another holder has reserved a scope this call changes; otherwise the call returns 423."
+          }
+        ]
+      }
+    },
+    "/api/v1/jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "List recent jobs",
+        "description": "Newest first, without results.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "1-200, default 50"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Run a script as a job",
+        "description": "Returns 202 at once; poll GET /api/v1/jobs/{jid}. Jobs run one at a time, in submission order, through the IDE session, with one shared namespace so script functions can call each other. session.report_progress({...}) inside the script shows as the job's progress (needs the current PERSISTENT_SESSION.py).",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "202": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "script"
+                    ]
+                  },
+                  "script": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "timeoutSeconds": {
+                    "type": "number",
+                    "description": "Up to 3600, default 600"
+                  }
+                },
+                "required": [
+                  "script"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{jid}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get a job",
+        "description": "States: queued, running, succeeded, failed, cancelled. Running jobs include progress.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "jid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Job id"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Cancel a queued job",
+        "description": "A running CODESYS script cannot be interrupted (409).",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "jid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Job id"
+          }
+        ]
+      }
+    },
+    "/api/v1/inventory/adapters": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "List serial adapters by USB serial",
+        "description": "Current COM port, presence, registered label and bus, and owner (managed simulator with running, portOpen and last RX). A present but unregistered adapter carries a warning.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/adapters/{serial}": {
+      "put": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Register an adapter",
+        "description": "Stores label, wiredTo (gateway MAC) and notes locally. FTDI's Windows 'A' suffix is optional.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "wiredTo": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "USB serial"
+          }
+        ]
+      }
+    },
+    "/api/v1/inventory/gateways": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "List gateways by MAC",
+        "description": "Current IP from the ARP cache and the expected IP; warns when they differ.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Sweep the expected /24 networks to repopulate ARP"
+          },
+          {
+            "name": "probe",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "TCP-connect to each Modbus port. Briefly uses one of the gateway's client slots; off by default"
+          }
+        ]
+      }
+    },
+    "/api/v1/inventory/gateways/{mac}": {
+      "put": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Register a gateway",
+        "description": "Stores label, model, expectedIp (the address clients such as the PLC are configured for), ports, profileUrl and notes locally.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "model": {
+                    "type": "string"
+                  },
+                  "expectedIp": {
+                    "type": "string"
+                  },
+                  "ports": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "profileUrl": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "MAC, e.g. B0-CB-D8-4E-88-BB"
+          }
+        ]
+      }
+    },
+    "/api/v1/plc/online/read": {
+      "post": {
+        "tags": [
+          "PLC Online"
+        ],
+        "summary": "Read online values",
+        "description": "Needs the project open and logged in; otherwise returns 409 with code not_logged_in or no_project, unless login is true.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "423": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "504": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "applicationPath": {
+                    "type": "string",
+                    "description": "Application path; optional when the project has one"
+                  },
+                  "login": {
+                    "type": "boolean",
+                    "description": "Log in with OnlineChangeOption.Keep if needed (never downloads). Needs the plc scope when reserved."
+                  },
+                  "names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "timeout": {
+                    "type": "number",
+                    "description": "Up to 60 s, default 20"
+                  }
+                },
+                "required": [
+                  "names"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Bench-Reservation",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation token. Required when another holder has reserved a scope this call changes; otherwise the call returns 423."
+          }
+        ]
+      }
+    },
+    "/api/v1/plc/online/write": {
+      "post": {
+        "tags": [
+          "PLC Online"
+        ],
+        "summary": "Write online values (prepared values)",
+        "description": "Needs the plc scope when reserved. Refuses while other prepared values are pending unless force is true. Returns the previous values and a readback. restoreAfterSeconds queues a job that writes the previous values back.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "423": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "504": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "applicationPath": {
+                    "type": "string",
+                    "description": "Application path; optional when the project has one"
+                  },
+                  "login": {
+                    "type": "boolean",
+                    "description": "Log in with OnlineChangeOption.Keep if needed (never downloads). Needs the plc scope when reserved."
+                  },
+                  "values": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "expression: IEC value text, e.g. {\"Modbus_TCP_Client.xStop\": \"TRUE\"}"
+                  },
+                  "force": {
+                    "type": "boolean"
+                  },
+                  "restoreAfterSeconds": {
+                    "type": "number"
+                  },
+                  "timeout": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "values"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Bench-Reservation",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation token. Required when another holder has reserved a scope this call changes; otherwise the call returns 423."
+          }
+        ]
+      }
+    },
+    "/api/v1/plc/online/watch": {
+      "post": {
+        "tags": [
+          "PLC Online"
+        ],
+        "summary": "Sample values over time (job)",
+        "description": "Returns 202 with a job. The result holds every sample plus a per-expression summary: first, last, distinct values, and delta for IEC integers (for counter deltas such as error cycles).",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "202": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "applicationPath": {
+                    "type": "string",
+                    "description": "Application path; optional when the project has one"
+                  },
+                  "login": {
+                    "type": "boolean",
+                    "description": "Log in with OnlineChangeOption.Keep if needed (never downloads). Needs the plc scope when reserved."
+                  },
+                  "names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "intervalMs": {
+                    "type": "number",
+                    "description": "Minimum 100, default 1000"
+                  },
+                  "durationSeconds": {
+                    "type": "number",
+                    "description": "Default 10, up to 3540"
+                  },
+                  "maxSamples": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "names"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/plc/online/diagnostics": {
+      "get": {
+        "tags": [
+          "PLC Online"
+        ],
+        "summary": "Modbus health in one call",
+        "description": "App and login state, every Modbus master (type 88/90) and slave (89/91) in the project with xStop, uiConnectedSlaves, xError and byModbusError, unhealthyDevices, plus optional extra expressions.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "504": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "parameters": [
+          {
+            "name": "applicationPath",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Application path"
+          },
+          {
+            "name": "names",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated extra expressions"
+          }
+        ]
+      }
+    },
+    "/api/v1/plc/app/{command}": {
+      "post": {
+        "tags": [
+          "PLC Online"
+        ],
+        "summary": "Start or stop the application",
+        "description": "Needs the plc scope when reserved. Waits up to 5 s for the new state.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "423": {
+            "$ref": "#/components/responses/JsonResponse"
+          },
+          "504": {
+            "$ref": "#/components/responses/JsonResponse"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "applicationPath": {
+                    "type": "string",
+                    "description": "Application path; optional when the project has one"
+                  },
+                  "login": {
+                    "type": "boolean",
+                    "description": "Log in with OnlineChangeOption.Keep if needed (never downloads). Needs the plc scope when reserved."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "start",
+                "stop"
+              ]
+            }
+          },
+          {
+            "name": "X-Bench-Reservation",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reservation token. Required when another holder has reserved a scope this call changes; otherwise the call returns 423."
+          }
+        ]
       }
     }
   },
@@ -837,7 +1617,7 @@
               "required": ["script"],
               "properties": {
                 "script": { "type": "string" },
-                "timeout": { "type": "integer", "default": 60 }
+                "timeout": { "type": "number", "default": 60, "description": "Seconds to wait, up to 300. Use /api/v1/jobs for longer work." }
               }
             }
           }

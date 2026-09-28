@@ -4,13 +4,11 @@
 
 from functools import partial
 
-try:
-    from http.server import HTTPServer
-except ImportError:
-    from BaseHTTPServer import HTTPServer
+from http.server import ThreadingHTTPServer
 
 from api_handler import CodesysApiHandler
 from auth import ApiKeyManager
+from bench_services import BenchServices
 from codesys_process import CodesysProcessManager
 from script_executor import ScriptExecutor
 from script_generator import ScriptGenerator
@@ -28,14 +26,23 @@ from server_config import (
 )
 
 
-def create_handler(process_manager, script_executor, script_generator, api_key_manager):
+def create_handler(process_manager, script_executor, script_generator, api_key_manager, bench=None):
+    """Bind shared services to the per-request handler; one BenchServices per server."""
     return partial(
         CodesysApiHandler,
         process_manager=process_manager,
         script_executor=script_executor,
         script_generator=script_generator,
         api_key_manager=api_key_manager,
+        bench=bench or BenchServices.create(),
     )
+
+
+def create_http_server(address, handler):
+    """Threaded so status and bench reads stay responsive while a script call waits."""
+    server = ThreadingHTTPServer(address, handler)
+    server.daemon_threads = True
+    return server
 
 
 def run_server():
@@ -49,7 +56,7 @@ def run_server():
 
     try:
         handler = create_handler(process_manager, script_executor, script_generator, api_key_manager)
-        server = HTTPServer((SERVER_HOST, SERVER_PORT), handler)
+        server = create_http_server((SERVER_HOST, SERVER_PORT), handler)
         print_connection_addresses(server.server_address)
         logger.info("Starting server on %s:%d", SERVER_HOST, SERVER_PORT)
         server.serve_forever()

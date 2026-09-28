@@ -3,10 +3,9 @@
 import argparse
 import json
 import time
-from http.server import HTTPServer
 from pathlib import Path
 
-from HTTP_SERVER import create_handler
+from HTTP_SERVER import create_handler, create_http_server
 from auth import ApiKeyManager
 from script_executor import ScriptExecutor
 from script_generator import ScriptGenerator
@@ -52,7 +51,7 @@ def create_server(host, port):
         ScriptGenerator(),
         ApiKeyManager(API_KEY_FILE),
     )
-    return HTTPServer((host, port), handler)
+    return create_http_server((host, port), handler)
 
 
 def main():

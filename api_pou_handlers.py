@@ -1,5 +1,6 @@
 """POU and raw script endpoint handlers."""
 
+from script_executor import MAX_SYNC_TIMEOUT_SECONDS, clamp_timeout, wrap_shared_namespace
 from server_config import logger
 
 
@@ -151,8 +152,10 @@ class PouHandlersMixin:
         logger.info("Script execute request: %s", 
                     first_line[:50] + "..." if len(first_line) > 50 else first_line)
         
-        # Actually execute the script in CODESYS
-        result = self.script_executor.execute_script(script)
+        # Honor the caller's timeout (capped: long work belongs in /api/v1/jobs) and
+        # give the script one namespace so its functions can call each other.
+        timeout = clamp_timeout(params.get("timeout"), 60, MAX_SYNC_TIMEOUT_SECONDS)
+        result = self.script_executor.execute_script(wrap_shared_namespace(script), timeout=timeout)
         
         # Return the result from execution
         self.send_json_response(result)

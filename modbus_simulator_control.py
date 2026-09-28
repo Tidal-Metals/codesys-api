@@ -12,6 +12,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 from datetime import datetime
 from typing import Any
@@ -376,7 +377,17 @@ def wait_for_start(spec: dict[str, Any], entry: dict[str, Any]) -> None:
         time.sleep(0.1)
 
 
+# The HTTP server is threaded; one apply at a time keeps the state file and
+# worker ownership consistent.
+_APPLY_LOCK = threading.Lock()
+
+
 def apply_simulator(buses: list[dict[str, Any]]) -> dict[str, Any]:
+    with _APPLY_LOCK:
+        return _apply_simulator(buses)
+
+
+def _apply_simulator(buses: list[dict[str, Any]]) -> dict[str, Any]:
     state = read_state()
     simulators = dict(state.get("simulators", {}))
     try:

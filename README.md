@@ -281,6 +281,16 @@ Authorization: ApiKey YOUR_API_KEY
 - `GET /api/v1/system/info`: Get system information
 - `GET /api/v1/system/logs`: Get system logs
 
+#### Bench, Jobs and Online PLC
+
+For agents sharing the PLC and Modbus bench; see [`docs/modbus-bench.md`](docs/modbus-bench.md).
+
+- `GET /api/v1/bench`: One snapshot of session, reservations, jobs, simulators, adapters, gateways and warnings
+- `GET|POST /api/v1/bench/reservations`, `PUT|DELETE /api/v1/bench/reservations/{id}`: Claim equipment; send `X-Bench-Reservation` on changes
+- `POST /api/v1/jobs`, `GET /api/v1/jobs[/{id}]`, `DELETE /api/v1/jobs/{id}`: Long scripts as jobs
+- `GET /api/v1/inventory/adapters|gateways`, `PUT .../{serial|mac}`: Adapters by USB serial, gateways by MAC
+- `POST /api/v1/plc/online/read|write|watch`, `GET /api/v1/plc/online/diagnostics`, `POST /api/v1/plc/app/start|stop`: Online PLC access
+
 ## 📝 Example Usage
 
 ### Example Client

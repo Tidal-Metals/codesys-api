@@ -2,7 +2,10 @@
 
 import time
 
+from bench_services import read_session_status
 from server_config import logger
+
+BUSY_HEARTBEAT_STALE_SECONDS = 10
 
 
 class SessionHandlersMixin:
@@ -16,6 +19,21 @@ class SessionHandlersMixin:
         else:
             logger.info("No attachable persistent session detected: %s", result.get("error"))
         return result
+
+    def _busy_session_status(self):
+        """While a script runs the session can't answer a status script; its
+        heartbeat file says it is alive and what it is doing."""
+        session = read_session_status()
+        age = session.get("fileAgeSeconds")
+        if session.get("state") != "busy" or age is None or age > BUSY_HEARTBEAT_STALE_SECONDS:
+            return None
+        return {
+            "process": {"running": True, "state": "busy", "timestamp": session.get("timestamp")},
+            "session": {"active": True, "session_active": True, "busy": True,
+                        "project_open": bool(session.get("project")), "project": {"path": session.get("project")},
+                        "request": session.get("request"), "progress": session.get("progress")},
+            "attached": True,
+        }
 
     def handle_session_start(self):
         """Handle session/start endpoint."""
@@ -104,6 +122,11 @@ class SessionHandlersMixin:
             
     def handle_session_status(self):
         """Handle session/status endpoint."""
+        busy = self._busy_session_status()
+        if busy is not None:
+            self.send_json_response({"success": True, "status": busy})
+            return
+
         self.process_manager.ensure_singleton()
 
         # Check process status

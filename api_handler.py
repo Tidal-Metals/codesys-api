@@ -4,12 +4,14 @@ import json
 import logging
 import sys
 
+from api_bench_handlers import BenchHandlersMixin, simulator_scopes
 from api_plc_handlers import PlcHandlersMixin
 from api_pou_handlers import PouHandlersMixin
 from api_project_handlers import ProjectHandlersMixin
 from api_session_handlers import SessionHandlersMixin
 from api_system_handlers import SystemHandlersMixin
 from api_variable_handlers import VariableHandlersMixin
+from bench_reservations import ReservationError
 from modbus_handlers import ModbusHandler, match_route as modbus_match
 from openapi import load_openapi_schema, swagger_ui_html
 
@@ -22,8 +24,14 @@ except ImportError:
 
 logger = logging.getLogger('codesys_api_server')
 
+# Existing endpoints that change the PLC; they honor bench reservations of "plc".
+PLC_MUTATING_PATHS = {
+    "api/v1/plc/deploy", "api/v1/plc/login", "api/v1/plc/logout", "api/v1/plc/bind-ip",
+}
+
 
 class CodesysApiHandler(
+    BenchHandlersMixin,
     SessionHandlersMixin,
     ProjectHandlersMixin,
     PouHandlersMixin,
@@ -41,6 +49,7 @@ class CodesysApiHandler(
         self.script_executor = kwargs.pop('script_executor', None)
         self.script_generator = kwargs.pop('script_generator', None)
         self.api_key_manager = kwargs.pop('api_key_manager', None)
+        self.bench = kwargs.pop('bench', None)
         self.modbus = ModbusHandler(self.script_executor)
         BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
 
@@ -49,6 +58,8 @@ class CodesysApiHandler(
         handler_name, groups = modbus_match(method, path)
         if handler_name is None:
             return False
+        if handler_name == "apply_simulator" and not self.guard(simulator_scopes(params.get("buses"))):
+            return True
         result = self.modbus.dispatch(handler_name, params, groups)
         self.send_json_response(result)
         return True
@@ -81,7 +92,9 @@ class CodesysApiHandler(
                 return
                 
             # Route request
-            if path == "api/v1/session/status":
+            if self.try_bench_route("GET", path, params):
+                pass
+            elif path == "api/v1/session/status":
                 self.handle_session_status()
             elif path == "api/v1/project/list":
                 self.handle_project_list()
@@ -146,7 +159,11 @@ class CodesysApiHandler(
                 return
                 
             # Route request
-            if path == "api/v1/session/start":
+            if path in PLC_MUTATING_PATHS and not self.guard(["plc"]):
+                pass
+            elif self.try_bench_route("POST", path, params):
+                pass
+            elif path == "api/v1/session/start":
                 self.handle_session_start()
             elif path == "api/v1/session/stop":
                 self.handle_session_stop()
@@ -218,6 +235,8 @@ class CodesysApiHandler(
                 self.send_error(401, "Unauthorized")
                 return
 
+            if self.try_bench_route(method, path, params):
+                return
             if not self.try_modbus_route(method, path, params):
                 if method == "DELETE" and path == "api/v1/variables":
                     self.handle_variable_delete(params)
@@ -240,6 +259,15 @@ class CodesysApiHandler(
 
     def do_PUT(self):
         self._handle_body_method("PUT")
+
+    def guard(self, scopes):
+        """Send 423 and return False if another holder reserved any of scopes."""
+        try:
+            self.require_scopes(scopes)
+            return True
+        except ReservationError as exc:
+            self.send_json_response({"success": False, "error": str(exc), "conflicts": exc.conflicts}, exc.status)
+            return False
 
     def authenticate(self):
         """Validate API key."""

@@ -1,5 +1,6 @@
 """Filesystem-backed CODESYS persistent-session script executor."""
 
+import base64
 import json
 import os
 import tempfile
@@ -9,6 +10,37 @@ import uuid
 
 from server_config import logger
 
+# Synchronous callers hold an HTTP request open; longer work belongs in a job.
+MAX_SYNC_TIMEOUT_SECONDS = 300
+
+
+def wrap_shared_namespace(script_content):
+    """Run a user script with one namespace for globals and locals.
+
+    The persistent session executes scripts with separate globals and locals,
+    so a top-level function cannot call another top-level function. Running
+    the code through exec(code, scope, scope) fixes that on any session
+    version. The script is base64-encoded so no quoting survives into the
+    IronPython source.
+    """
+    encoded = base64.b64encode(script_content.encode("utf-8")).decode("ascii")
+    return (
+        "import base64 as _b64\n"
+        "_scope = dict(globals())\n"
+        "exec(_b64.b64decode('{0}').decode('utf-8'), _scope, _scope)\n"
+        "result = _scope.get('result', {{'success': True, "
+        "'message': 'Script executed successfully (no result variable)'}})\n"
+    ).format(encoded)
+
+
+def clamp_timeout(value, default, maximum):
+    """Parse a timeout parameter; fall back to default, cap at maximum."""
+    try:
+        timeout = float(value)
+    except (TypeError, ValueError):
+        return default
+    return max(1.0, min(timeout, float(maximum)))
+
 class ScriptExecutor:
     """Executes scripts through the CODESYS persistent session."""
     
@@ -16,7 +48,7 @@ class ScriptExecutor:
         self.request_dir = request_dir
         self.result_dir = result_dir
         
-    def execute_script(self, script_content, timeout=60):
+    def execute_script(self, script_content, timeout=60, request_id=None):
         """Execute a script and return the result.
         
         Args:
@@ -26,7 +58,7 @@ class ScriptExecutor:
         Returns:
             dict: The result of the script execution
         """
-        request_id = str(uuid.uuid4())
+        request_id = request_id or str(uuid.uuid4())
         script_path = None
         result_path = None
         request_path = None

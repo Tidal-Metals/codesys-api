@@ -89,6 +89,7 @@ All endpoints prefixed with `/api/v1/`:
 - **POU**: `/pou/{create,code,list}`
 - **Script**: `/script/execute`
 - **System**: `/system/{info,logs}`
+- **Bench**: `/bench`, `/bench/reservations`, `/jobs`, `/inventory/{adapters,gateways}`, `/plc/online/{read,write,watch,diagnostics}`, `/plc/app/{start,stop}` (routes in `api_bench_handlers.py`)
 
 ## Development Notes
 
