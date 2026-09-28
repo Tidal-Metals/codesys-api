@@ -235,10 +235,22 @@ def action(online_app):
                 device["values"][member] = value
         if str(device["values"].get("xError", "")).upper() == "TRUE":
             unhealthy.append(device["name"])
+    warnings = []
+    state = safe_text(online_app.application_state)
+    if "run" not in state.lower():
+        warnings.append("Application state is '" + (state or "unknown") + "', not running: values are frozen and no Modbus polling happens")
+    for device in devices:
+        if device["role"] != "master":
+            continue
+        slave_count = len([d for d in devices if d.get("master") == device["name"]])
+        connected = iec_number(device["values"].get("uiConnectedSlaves"))
+        if slave_count and connected is not None and connected < slave_count:
+            warnings.append("%s: %d of %d slaves connected" % (device["name"], connected, slave_count))
     extra = {}
     for name in payload.get("names", []):
         extra[name] = read_one(online_app, name)[0]
-    return {"modbusDevices": devices, "unhealthyDevices": unhealthy, "values": extra, "readAt": time.time()}
+    return {"modbusDevices": devices, "unhealthyDevices": unhealthy, "warnings": warnings,
+            "healthy": not unhealthy and not warnings, "values": extra, "readAt": time.time()}
 
 result = run_online(action)
 """.replace("@@MASTERS@@", repr(MODBUS_MASTER_TYPES)).replace("@@SLAVES@@", repr(MODBUS_SLAVE_TYPES)).replace(

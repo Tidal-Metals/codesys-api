@@ -63,9 +63,26 @@ class FakeApplication:
         return []
 
 
-class FakeProject:
+class FakeDevice:
+    def __init__(self, name, kind, children=()):
+        self.name, self.kind, self.children = name, kind, list(children)
+
+    def get_name(self):
+        return self.name
+
+    def get_device_identification(self):
+        return types.SimpleNamespace(type=self.kind)
+
     def get_children(self):
-        return [FakeApplication()]
+        return self.children
+
+
+class FakeProject:
+    def __init__(self, children=None):
+        self.children = children
+
+    def get_children(self):
+        return self.children if self.children is not None else [FakeApplication()]
 
 
 class FakeSession:
@@ -82,9 +99,9 @@ class FakeSession:
         self.progress.append(data)
 
 
-def run_script(script, online_app):
+def run_script(script, online_app, project=None):
     scriptengine = types.ModuleType("scriptengine")
-    scriptengine.projects = types.SimpleNamespace(primary=FakeProject())
+    scriptengine.projects = types.SimpleNamespace(primary=project or FakeProject())
     scriptengine.OnlineChangeOption = types.SimpleNamespace(Keep="Keep")
     session = FakeSession(online_app)
     namespace = {"session": session, "json": __import__("json"), "time": time}
@@ -161,6 +178,20 @@ class OnlineScriptTests(unittest.TestCase):
             result, _ = run_script(gen.generate_plc_app_control_script({}, "start"), app)
         self.assertEqual(result["code"], "state_not_reached")
         self.assertIn("TimeoutException", result["error"])
+
+    def test_diagnostics_flags_stopped_app_and_missing_connections(self):
+        master = FakeDevice("Modbus_TCP_Client", 88, [FakeDevice("Unit1", 89), FakeDevice("Unit2", 89)])
+        project = FakeProject([FakeApplication(), master])
+        app = FakeOnlineApp({"Modbus_TCP_Client.uiConnectedSlaves": "UINT#0", "Unit1.xError": "FALSE",
+                             "Unit2.xError": "FALSE"}, state="stop")
+        result, _ = run_script(gen.generate_plc_online_diagnostics_script({}), app, project)
+        self.assertFalse(result["healthy"])
+        self.assertEqual(result["unhealthyDevices"], [])
+        self.assertTrue(any("stop" in w for w in result["warnings"]))
+        self.assertTrue(any("0 of 2 slaves" in w for w in result["warnings"]))
+        app.application_state, app.values["Modbus_TCP_Client.uiConnectedSlaves"] = "run", "UINT#2"
+        result, _ = run_script(gen.generate_plc_online_diagnostics_script({}), app, project)
+        self.assertTrue(result["healthy"], result["warnings"])
 
     def test_start_fails_when_state_never_changes(self):
         app = FakeOnlineApp({}, state="stop", reach_state=False)
