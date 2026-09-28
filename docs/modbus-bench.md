@@ -21,7 +21,7 @@ its addresses and baud rates are out of date.
 ```
 PLC P2CDS-622-DEV  ETH1 .123 / ETH2 .125 (bench traffic uses ETH2)
  ├─ Modbus TCP → PC TCP simulator   192.168.50.155:502  unit 1     (modbus_tcp_slave_sim.py)
- └─ Modbus TCP → NE2-D11P           192.168.50.151 A:502 units 1–5, B:1502 units 6–10
+ └─ Modbus TCP → NE2-D11P           .151 configured (lease now .153) A:502 units 1–5, B:1502 units 6–10
                     └─ RS485 115200 8N1 → COM18 (FTDI BG01GGR2) Go worker, units 1–10
 PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
                     └─ RS485 115200 8N1 → COM11 (FTDI BG00XX03) Go worker, unit 11
@@ -35,9 +35,12 @@ PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
 | PLC project | `../codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project` |
 | Unit values | COM18: `examples/modbusfb_single_connection/rtu_devices.json` (unit 1 = `[1234,5678]`, unit *n* = `[n01,n02]`); COM11 unit 11 = `[1101,1102]` |
 
-Until 2026-09-25, COM11 shared the NE2's bus as a second multidrop responder. On 2026-09-28 the NE2
-was not reachable at `.151` (not in ARP) and neither adapter had received traffic since 09-25.
-Find the gateway by MAC `B0-CB-D8-4E-88-BB` before assuming an address.
+Until 2026-09-25, COM11 shared the NE2's bus as a second multidrop responder.
+
+**By 2026-09-28 the NE2's DHCP lease had moved to `192.168.50.153`** (MAC `B0-CB-D8-4E-88-BB`).
+The PLC's gateway modules still target `.151`, so the PLC's RTU path is down until the lease is
+reserved or the modules are re-pointed; neither adapter had received traffic since 09-25. Always
+find a gateway by MAC (`arp -a` after a ping, or its profile's identity check) before using an address.
 
 ## Ownership rules
 
@@ -74,10 +77,10 @@ The simulator baud must equal the gateway's serial setting.
 ### Read through a gateway from the PC
 
 ```powershell
-python examples/modbus_tcp_read.py --host 192.168.50.151 --source 192.168.50.155 --port 502 --unit 1 --address 0 --count 2
+python examples/modbus_tcp_read.py --host 192.168.50.153 --source 192.168.50.155 --port 502 --unit 1 --address 0 --count 2
 ```
 
-Bind to `.155` explicitly. The expected values are above; confirm the worker's counters rose by
+Bind to `.155` explicitly, and confirm the NE2's current address by MAC first. The expected values are above; confirm the worker's counters rose by
 the same amount. If the gateway's sockets are full, pause PLC polling. If the slots stay held
 (native clients keep their sockets open), reboot the NE2 while the PLC is paused; see the profile.
 For sustained tests, `temp/go_rtu_gateway_test.py` cycles units, verifies every reply, and
