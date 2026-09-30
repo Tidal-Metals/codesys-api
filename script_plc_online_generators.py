@@ -110,11 +110,24 @@ result = run_online(action)
 def generate_plc_online_write_script(params):
     """Write prepared values: {values: {name: iecText}, force?: bool to override others' prepared values}."""
     action = """
+def iec_integer(text):
+    # BYTE#91, 16#5B, BYTE#16#5B and 2#0101_1011 are all 91; None if not an integer.
+    parts = str(text).strip().upper().replace("_", "").split("#")
+    try:
+        if len(parts) >= 2 and parts[-2] in ("2", "8", "16"):
+            return int(parts[-1], int(parts[-2]))
+        return int(parts[-1])
+    except ValueError:
+        return None
+
 def matches(desired, actual):
     if actual is None:
         return False
     desired, actual = str(desired).strip().upper(), str(actual).strip().upper()
-    return actual == desired or actual.split("#")[-1] == desired.split("#")[-1]
+    if actual == desired or actual.split("#")[-1] == desired.split("#")[-1]:
+        return True
+    number = iec_integer(desired)
+    return number is not None and number == iec_integer(actual)
 
 def action(online_app):
     pending = [str(e) for e in (online_app.get_prepared_expressions() or [])]

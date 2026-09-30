@@ -142,6 +142,15 @@ class OnlineScriptTests(unittest.TestCase):
         self.assertEqual(result["discardedPrepared"], ["Other"])
         self.assertEqual(app.values["Other"], "0", "force must not commit someone else's prepared value")
 
+    def test_write_confirms_hex_literal_read_back_as_decimal(self):
+        app = FakeOnlineApp({"GVL.CoilW10[0]": "BYTE#0", "GVL.Mask": "WORD#0"})
+        app.write_prepared_values = lambda: (app.values.update({"GVL.CoilW10[0]": "BYTE#91", "GVL.Mask": "WORD#5"}),
+                                             app.prepared.clear())
+        with mock.patch("time.sleep"):
+            result, _ = run_script(gen.generate_plc_online_write_script(
+                {"values": {"GVL.CoilW10[0]": "16#5B", "GVL.Mask": "WORD#2#0101"}}), app)
+        self.assertTrue(result["confirmed"], result)
+
     def test_write_readback_mismatch_still_reports_previous(self):
         app = FakeOnlineApp({"Latch": "FALSE"})
         app.write_prepared_values = lambda: app.prepared.clear()  # PLC ignores the write

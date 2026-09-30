@@ -184,14 +184,14 @@ func TestEchoFilterRemovesOwnReplyOnly(t *testing.T) {
 	now := time.Now()
 	reply := mustHex(t, replyUnit1)
 	var e EchoFilter
-	e.Expect(reply, now, 100*time.Millisecond)
+	e.Expect(reply, now, 100*time.Millisecond, true)
 	out := e.Filter(append(append([]byte{}, reply...), mustHex(t, reqUnit9)...), now)
 	if hex.EncodeToString(out) != reqUnit9 || e.Echoes() != 1 {
 		t.Fatalf("out=%x echoes=%d", out, e.Echoes())
 	}
 
 	// No echo: a request sharing the reply's first two bytes passes intact.
-	e.Expect(reply, now, 100*time.Millisecond)
+	e.Expect(reply, now, 100*time.Millisecond, true)
 	out = e.Filter(mustHex(t, reqUnit1)[:2], now)
 	out = append(out, e.Filter(mustHex(t, reqUnit1)[2:], now)...)
 	if hex.EncodeToString(out) != reqUnit1 {
@@ -199,7 +199,7 @@ func TestEchoFilterRemovesOwnReplyOnly(t *testing.T) {
 	}
 
 	// A held prefix is released once the window expires.
-	e.Expect(reply, now, 10*time.Millisecond)
+	e.Expect(reply, now, 10*time.Millisecond, true)
 	if out := e.Filter(reply[:3], now); len(out) != 0 {
 		t.Fatalf("prefix released early: %x", out)
 	}

@@ -38,7 +38,24 @@ type DeviceConfig struct {
 	Name              string            `json:"name"`
 	HoldingMap        map[string]uint16 `json:"holdingMap"`
 	InputRegistersMap map[string]uint16 `json:"inputRegistersMap"`
+	CoilsMap          map[string]bit    `json:"coilsMap"`
+	DiscreteInputsMap map[string]bit    `json:"discreteInputsMap"`
 	Silent            bool              `json:"silent"`
+}
+
+// bit is a JSON coil/discrete value: 0, 1, false or true.
+type bit bool
+
+func (b *bit) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "0", "false":
+		*b = false
+	case "1", "true":
+		*b = true
+	default:
+		return fmt.Errorf("bit value %s must be 0, 1, false or true", data)
+	}
+	return nil
 }
 
 func loadConfig(path string) (Config, error) {
@@ -106,8 +123,17 @@ func (c Config) units() ([]device.Unit, error) {
 		if err != nil {
 			return nil, fmt.Errorf("device %d inputRegistersMap: %w", d.Unit, err)
 		}
+		coils, err := bitMap(d.CoilsMap)
+		if err != nil {
+			return nil, fmt.Errorf("device %d coilsMap: %w", d.Unit, err)
+		}
+		discrete, err := bitMap(d.DiscreteInputsMap)
+		if err != nil {
+			return nil, fmt.Errorf("device %d discreteInputsMap: %w", d.Unit, err)
+		}
 		units = append(units, device.Unit{
-			ID: byte(d.Unit), Name: d.Name, Holding: holding, InputRegisters: input, Silent: d.Silent,
+			ID: byte(d.Unit), Name: d.Name, Holding: holding, InputRegisters: input,
+			Coils: coils, DiscreteInputs: discrete, Silent: d.Silent,
 		})
 	}
 	return units, nil
@@ -122,6 +148,19 @@ func registerMap(raw map[string]uint16) (map[uint16]uint16, error) {
 			return nil, fmt.Errorf("offset %q is not 0-65535", key)
 		}
 		out[uint16(offset)] = value
+	}
+	return out, nil
+}
+
+// bitMap converts JSON object keys to coil/discrete-input offsets.
+func bitMap(raw map[string]bit) (map[uint16]bool, error) {
+	out := make(map[uint16]bool, len(raw))
+	for key, value := range raw {
+		offset, err := strconv.ParseUint(key, 10, 16)
+		if err != nil {
+			return nil, fmt.Errorf("offset %q is not 0-65535", key)
+		}
+		out[uint16(offset)] = bool(value)
 	}
 	return out, nil
 }

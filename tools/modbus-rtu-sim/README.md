@@ -32,13 +32,18 @@ A USB serial number can belong to only one port.
 Optional bus fields: `usbSerial` (FTDI serial, with or without the `A` suffix),
 `bytesize`, `parity`, `stopbits`, `idleGapMs` (default 50), and
 `traceFrames` (log every frame to the stderr log). Device fields match the
-Python manifest (`unit`, `name`, `holdingMap`, `inputRegistersMap`), plus `silent`.
+Python manifest (`unit`, `name`, `holdingMap`, `inputRegistersMap`, `coilsMap`,
+`discreteInputsMap`), plus `silent`. The coil and discrete maps take `0`/`1` (or
+`false`/`true`) values keyed by decimal offset.
 
 `GET /api/v1/modbus/simulator/status` reports these separately for each Go bus:
 `running` (whether the process is ours), `portOpen`, and `heartbeatAgeSeconds`/`heartbeatStale`.
 `worker` carries the full status file (`logs/rtu_sim_<port>_status.json`): RX/TX
 counters, per-unit requests/replies/exceptions/skips, framer discards, reopen
 count, and host-side reply latency. A quiet bus does not trigger a port reset.
+Each unit also reports `writes` and `lastWrite` (`function`, `start`, `values`, `time`;
+null until the first accepted write), plus the current `coils` (offset to 0/1), so a bench
+test can show what a PLC wrote.
 
 ## Behaviour
 
@@ -51,9 +56,16 @@ count, and host-side reply latency. A quiet bus does not trigger a port reset.
   valid frame. It does not answer a request found by resynchronizing, or one followed
   by more bytes already buffered (the master has moved on). Broadcasts get no reply.
   Local echo of the simulator's own reply is removed if the adapter produces one.
-- **Functions.** FC03 (holding) and FC04 (input) reads. A missing register
-  returns exception 02, and a quantity outside 1–125 returns 03. Other standard
-  functions addressed to a served ID return exception 01.
+  An FC05/FC06 success reply equals its request, so its echo would look like the master
+  repeating the write. Once a differing reply (FC01/03 and so on) has gone unechoed, those
+  replies are not filtered, and cyclic identical writes are all answered.
+- **Functions.** FC01 (coils), FC02 (discrete inputs), FC03 (holding) and FC04 (input)
+  reads, plus FC05, FC06, FC15 and FC16 writes. A missing address returns exception 02.
+  A bad quantity, byte count or FC05 value returns 03; limits are 2000 bits, 125 read
+  registers, 1968 coils and 123 written registers. Multi-writes are all-or-nothing, and a
+  write can only change an address that already exists in the map. Reads return written
+  values. Broadcast writes are ignored. Other functions addressed to a served ID return
+  exception 01.
 - **USB recovery.** An I/O error, or the port disappearing during silence,
   closes the port. The worker reopens it with 250 ms–5 s backoff. With `usbSerial`
   it finds the adapter again even if Windows assigns a new COM number.
@@ -66,7 +78,7 @@ count, and host-side reply latency. A quiet bus does not trigger a port reset.
 | --- | --- |
 | `cmd/rtu-sim` | Config, shutdown, JSON-line events on stdout, status file publisher |
 | `internal/rtu` | CRC, framer and resynchronization, echo filter |
-| `internal/device` | Unit IDs, register maps, FC03/FC04 replies and exceptions |
+| `internal/device` | Unit IDs, register and bit maps, FC01–FC06/FC15/FC16 replies, exceptions, write stats |
 | `internal/serialrun` | Serial bus loop, reply decisions, port reopen, status snapshot |
 
 ## Bench verification

@@ -2,7 +2,7 @@
 
 How the CODESYS PLC, the Ebyte TCP-to-RTU gateways, the PC's RS485 simulators and this API fit
 together, and how to test or change them without breaking another agent's run. Updated
-2026-09-28. The state below comes from recorded tests; verify it live before relying on it.
+2026-09-30. The state below comes from recorded tests; verify it live before relying on it.
 
 Gateway internals (web API, enums, save sequence, client limits) live in the device profiles and
 are not repeated here:
@@ -33,7 +33,7 @@ PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
 | PC USB Ethernet (bench test source) | ASIX, `192.168.50.155` DHCP |
 | API | `serve_on_port.py --port 8081`; `Authorization: ApiKey <key from api_keys.json>` |
 | PLC project | `../codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project` |
-| Unit values | COM18: `examples/modbusfb_single_connection/rtu_devices.json` (unit 1 = `[1234,5678]`, unit *n* = `[n01,n02]`); COM11 unit 11 = `[1101,1102]` |
+| Unit values | COM18: `examples/modbusfb_single_connection/rtu_devices.json` (unit 1 = `[1234,5678]`, unit 2 = `[2222,3333]`, unit *n* = `[n01,n02]`); COM11 unit 11 = `[1101,1102]`. Units 2 and 11 also serve coils 0–9 = `1,0,1,1,0,0,0,1,0,1` (FC01 bytes `16#8D 16#02`), coils 10–47 = 0 and discrete inputs 0–9 = `0,1,1,0,1,0,0,0,1,1` (`16#16 16#03`); `temp/coil_proof/apply_buses.py` applies them |
 
 Until 2026-09-25, COM11 shared the NE2's bus as a second multidrop responder.
 
@@ -101,6 +101,9 @@ POST /api/v1/modbus/simulator/apply
 
 Use `backend: "go"`. The PyModbus backend rejects multidrop above 38,400 baud and does not
 recover from USB unplugs. `"silent": true` on a device makes it ignore requests, for timeout tests.
+The Go worker answers FC01/02/03/04 and writes FC05/06/15/16; `coilsMap`/`discreteInputsMap`
+are `{"offset": 0|1}`, and the status file shows each unit's `writes`, `lastWrite` and current `coils`.
+A device given both `holding` and `holdingMap` uses `holdingMap`, even when it is empty.
 The simulator baud must equal the gateway's serial setting.
 
 ### Read through a gateway from the PC
@@ -175,6 +178,33 @@ IDE, but online reads need the project reopened and logged in.
   with array words numbered in the second field (`38010881_1_0_0`). The canonical templates in
   `templates/modbus_serial_slave_canonical*.export` are required at run time.
 
+### Coil and discrete-input channels (proven 2026-09-30)
+
+CODESYS builds these channels itself in `DeviceEditorModbus.plugin` (`ChannelData.CreateSlaveChannel`,
+the code behind the editor's Add Channel button). The proof called that code from the IDE session,
+exported the result (`templates/modbus_tcp_server_canonical_coils.export`) and ran it on the PLC
+against NE2 unit 2.
+
+- **IO type:** FC1, FC2, FC5 and FC15 get `std:ARRAY[0..ceil(n/8)-1] OF BYTE`: one BYTE per
+  eight coils, each byte holding eight `BIT`s. Coil *k* of the channel is bit *k* mod 8 of byte *k* div 8
+  (Modbus LSB-first). Bits past the channel length carry `OfflineAccess None` and never reach the wire:
+  `16#FE` in byte 1 of a 10-coil FC15 channel wrote only coils 8–9.
+- **Version gate:** the packed form requires the slave's ConfigVersion (param `1879052288`) to be
+  at least `16#03050300`. The TCP Server here is `16#03050B00`, the RTU slave (type 91) `16#03050300`.
+  Older versions give one parameter per coil.
+- **IDs:** read `0xSS4F0000 + offset`, write `0xSS8F0000 + offset`, where F is `1` for discrete inputs,
+  `2` for coils, `3` for input registers and `4` for holding registers. So FC2 is `0x41`, FC1 `0x42`,
+  FC5/15 `0x82`. Bytes are `<id>_<byte>_0_0` and bits are `<id>_<byte>_0_0_<bit>`.
+- **Mapping, all proven on the wire:** a whole channel to an `ARRAY[0..m] OF BYTE` variable (read and
+  write); a single bit to a `BOOL` (read FC1/FC2, write FC5); ten bits to `ARRAY[0..9] OF BOOL`
+  elements. CODESYS also compiles a `BOOL` mapped to a whole 1-coil channel, and FC05 then drives the
+  coil, but only its FALSE read was observed. Map BOOL storage to bit 0 instead.
+- **Unused I/O is not updated.** CODESYS copies a channel's IO only when IEC code uses the mapped
+  variable or the device's connector has `io_always_mapping = True`. Mapped GVL variables that no
+  program reads stayed at 0 until that flag was set.
+- Evidence: `temp/coil_proof/` (exports, `write_check_unit2.json`, `watch_60s_unit2_coils.json`, the
+  proven project copy, and the decompiled plugin, which is local only).
+
 ## Verified results
 
 | Test | Result | Evidence (local, not in git) |
@@ -186,9 +216,21 @@ IDE, but online reads need the project reopened and logged in.
 | NE2 native modules, 5 A + 5 B | 612/612 in 60.8 s | `temp/native_repair_20260924/recovered/summary.json` |
 | NA111-E, 6 concurrent clients → COM11 | 600/600, median about 11.8 ms; a 7th client is accepted then closed | `temp/na111_setup/client_limit_results.json` |
 | ModbusFB, one connection, ten units | 0.696 s round at a 5 ms task vs 4.04 s at 50 ms (115200) | `examples/modbusfb_single_connection/test_results.json` |
+| Go sim FC1/2/5/6/15/16 from pymodbus via NA111-E → COM11 unit 11 | All reads, writes and read-backs match | `temp/coil_proof/pc_client_check_na111_unit11.json` |
+| PLC coil channels on NE2 unit 2 (FC1 ×3, FC2, FC5, FC15) | Reads `16#8D 16#02`, BOOL bits and 10 DI bits exact; three write patterns exact on the wire and in FC1 read-back; 60 s with 0 new error cycles | `temp/coil_proof/write_check_unit2.json`, `watch_60s_unit2_coils.json` |
 
 ## Pitfalls
 
+- A CODESYS certificate-expiry dialog can block a login or download until someone clicks it.
+  On 2026-09-30 a "login with download" waited about 3 minutes on one. Earlier the same day, an
+  online read hung the IDE's script thread for 10 minutes and needed a session restart and a kill
+  of the old IDE, with no dialog visible to UI automation. `/plc/login` reports
+  `certificateTrustError: "This functionality is no longer supported!"`, so the API cannot
+  pre-trust certificates on SP22. If a login stalls, ask someone at the desktop.
+- After an online change, cached online reads can fail with "Invalid variable reference" for
+  every name. `POST /plc/logout` then `/plc/login` fixes it.
+- The NA111-E does not forward Modbus exception replies. The simulator answered exception 02
+  four times, and the PC client timed out.
 - The PLC task interval, not baud, dominated the round time. Raising baud from 38,400 to
   115,200 barely changed a 50 ms-task round.
 - A cached gateway polling mode can report stale data as valid while a unit is silent (keep time

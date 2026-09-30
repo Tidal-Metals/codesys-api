@@ -2,6 +2,7 @@
 package serialrun
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"fmt"
@@ -175,7 +176,13 @@ func (r *Runner) reply(frame rtu.Frame, rxAt time.Time) error {
 		return fmt.Errorf("write reply to unit %d: %w", frame.Unit, err)
 	}
 	now := time.Now()
-	r.echo.Expect(reply, now, r.wireTime(len(reply))+echoMargin)
+	// A reply identical to its request (FC05/FC06) cannot be told apart from
+	// the master repeating that write, so skip it once the adapter is known
+	// not to echo; otherwise cyclic identical writes would be discarded.
+	distinct := !bytes.Equal(reply, frame.Raw)
+	if distinct || !r.echo.KnownAbsent() {
+		r.echo.Expect(reply, now, r.wireTime(len(reply))+echoMargin, distinct)
+	}
 	latency := now.Sub(rxAt).Microseconds()
 	r.status.Update(func(s *Snapshot) {
 		s.TxBytes += uint64(len(reply))

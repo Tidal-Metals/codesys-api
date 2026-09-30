@@ -15,6 +15,18 @@ DEFAULT_EMPTY_TEMPLATE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_empty.e
 DEFAULT_CHANNEL_SAMPLE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_channel_sample.export")
 DEFAULT_REAL_TEMPLATE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_real.export")
 DEFAULT_CANONICAL_TEMPLATE = os.path.join(TEMPLATE_DIR, "modbus_serial_slave_canonical_mixed.export")
+# Coil and discrete-input channels created by CODESYS's own Modbus editor code
+# (ChannelData.CreateSlaveChannel, bench 2026-09-30): packed BYTE arrays, one
+# BIT per coil, unused tail bits disabled.
+DEFAULT_COIL_TEMPLATE = os.path.join(TEMPLATE_DIR, "modbus_tcp_server_canonical_coils.export")
+
+BIT_FUNCTION_CODES = (1, 2, 5, 15)
+FUNCTION_CODE_TEXT = {
+    1: "Read Coils",
+    2: "Read Discrete Inputs",
+    5: "Write Single Coil",
+    15: "Write Multiple Coils",
+}
 
 SAMPLE_DEVICE_NAME = "TEST_SLAVE"
 SAMPLE_CHANNEL_NAME = "XML_GEN_SAMPLE"
@@ -103,6 +115,8 @@ def _generate_from_real_template(device_name, slave_address, channels, output_pa
 
     params = _host_params_list(root)
     samples = _load_real_channel_samples(params)
+    if any(_is_bit_channel(channel) for channel in normalized):
+        samples.update(_load_bit_channel_samples(DEFAULT_COIL_TEMPLATE))
 
     insert_index = _remove_real_channel_params(params)
     position = _max_position_id(root) + 2
@@ -178,7 +192,26 @@ def _load_real_channel_samples(params):
     }
 
 
-def _extract_real_channel_groups(params):
+def _load_bit_channel_samples(path):
+    """Coil/discrete IO samples (BYTE arrays) from a CODESYS-created export."""
+    if not os.path.exists(path):
+        raise ValueError("coil channel template not found: {0}".format(path))
+    params = _host_params_list(ET.parse(path).getroot())
+    samples = {"bitInput": None, "bitOutput": None}
+    for group in _extract_real_channel_groups(params, "BYTE"):
+        key = "bitOutput" if group.get("channelType") == "Output" else "bitInput"
+        if group["io"] is not None and samples[key] is None:
+            samples[key] = group
+    if samples["bitInput"] is None or samples["bitOutput"] is None:
+        raise ValueError("coil template needs an input and an output coil channel: {0}".format(path))
+    return samples
+
+
+def _is_bit_channel(channel):
+    return int(channel["accessType"]) in BIT_FUNCTION_CODES
+
+
+def _extract_real_channel_groups(params, element_type="WORD"):
     groups = []
     current = None
     for param in list(params):
@@ -211,7 +244,7 @@ def _extract_real_channel_groups(params):
             current["bit"] = copy.deepcopy(param)
             current["bitId"] = numeric_id
             continue
-        if param_type and param_type.startswith("std:ARRAY") and param_type.endswith("OF WORD") and current["io"] is None:
+        if param_type and param_type.startswith("std:ARRAY") and param_type.endswith("OF " + element_type) and current["io"] is None:
             current["io"] = copy.deepcopy(param)
             current["ioId"] = numeric_id
             current["channelType"] = _child_text(param, "Single", "ChannelType")
@@ -274,6 +307,25 @@ def _build_real_io_param(sample, channel, io_id, sample_id, channel_type):
     return param
 
 
+def _build_real_bit_io_param(sample, channel, io_id, sample_id, channel_type):
+    """Coil/discrete IO parameter: ARRAY[0..ceil(n/8)-1] OF BYTE, one BIT per coil."""
+    param = copy.deepcopy(sample)
+    upper = (_io_length(channel) + 7) // 8 - 1
+    sample_text = _dala_description(param)
+    _replace_text(param, str(sample_id), str(io_id))
+    _set_top_level_child_text(param, "Id", str(io_id))
+    _set_descendant_child_text(param, "Single", "Dimenstion1LowerBorder", "0")
+    _set_descendant_child_text(param, "Single", "Dimenstion1UpperBorder", str(upper))
+    _set_top_level_child_text(param, "ParamType", "std:ARRAY[0..{0}] OF BYTE".format(upper))
+    _set_top_level_child_text(param, "ChannelType", channel_type)
+    _set_param_visible_name(param, channel["name"])
+    if sample_text:
+        _replace_text(param, sample_text, FUNCTION_CODE_TEXT[int(channel["accessType"])])
+    _rebuild_io_byte_elements(param, channel, io_id)
+    _clear_io_variable_mappings(param)
+    return param
+
+
 def _build_real_trigger_param(sample, channel, trigger_id, sample_id):
     param = copy.deepcopy(sample)
     _replace_text(param, str(sample_id), str(trigger_id))
@@ -319,13 +371,12 @@ def _build_real_channel_params(samples, channel, index):
         params.append(trigger_param)
 
     io_id = _io_id_for_channel(slot_index, channel)
-    io_param = _build_real_io_param(
-        group["io"],
-        channel,
-        io_id,
-        group["ioId"],
-        "Output" if is_output else "Input",
-    )
+    channel_type = "Output" if is_output else "Input"
+    if _is_bit_channel(channel):
+        bit_group = samples["bitOutput" if is_output else "bitInput"]
+        io_param = _build_real_bit_io_param(bit_group["io"], channel, io_id, bit_group["ioId"], channel_type)
+    else:
+        io_param = _build_real_io_param(group["io"], channel, io_id, group["ioId"], channel_type)
     params.append(io_param)
     return params
 
@@ -684,6 +735,80 @@ def _rebuild_io_word_elements(param, channel, io_id):
 
         elements.append(word_element)
     return True
+
+
+def _rebuild_io_byte_elements(param, channel, io_id):
+    """Rebuild BYTE children, eight BIT children each, as CODESYS's editor does.
+
+    Coil n of the channel is bit n % 8 of byte n // 8 (Modbus LSB-first order).
+    Used bits describe their coil address (0x0008); bits past the channel
+    length are disabled with OfflineAccess None and describe the function.
+    """
+    length = _io_length(channel)
+    function_text = FUNCTION_CODE_TEXT[int(channel["accessType"])]
+    elements = _io_array_elements(param)
+    sample_bytes = [child for child in list(elements)
+                    if child.tag == "Single" and _child_text(child, "Single", "BaseType") == "BYTE"]
+    if not sample_bytes:
+        raise ValueError("coil IO sample has no BYTE element")
+    sample_bits = [bit for byte in sample_bytes for bit in _byte_bits(byte)]
+    enabled_bits = [bit for bit in sample_bits if _find_direct_child(bit, "Single", "OfflineAccess") is None]
+    offline_marks = [_find_direct_child(bit, "Single", "OfflineAccess") for bit in sample_bits
+                     if _find_direct_child(bit, "Single", "OfflineAccess") is not None]
+    if not enabled_bits or not offline_marks:
+        raise ValueError("coil IO sample needs an enabled and a disabled bit")
+    template_byte = copy.deepcopy(sample_bytes[0])
+    for child in sample_bytes:
+        elements.remove(child)
+
+    first_address = _channel_offset(channel)
+    for byte_index in range((length + 7) // 8):
+        byte_element = copy.deepcopy(template_byte)
+        _set_param_visible_name(byte_element, channel["name"])
+        _set_param_description(byte_element, function_text)
+        _set_top_level_child_text(byte_element, "Identifier", "{0}_{1}_0_0".format(io_id, byte_index))
+        _clear_io_variable_mappings(byte_element)
+        bit_list = _find_direct_child(_find_direct_child(byte_element, "Single", "SubElements"), "List2", "elements")
+        for child in list(bit_list):
+            bit_list.remove(child)
+        for bit_index in range(8):
+            coil = byte_index * 8 + bit_index
+            bit = copy.deepcopy(enabled_bits[0])
+            for node in bit.iter("Single"):
+                if node.attrib.get("Name") == "Identifier":
+                    node.text = "{0}_{1}_0_0_{2}".format(io_id, byte_index, bit_index)
+                elif node.attrib.get("Name") == "VisibleName":
+                    _set_top_level_child_text(node, "Default", "Bit{0}".format(bit_index))
+            if coil < length:
+                _set_param_description(bit, "0x{0:04X}".format(first_address + coil))
+            else:
+                _set_param_description(bit, function_text)
+                bit.insert(0, copy.deepcopy(offline_marks[0]))
+            bit_list.append(bit)
+        elements.append(byte_element)
+    return True
+
+
+def _io_array_elements(param):
+    dala = _find_direct_child(param, "Single", "DalaElement")
+    sub_elements = _find_direct_child(dala, "Single", "SubElements") if dala is not None else None
+    elements = _find_direct_child(sub_elements, "List2", "elements") if sub_elements is not None else None
+    if elements is None:
+        raise ValueError("IO array parameter has no element list")
+    return elements
+
+
+def _byte_bits(byte_element):
+    sub_elements = _find_direct_child(byte_element, "Single", "SubElements")
+    bit_list = _find_direct_child(sub_elements, "List2", "elements") if sub_elements is not None else None
+    return [child for child in list(bit_list)] if bit_list is not None else []
+
+
+def _dala_description(param):
+    dala = _find_direct_child(param, "Single", "DalaElement")
+    description = _find_direct_child(dala, "Single", "Description") if dala is not None else None
+    default = _find_direct_child(description, "Single", "Default") if description is not None else None
+    return default.text if default is not None else None
 
 
 def _clear_io_variable_mappings(param):
