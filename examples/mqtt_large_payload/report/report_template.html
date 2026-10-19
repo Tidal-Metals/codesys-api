@@ -29,7 +29,7 @@ h3 { font-size: 1.05rem; margin: 24px 0 6px; }
 .meta { color: var(--ink-2); margin: 0; }
 p, li, .prose { max-width: 72ch; }
 a { color: var(--accent); }
-code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 0.88em; }
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 0.88em; font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
 :not(pre) > code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
 pre.code { background: var(--code-bg); padding: 14px 16px; border-radius: 8px; overflow-x: auto; line-height: 1.45; max-width: 100%; }
 nav.toc { position: sticky; top: 0; z-index: 5; background: var(--page); border-bottom: 1px solid var(--grid); }
@@ -71,6 +71,14 @@ svg .s1 { fill: var(--s1); } svg .s2 { fill: var(--s2); } svg .s0 { fill: var(--
 svg .mark:hover { opacity: 0.8; }
 svg.diagram .box { fill: var(--surface); stroke: var(--axis); stroke-width: 1.5; }
 svg.diagram .box.dim { stroke-dasharray: 5 4; }
+svg.diagram .box.cut { stroke: var(--bad); }
+svg.diagram .box.ok { stroke: var(--good); }
+svg.diagram .cut-label { fill: var(--bad); font-size: 11.5px; }
+svg.diagram .cell { fill: var(--surface); stroke: var(--axis); stroke-width: 1; }
+svg.diagram .cell.filled { fill: var(--code-bg); }
+svg.diagram .cell.new { fill: var(--s1); fill-opacity: 0.18; stroke: var(--s1); }
+svg.diagram .cell.term { fill: var(--warn-bg); stroke: var(--warn); }
+svg.diagram .cell + text { font-family: ui-monospace, Consolas, monospace; }
 svg.diagram text { fill: var(--ink); font-size: 13px; }
 svg.diagram .sub { fill: var(--ink-2); font-size: 11.5px; }
 svg.diagram .arrow { stroke: var(--accent); stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
@@ -97,7 +105,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
   <p class="meta">Why the BCNF PLC could only publish about 250 characters per message, proof on the bench that one message can carry 19.7 KB, and what larger payloads cost the PLC with production settings.</p>
 </header>
 <nav class="toc"><ul>
-  <li><a href="#summary">Summary</a></li><li><a href="#cause">Where 255 comes from</a></li><li><a href="#setup">Test setup</a></li>
+  <li><a href="#summary">Summary</a></li><li><a href="#cause">Where 255 comes from</a></li><li><a href="#build">How the payload is built</a></li><li><a href="#setup">Test setup</a></li>
   <li><a href="#recipe">Recipe</a></li><li><a href="#code">Code</a></li><li><a href="#results">Results</a></li>
   <li><a href="#performance">Performance</a></li><li><a href="#issues">What worked, what didn't</a></li>
   <li><a href="#caveats">Not tested</a></li><li><a href="#state">Bench state and files</a></li>
@@ -129,6 +137,111 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 @@library_snippet@@
 <p>The maintainer says the same on GitHub. In <a href="https://github.com/stefandreyer/CODESYS-MQTT/issues/17">issue #17</a> he notes that the library has no string-size limit and that CODESYS's own string functions only handle 255 characters, which is why the library has its own pointer-based helpers. <a href="https://github.com/stefandreyer/CODESYS-MQTT/issues/76">Issue #76</a> ("Limited String payload size") ended with long JSON payloads working; the confusion there was the debugger showing only 80 characters behind a pointer. <code>COM_CONFIG.MaxPayloadSize</code> (default 2000) limits <em>received</em> messages only.</p>
 <div class="callout"><strong>The CONCAT control copy.</strong> To reproduce what the team tried, the demo can also build the same text with <code>CONCAT</code> into a <code>STRING(8000)</code> and publish it on <code>raw_data_demo/concat</code>. In the first runs it came out at exactly 255 characters every time (<code>LastConcatLength = 255</code> on the PLC, @@concat_messages@@ messages of 255 bytes on the wire), cut off mid-line as a clean prefix of the full message. The pointer-built payload in the same scan, from the same lines, arrived complete. This is a demonstration, not production work, so it's now off by default (<code>IsConcatControlEnabled</code>) and is not part of the performance numbers.</div>
+</section>
+
+<section id="build">
+<h2>How the payload is built</h2>
+<p class="prose">This is where the demo differs from BCNF. The MQTT call is the same <code>MQTTPublish</code> with <code>PayloadString := ADR(...)</code>; what changes is how the text gets into memory before that call, how many times it is copied, and how often it is rebuilt.</p>
+
+<h3>The two pipelines</h3>
+<figure>
+<svg class="diagram" viewBox="0 0 960 250" role="img" aria-label="BCNF builds each group with CONCAT into STRING(255) and copies it three times before seven publishers; the demo formats one short line at a time, appends it into one large buffer and hands its address to one publisher">
+  <defs>
+    <marker id="arrowhead2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+  </defs>
+  <text x="10" y="22" font-weight="600">BCNF today (per group, 7 groups)</text>
+  <g><rect class="box" x="10" y="36" width="100" height="56" rx="8"/><text x="22" y="60">Values</text><text class="sub" x="22" y="78">REAL / BOOL</text></g>
+  <g><rect class="box cut" x="134" y="36" width="150" height="56" rx="8"/><text x="146" y="60">CONCAT chain</text><text class="sub" x="146" y="78">result ≤ 255 chars</text></g>
+  <g><rect class="box cut" x="308" y="36" width="150" height="56" rx="8"/><text x="320" y="60">BCNF_*_STRING</text><text class="sub" x="320" y="78">STRING(255)</text></g>
+  <g><rect class="box cut" x="482" y="36" width="140" height="56" rx="8"/><text x="494" y="60">fullPayload_*</text><text class="sub" x="494" y="78">copy, STRING(255)</text></g>
+  <g><rect class="box cut" x="646" y="36" width="140" height="56" rx="8"/><text x="658" y="60">FirstPublish input</text><text class="sub" x="658" y="78">copy ×2, STRING(255)</text></g>
+  <g><rect class="box" x="810" y="36" width="140" height="56" rx="8"/><text x="822" y="60">7 × MQTTPublish</text><text class="sub" x="822" y="78">ADR(fullPayloadN)</text></g>
+  <path class="arrow" style="marker-end:url(#arrowhead2)" d="M110,64 L132,64"/><path class="arrow" style="marker-end:url(#arrowhead2)" d="M284,64 L306,64"/>
+  <path class="arrow" style="marker-end:url(#arrowhead2)" d="M458,64 L480,64"/><path class="arrow" style="marker-end:url(#arrowhead2)" d="M622,64 L644,64"/>
+  <path class="arrow" style="marker-end:url(#arrowhead2)" d="M786,64 L808,64"/>
+  <text class="cut-label" x="134" y="110">every red box can silently cut the text at 255 · rebuilt every scan</text>
+  <text x="10" y="150" font-weight="600">Demo (one message, all values)</text>
+  <g><rect class="box" x="10" y="164" width="100" height="56" rx="8"/><text x="22" y="188">Values</text><text class="sub" x="22" y="206">snapshot</text></g>
+  <g><rect class="box" x="134" y="164" width="150" height="56" rx="8"/><text x="146" y="188">BuildLine</text><text class="sub" x="146" y="206">one line, ≤ 80 chars</text></g>
+  <g><rect class="box ok" x="308" y="164" width="150" height="56" rx="8"/><text x="320" y="188">AppendText</text><text class="sub" x="320" y="206">byte copy at Used</text></g>
+  <g><rect class="box ok" x="482" y="164" width="140" height="56" rx="8"/><text x="494" y="188">LargePayload</text><text class="sub" x="494" y="206">STRING(30000)</text></g>
+  <g><rect class="box" x="646" y="164" width="140" height="56" rx="8"/><text x="658" y="188">ADR(LargePayload)</text><text class="sub" x="658" y="206">no copy</text></g>
+  <g><rect class="box" x="810" y="164" width="140" height="56" rx="8"/><text x="822" y="188">1 × MQTTPublish</text><text class="sub" x="822" y="206">reads via pointer</text></g>
+  <path class="arrow" style="marker-end:url(#arrowhead2)" d="M110,192 L132,192"/><path class="arrow" style="marker-end:url(#arrowhead2)" d="M284,192 L306,192"/>
+  <path class="arrow" style="marker-end:url(#arrowhead2)" d="M458,192 L480,192"/><path class="arrow" style="marker-end:url(#arrowhead2)" d="M622,192 L644,192"/>
+  <path class="arrow" style="marker-end:url(#arrowhead2)" d="M786,192 L808,192"/>
+  <text class="sub" x="134" y="240">only short pieces ever pass through CONCAT or STRING(255) · built once per publish</text>
+</svg>
+<figcaption>Where the text can be cut, and how many times it is copied, in each approach.</figcaption>
+</figure>
+
+<h3>What BCNF does today</h3>
+<p class="prose">Excerpts from <code>PLC_BCNF_4_16_26.project</code>, trimmed. Every group follows the same pattern: start a <code>STRING(255)</code>, then one <code>CONCAT</code> for the separator and one for the value, for every value. The project has about 200 <code>CONCAT</code> calls in total.</p>
+@@bcnf_today@@
+<p class="prose">Four things in this code limit or slow it down:</p>
+<ul>
+  <li><strong>Every <code>CONCAT</code> returns at most 255 characters.</strong> Once a group passes 255, the rest of it is dropped without an error. The setpoints are split into <code>BCNF_SETPOINT_STRING_1</code> and <code>_2</code>, presumably to stay under that limit; more values means more groups, hence "40 publishers".</li>
+  <li><strong>Every assignment into a <code>STRING(255)</code> also truncates silently</strong>, and each group is copied three times on its way to the publisher: into <code>fullPayload_*</code>, into the <code>FirstPublish</code> input and into <code>fullPayloadN</code>. Declaring any one of them bigger doesn't help while the others stay at 255.</li>
+  <li><strong>Each <code>CONCAT</code> re-copies the whole string built so far</strong>, so a group costs more the longer it gets. The demo's append only copies the new piece.</li>
+  <li><strong><code>StringPublication()</code> runs every scan</strong>, from the body of <code>FB_InterlockMatrix</code>, although <code>FirstPublish</code> only sends once a second. BCNF publishes 103 values (48 REALs, 55 flags and counters); at the rates measured on the bench that's an estimated 3 ms of formatting in every scan of its 50 ms task, 20 times as often as it's needed.</li>
+</ul>
+
+<h3>AppendText, step by step</h3>
+<p class="prose">The whole technique is one small function. The caller owns a large <code>STRING(n)</code> buffer and a <code>Used</code> counter; <code>AppendText</code> copies one short piece to the end and moves the counter.</p>
+@@append_text@@
+<figure>
+<svg class="diagram" viewBox="0 0 960 190" role="img" aria-label="Appending 'DEMO_COUNT:500' plus newline to a buffer holding 'DEMO_SEQ:7' plus newline: bytes 11 to 25 are written, a zero terminator goes at 26 and Used moves from 11 to 26">
+  <text x="10" y="20" font-weight="600">Before: Used = 11</text>
+  <g><rect class="cell filled" x="10" y="30" width="330" height="36" rx="4"/><text x="22" y="53">D E M O _ S E Q : 7 \n</text><text class="sub" x="22" y="84">bytes 0–10</text></g>
+  <g><rect class="cell term" x="344" y="30" width="36" height="36" rx="4"/><text x="354" y="53">0</text><text class="sub" x="344" y="84">11</text></g>
+  <g><rect class="cell" x="384" y="30" width="566" height="36" rx="4"/><text class="sub" x="396" y="53">free … up to SIZEOF(buffer) − 1</text></g>
+  <text x="10" y="118" font-weight="600">After AppendText(Text := 'DEMO_COUNT:500$N'): Used = 26</text>
+  <g><rect class="cell filled" x="10" y="128" width="330" height="36" rx="4"/><text x="22" y="151">D E M O _ S E Q : 7 \n</text><text class="sub" x="22" y="182">bytes 0–10, untouched</text></g>
+  <g><rect class="cell new" x="344" y="128" width="420" height="36" rx="4"/><text x="356" y="151">D E M O _ C O U N T : 5 0 0 \n</text><text class="sub" x="356" y="182">bytes 11–25, copied from Text</text></g>
+  <g><rect class="cell term" x="768" y="128" width="36" height="36" rx="4"/><text x="778" y="151">0</text><text class="sub" x="768" y="182">26</text></g>
+  <g><rect class="cell" x="808" y="128" width="142" height="36" rx="4"/><text class="sub" x="818" y="151">free</text></g>
+</svg>
+<figcaption>One append: check it fits, copy the piece at <code>Used</code>, write the zero terminator after it, advance <code>Used</code>.</figcaption>
+</figure>
+<ul>
+  <li><strong>Capacity is <code>SIZEOF(buffer)</code>.</strong> A <code>STRING(30000)</code> occupies 30,001 bytes, so the check <code>Used + TextLength + 1 &gt; Capacity</code> always leaves room for the terminator.</li>
+  <li><strong>The terminator is rewritten after every append</strong>, so the buffer is a valid string at all times. That's what the MQTT library relies on: it measures the payload by scanning to the zero byte.</li>
+  <li><strong><code>Used</code> is kept by the caller</strong> (<code>VAR_IN_OUT</code>) instead of measuring the buffer each time, so an append costs only the length of the piece, however big the payload already is.</li>
+  <li><strong>All or nothing.</strong> If a piece doesn't fit, the function returns FALSE and writes nothing. The caller ANDs the results and skips publishing a message that didn't fit, so the bridge never gets half a payload.</li>
+  <li><strong>The piece is a <code>STRING(255)</code> input</strong>, which is fine: only the running total needs to be large. That's why <code>CONCAT</code> and <code>REAL_TO_STRING</code> remain safe for formatting a single value or line.</li>
+</ul>
+
+<h3>Formatting one value</h3>
+<p class="prose">The demo formats each line with ordinary string functions, which is safe because a line is far below 255 characters. Values use BCNF's own rounding and conversion, so the timings reflect what BCNF would pay.</p>
+@@build_line@@
+<p class="prose">This conversion is where the time goes: about 36 µs per REAL value on the bench PLC, against about 31 µs for an integer. The append itself is a short byte loop.</p>
+
+<h3>When the buffer may change</h3>
+<p class="prose">The library doesn't copy the payload when <code>send</code> rises. It keeps the pointer and copies the text into its TCP buffer over the next few scans; at QoS 0 it reported <code>done</code> after 6 scans for 8.9 KB and 10 scans for 19.7 KB. So the buffer has to stay untouched from the request until <code>done</code> or <code>SendTimeout</code>. The demo builds only when no request is pending:</p>
+@@lifecycle_snippet@@
+
+<h3>Applying it to BCNF's format</h3>
+<p class="prose">BCNF doesn't need to change its message format. Two small helpers append a value in exactly the form <code>StringPublication</code> produces today (<code>", 12.34"</code> or <code>", 1"</code>), and every group goes into one buffer as its own line:</p>
+@@append_group_real@@
+@@append_group_bool@@
+@@bcnf_example@@
+<p class="prose">The result is one message with one line per group, the same lines BCNF sends today (values made up for illustration):</p>
+@@bcnf_example_output@@
+<ul>
+  <li><strong>The bridge should accept this unchanged.</strong> Its <code>raw_data</code> ingest splits a message on newlines and expands each <code>[GROUP, v1, v2, …]</code> line through its publish map (<code>raw_ingest.go</code>, <code>raw_publish_map.go</code> in sparkplug-bridge). That's from reading the bridge code; it hasn't been run end to end.</li>
+  <li><strong>The setpoint split can go</strong>, but only together with a publish-map change on the bridge. Until then, keep sending <code>BCNF_SETPOINT_1</code> and <code>_2</code> as two lines.</li>
+  <li><strong><code>AND_THEN</code></strong> stops further appends after the first one that doesn't fit, so a line is never finished with values missing from its middle.</li>
+  <li>These helpers and the example compile against the demo project with no errors or warnings. They have not run on a PLC; the demo's own build (<code>BuildLine</code> + <code>AppendText</code>) is what the measurements cover.</li>
+</ul>
+
+<h3>Pitfalls with long strings in CODESYS</h3>
+<ul>
+  <li><strong>Standard string functions</strong> (<code>CONCAT</code>, <code>LEFT</code>, <code>RIGHT</code>, <code>MID</code>, <code>INSERT</code>, <code>REPLACE</code>, …) work on <code>STRING(255)</code>. Use them on short pieces only.</li>
+  <li><strong>Any <code>STRING(255)</code> on the path</strong> — a variable, an FB input, a function result — truncates without an error.</li>
+  <li><strong>Passing a big <code>STRING</code> into an FB input copies all of it every call.</strong> Pass <code>ADR()</code> or use <code>VAR_IN_OUT</code>.</li>
+  <li><strong>Changing the buffer while a publish is in flight</strong> sends a mix of old and new text.</li>
+  <li><strong>Commas inside values</strong> would break the bracket format. <code>REAL_TO_STRING</code> doesn't produce them, but string tags would need escaping.</li>
+</ul>
 </section>
 
 <section id="setup">
@@ -181,16 +294,12 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 </section>
 
 <section id="code">
-<h2>Code</h2>
-<h3>AppendText: append without the 255-character cap</h3>
-@@append_text@@
+<h2>Client and publisher code</h2>
+<p class="prose">The payload build itself is covered in <a href="#build">How the payload is built</a>. This is the rest of the demo program: the client, the publisher, and the loop that ties them together.</p>
 <h3>Declarations and client</h3>
 @@decl_snippet@@
 <h3>Build and publish</h3>
 @@publish_snippet@@
-<details><summary>BuildLine action (formats one line)</summary>
-@@build_line@@
-</details>
 <details><summary>NowUs: microsecond clock for the performance counters</summary>
 <p>Needs the SysTimeCore library; the call has to be qualified.</p>
 @@now_us@@

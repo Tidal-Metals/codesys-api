@@ -241,6 +241,53 @@ MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := '192.168.50.24
 \tTIMEOUT := T#10S, TLS := FALSE);
 // once: LargePublisher.SetMqttInOut(MQTT_IN_OUT := MqttLink);"""
 
+BCNF_TODAY_SNIPPET = """// FB_InterlockMatrix body: runs every scan of the 50 ms task
+ProcessMQTTMessage();
+StringPublication();
+
+// StringPublication action: one STRING(255) per group, built with CONCAT
+BCNF_ANALOG_STRING := '[BCNF_ANALOG, ';
+BCNF_ANALOG_STRING := CONCAT(BCNF_ANALOG_STRING, REAL_TO_STRING(DINT_TO_REAL(TRUNC(AIT_1508_V * 100.0 + SEL(AIT_1508_V >= 0.0, -0.5, 0.5))) / 100.0));
+BCNF_ANALOG_STRING := CONCAT(BCNF_ANALOG_STRING, ', ');
+BCNF_ANALOG_STRING := CONCAT(BCNF_ANALOG_STRING, REAL_TO_STRING(DINT_TO_REAL(TRUNC(FIT_1506_F * 100.0 + SEL(FIT_1506_F >= 0.0, -0.5, 0.5))) / 100.0));
+// ... one CONCAT pair per value, 14 values in this group ...
+BCNF_ANALOG_STRING := CONCAT(BCNF_ANALOG_STRING, ']');
+// ... the same for DIGITAL (9), ALARM (43), SETPOINT_1 (26), SETPOINT_2 (6), OUTPUT_OTHER (3), STATUS (2)
+
+fullPayload_BCNF_ANALOG_STRING := BCNF_ANALOG_STRING;       // copy 1, STRING(255)
+
+// POU1: each group is passed by value into FirstPublish
+FirstPublish(InterlockData1 := call_statemachine.fullPayload_BCNF_ANALOG_STRING, ...);   // copy 2, STRING(255) input
+
+// FirstPublish, when its 1 s timer fires
+fullPayload1 := InterlockData1;                             // copy 3, STRING(255)
+publisher1(Topic := ADR('raw_data'), PayloadString := ADR(fullPayload1), PublishAsString := TRUE,
+\tQoSin := MQTT.QoS.AtMostOnce, MRetain := FALSE, send := readyToSend AND (LEN(fullPayload1) > 0));
+// ... publisher2 to publisher7, one per group"""
+
+LIFECYCLE_SNIPPET = """IF PublishTimer.Q AND IsBrokerConnected THEN
+\tIF IsLargeRequested THEN
+\t\tSkippedBusyCount := SkippedBusyCount + 1;   // previous message still in flight: leave the buffer alone
+\tELSE
+\t\t// ... build into LargePayload (above) ...
+\t\tIsLargeRequested := IsBuildOk;              // never publish a message that didn't fit
+\tEND_IF
+END_IF
+
+LargePublisher(..., PayloadString := ADR(LargePayload), send := IsLargeRequested);
+
+IF LargePublisher.done OR LargePublisher.SendTimeout THEN
+\tIsLargeRequested := FALSE;                     // the buffer may be rebuilt from the next timer tick
+END_IF"""
+
+BCNF_EXAMPLE_OUTPUT = """[BCNF_ANALOG, 7.12, 31.5, 12.04, 1.98, 2.31, 0, 0, 640.2, 18.75, 21.4, 3.2, 44.9, 31.07, 460.0]
+[BCNF_DIGITAL, 0, 1, 0, 1, 1, 0, 0, 1, 1]
+[BCNF_ALARM, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...]
+[BCNF_SETPOINT_1, 9.5, 9.0, 6.0, 6.5, ...]
+[BCNF_SETPOINT_2, ...]
+[BCNF_OUTPUT_OTHER, 1, 45.0, 45.0]
+[BCNF_STATUS_STRING, 18234, TRUE]"""
+
 LIBRARY_SNIPPET = """// MqttPublish (MQTT 1.2.0.7), string payloads:
 MyOutData.PaketData.MqttPayloadLength := CommonTypesAndFunctions.LEN(PayloadString);
 MyOutData.PaketData.MqttPayload := PayloadString;
@@ -290,6 +337,12 @@ def build_html():
         concat_messages=sum(data["concat"]["messages"] for _, data in verifications),
         issue_rows=issue_rows(),
         append_text=code(st_source("AppendText")),
+        bcnf_today=code(BCNF_TODAY_SNIPPET),
+        lifecycle_snippet=code(LIFECYCLE_SNIPPET),
+        append_group_real=code(st_source("bcnf_style/AppendGroupReal")),
+        append_group_bool=code(st_source("bcnf_style/AppendGroupBool")),
+        bcnf_example=code(st_source("bcnf_style/BcnfPayloadExample")),
+        bcnf_example_output=code(BCNF_EXAMPLE_OUTPUT, "text"),
         decl_snippet=code(DECL_SNIPPET),
         publish_snippet=code(PUBLISH_SNIPPET),
         build_line=code(st_source("PLC_PRG.BuildLine", "impl")),

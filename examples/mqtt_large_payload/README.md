@@ -10,6 +10,7 @@ message without trouble. The 255-character cap seen on the BCNF PLC comes from `
 | Path | Purpose |
 |---|---|
 | `st/` | ST sources: `AppendText` (append without the 255 cap), `PLC_PRG`, its `BuildLine` action, `NowUs` |
+| `st/bcnf_style/` | BCNF's `[GROUP, v1, v2, ...]` format without the cap: `AppendGroupReal`, `AppendGroupBool`, `BcnfPayloadExample`. Compiled against the demo project, not run on a PLC |
 | `build_demo_project.py` | Headless build: turns a copy of `modbus_tcp_bench.project` into the demo project |
 | `apply_session.py` | Applies the sources to the demo project open in the API session and rebuilds |
 | `deploy_demo.py` | Full download to the bench PLC, start, boot application |
