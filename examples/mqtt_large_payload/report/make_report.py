@@ -96,8 +96,10 @@ TASK_INTERVAL_MS = 50
 
 
 def expected_publishes(run):
-    # The TON restarts one scan after it fires, so the real period is PublishPeriod + one task interval.
-    return int(run["seconds"] * 1000 / (run["periodMs"] + TASK_INTERVAL_MS))
+    # TON(IN := NOT Q): Q is seen one scan after it fires, IN is FALSE for that scan (reset),
+    # and timing restarts the scan after, so the real period is PublishPeriod + two task intervals.
+    # Confirmed on the broker: 381 messages in 420 s, one per 1.10 s.
+    return round(run["seconds"] * 1000 / (run["periodMs"] + 2 * TASK_INTERVAL_MS))
 
 
 def timing_cell(run):

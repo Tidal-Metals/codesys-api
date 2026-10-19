@@ -224,7 +224,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 @@perf_rows@@
 </tbody>
 </table></div>
-<p class="prose">"Request → done" runs from the build finishing to the publisher's <code>done</code>: at QoS 0 that is the payload handed to TCP, at QoS 1 the broker's PUBACK. "Expected" allows for the publish timer restarting one scan after it fires, which makes the real period 1.05 s.</p>
+<p class="prose">"Request → done" runs from the build finishing to the publisher's <code>done</code>: at QoS 0 that is the payload handed to TCP, at QoS 1 the broker's PUBACK. "Expected" uses the real publish period of 1.1 s: the self-resetting timer (<code>IN := NOT Q</code>) spends one scan resetting after it fires and starts timing again the scan after, so each 1 s period costs two extra 50 ms scans. The broker confirms it: 381 messages in 420 s. BCNF's <code>FirstPublish</code> uses the same timer pattern, so it also publishes about every 1.1 s.</p>
 <h3>What the numbers say</h3>
 <ul>
   <li><strong>Every scan started on time</strong>, even at 1,100 values (19.7 KB). The longest gap between scan starts was 51.0 ms against a 50 ms interval.</li>
