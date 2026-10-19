@@ -23,6 +23,8 @@ REMOVED_DEVICES = ["Modbus_TCP_Client"]
 DYNAMIC_MEMORY_BYTES = 100000
 FUNCTIONS = [("AppendText", "BOOL"), ("NowUs", "ULINT")]
 ACTIONS = [("PLC_PRG", "BuildLine")]
+# (object name, source path under st/): BCNF's StringPublication, called by PLC_PRG when enabled
+PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy")]
 
 
 def read_source(source_dir, name):
@@ -80,6 +82,11 @@ def write_sources(application, source_dir, steps):
         pou = direct_child(application, name) or application.create_pou(
             name=name, type=PouType.Function, return_type=return_type)
         declaration, implementation = read_source(source_dir, name)
+        pou.textual_declaration.replace(declaration)
+        pou.textual_implementation.replace(implementation)
+    for name, source_name in PROGRAMS:
+        pou = direct_child(application, name) or application.create_pou(name=name, type=PouType.Program)
+        declaration, implementation = read_source(source_dir, source_name)
         pou.textual_declaration.replace(declaration)
         pou.textual_implementation.replace(implementation)
     for parent_name, action_name in ACTIONS:

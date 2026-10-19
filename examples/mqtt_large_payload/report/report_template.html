@@ -42,6 +42,8 @@ nav.toc a { text-decoration: none; }
 .stat { background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; padding: 12px 14px; }
 .stat .n { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; }
 .stat .l { color: var(--ink-2); font-size: 0.88rem; }
+.stat.warn-stat { border-color: var(--warn); background: var(--warn-bg); }
+.callout.bad-callout { background: var(--bad-bg); border-left: 4px solid var(--bad); }
 table { border-collapse: collapse; width: 100%; background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; font-size: 0.92rem; margin: 10px 0; }
 th, td { padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; text-align: left; }
 th { position: sticky; top: 38px; background: var(--surface); font-weight: 600; color: var(--ink-2); }
@@ -117,11 +119,13 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
   <strong>Summary</strong>
   <ul>
     <li><strong>The MQTT library has no 255-character limit.</strong> The cap comes from CODESYS's Standard string functions (<code>CONCAT</code> and friends), which return at most 255 characters, and from passing payloads through <code>STRING(255)</code> variables. That's why declaring a <code>STRING(8000)</code> didn't help.</li>
+    <li><strong>BCNF rebuilds its whole payload in every scan, though it only sends about once a second.</strong> <code>StringPublication()</code> runs from the body of the interlock FB, so all seven strings are rebuilt 20 times a second and @@bcnf_wasted@@ builds are thrown away. Measured with BCNF's own code on the bench: <strong>@@bcnf_build_mean_ms@@ ms per scan</strong> (@@bcnf_build_max_ms@@ ms worst case), about @@bcnf_cpu_pct@@% of every 50 ms cycle. Building only in the scan that publishes cuts that to about @@bcnf_cpu_fixed_pct@@%. This fix is independent of the 255-character problem and can go in first (<a href="#every-scan">details</a>).</li>
     <li><strong>One publisher is enough.</strong> Built with a pointer append instead of <code>CONCAT</code>, one message carried up to 1,100 two-decimal values (19.7 KB) to the HQ broker once a second, at QoS 0 and QoS 1. All @@total_messages@@ messages were correct, @@total_values@@ values checked, with no gaps or timeouts. We don't need 40 parallel publishers.</li>
     <li><strong>It fits in a 50 ms task, but the build is the cost to watch.</strong> With production settings (BCNF-style REAL formatting, one publish a second, no extra work), building the text takes about 36 µs per value, all in one scan: 19 ms for 500 values, 40 ms for 1,100. Every scan started on time. Sending is cheap: at most 2.5 ms per scan. BCNF's roughly 10 KB is about 550 values, so about 20 ms of build on top of its interlock logic. A separate lower-priority task for the MQTT work keeps that away from the control logic.</li>
   </ul>
 </div>
 <div class="stats">
+  <div class="stat warn-stat"><div class="n">@@bcnf_build_mean_ms@@ ms</div><div class="l">BCNF spends in every scan rebuilding strings it sends once a second</div></div>
   <div class="stat"><div class="n">19.7 KB</div><div class="l">largest single message, every value correct</div></div>
   <div class="stat"><div class="n">@@total_values@@</div><div class="l">values checked on the broker, 0 wrong</div></div>
   <div class="stat"><div class="n">40 ms</div><div class="l">worst scan at 1,100 values, inside the 50 ms task</div></div>
@@ -183,8 +187,25 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
   <li><strong>Every <code>CONCAT</code> returns at most 255 characters.</strong> Once a group passes 255, the rest of it is dropped without an error. The setpoints are split into <code>BCNF_SETPOINT_STRING_1</code> and <code>_2</code>, presumably to stay under that limit; more values means more groups, hence "40 publishers".</li>
   <li><strong>Every assignment into a <code>STRING(255)</code> also truncates silently</strong>, and each group is copied three times on its way to the publisher: into <code>fullPayload_*</code>, into the <code>FirstPublish</code> input and into <code>fullPayloadN</code>. Declaring any one of them bigger doesn't help while the others stay at 255.</li>
   <li><strong>Each <code>CONCAT</code> re-copies the whole string built so far</strong>, so a group costs more the longer it gets. The demo's append only copies the new piece.</li>
-  <li><strong><code>StringPublication()</code> runs every scan</strong>, from the body of <code>FB_InterlockMatrix</code>, although <code>FirstPublish</code> only sends once a second. BCNF publishes 103 values (48 REALs, 55 flags and counters); at the rates measured on the bench that's an estimated 3 ms of formatting in every scan of its 50 ms task, 20 times as often as it's needed.</li>
+  <li><strong><code>StringPublication()</code> runs every scan</strong>, although <code>FirstPublish</code> only sends about once a second. This one is measured below.</li>
 </ul>
+
+<h3 id="every-scan">Measured: BCNF rebuilds its payload in every scan</h3>
+<div class="callout bad-callout"><strong>The single biggest waste in BCNF's MQTT code, and the easiest to fix.</strong> <code>FB_InterlockMatrix</code> calls <code>StringPublication()</code> at the end of its body, and the FB runs in every 50 ms scan. So the seven payload strings — 103 values, 48 of them REALs, about 200 <code>CONCAT</code> calls — are rebuilt 20 times a second. <code>FirstPublish</code> sends them about once every 1.1 s, so @@bcnf_wasted@@ builds are thrown away unused.</div>
+<p class="prose">To put a number on it, the demo now contains <code>BcnfStringPublicationCopy</code>: BCNF's <code>StringPublication</code> action copied verbatim, with the 117 tags it reads declared with their BCNF types and non-zero values. With MQTT publishing paused, the bench PLC ran 30 s without it and 30 s calling it every scan:</p>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th class="num">Without the build</th><th class="num">BCNF's build every scan</th></tr></thead>
+<tbody>
+<tr><td>Average scan (sampled every 0.5 s)</td><td class="num">@@bcnf_scan_before_ms@@ ms</td><td class="num"><strong>@@bcnf_scan_after_ms@@ ms</strong></td></tr>
+<tr><td>Worst scan</td><td class="num">@@bcnf_worst_before_ms@@ ms</td><td class="num">@@bcnf_worst_after_ms@@ ms</td></tr>
+<tr><td>StringPublication, per call</td><td class="num">–</td><td class="num"><strong>@@bcnf_build_mean_ms@@ ms</strong> average, @@bcnf_build_max_ms@@ ms max</td></tr>
+<tr><td>Builds in 30 s</td><td class="num">0</td><td class="num">@@bcnf_builds@@ (one per scan)</td></tr>
+<tr><td>Share of the 50 ms cycle</td><td class="num">–</td><td class="num">about @@bcnf_cpu_pct@@%, continuously</td></tr>
+</tbody>
+</table></div>
+<p class="prose">On BCNF that's about @@bcnf_build_mean_ms@@ ms added to every scan of the interlock task, all the time, for no benefit. Building only in the scan that publishes keeps the same messages and cuts the cost to about @@bcnf_cpu_fixed_pct@@% of the task. It doesn't depend on the 255-character fix and can go in on its own:</p>
+@@every_scan_fix@@
+<p class="prose">This is a sketch against BCNF's structure; it hasn't been compiled into BCNF. Because <code>call_statemachine</code> runs before <code>FirstPublish</code> in <code>POU1</code>, the strings are rebuilt in the same scan that <code>FirstPublish</code> copies them, so nothing goes stale. The same rule carries into the new design: build once per publish, never per scan.</p>
 
 <h3>AppendText, step by step</h3>
 <p class="prose">The whole technique is one small function. The caller owns a large <code>STRING(n)</code> buffer and a <code>Used</code> counter; <code>AppendText</code> copies one short piece to the end and moves the counter.</p>
@@ -285,6 +306,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
   <li><strong>One buffer per message, sized for the largest payload plus margin</strong>, e.g. <code>LargePayload : STRING(30000)</code>. A two-decimal value line is about 18 bytes, so 30,000 bytes holds about 1,600 values.</li>
   <li><strong>Build the text with a pointer append</strong> (<code>AppendText</code> below), not <code>CONCAT</code>. <code>CONCAT</code> and <code>REAL_TO_STRING</code> are fine for one short piece under 255 characters; only the running total has to avoid them. Keep the current length in a variable so each append doesn't rescan the buffer.</li>
   <li><strong>Hand the publisher a pointer to the buffer</strong>: <code>PayloadString := ADR(LargePayload)</code>, <code>PublishAsString := TRUE</code>. Don't copy the payload through <code>STRING(255)</code> inputs or variables on the way.</li>
+  <li><strong>Build once per publish, never every scan.</strong> Call the build from the publish timer, not from logic that runs in every scan; BCNF's every-scan rebuild costs about @@bcnf_build_mean_ms@@ ms per scan for nothing (<a href="#every-scan">measured</a>).</li>
   <li><strong>Leave the buffer alone while a publish is in flight.</strong> The library reads it through the pointer over several scans. Rebuild only after <code>done</code> or <code>SendTimeout</code>.</li>
   <li><strong>Treat <code>done</code> and <code>SendTimeout</code> as one-scan pulses.</strong> Clear each publisher's own request on either. Don't wait for several publishers' <code>done</code> in the same scan; that's the stall risk in BCNF's <code>FirstPublish</code>.</li>
   <li><strong>Turn on dynamic memory</strong> in Application Properties › Build (the demo uses 100,000 bytes, BCNF already has 50,000). Without it the library won't compile.</li>
@@ -353,6 +375,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 </table></div>
 <h3>Recommendations for BCNF</h3>
 <ol>
+  <li><strong>Stop rebuilding the payload every scan.</strong> Call <code>StringPublication()</code> only in the scan that publishes. That saves about @@bcnf_build_mean_ms@@ ms in every 50 ms scan today, needs no other change, and can ship first (<a href="#every-scan">measurement and fix</a>).</li>
   <li><strong>Put the MQTT build and publish in a separate lower-priority task</strong> (e.g. 100 ms) that copies a snapshot of the published values first. On the bench a 1,100-value build fits a 50 ms scan, but BCNF's interlock logic shares that scan; a separate task keeps a 20–40 ms build away from control code entirely.</li>
   <li><strong>If it has to stay in the main task, build over several scans</strong> (e.g. 200 values per scan) and publish when the buffer is complete.</li>
   <li><strong>Format with fewer intermediate strings</strong>: append the name, the colon and the value straight into the buffer instead of nesting <code>CONCAT</code>s. I'd expect this to cut the build time noticeably, but I haven't measured it.</li>
@@ -385,7 +408,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 <section id="state">
 <h2>Bench state and files</h2>
 <ul>
-  <li>The bench PLC is running the demo as its boot application. After a restart it publishes 500 two-decimal values to <code>raw_data_demo</code> once a second at QoS 0 with the CONCAT control off; the settings in <code>PLC_PRG</code> can be changed online. <strong>The Modbus bench application is no longer on the PLC.</strong> To restore it, open <code>codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project</code>, do a full download and create the boot application (see <code>docs/modbus-bench.md</code>).</li>
+  <li>The bench PLC is running the demo as its boot application. After a restart it publishes 500 two-decimal values to <code>raw_data_demo</code> once a second at QoS 0 with the CONCAT control and the BCNF every-scan copy both off; the settings in <code>PLC_PRG</code> can be changed online. <strong>The Modbus bench application is no longer on the PLC.</strong> To restore it, open <code>codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project</code>, do a full download and create the boot application (see <code>docs/modbus-bench.md</code>).</li>
   <li>Demo project: <code>~/projects/codesys_projects/mqtt_large_payload_demo/mqtt_large_payload_demo.project</code> (a copy of the bench project with the Modbus client removed; ETH and network settings unchanged).</li>
   <li>Sources, scripts, result JSON and this report's generator: <code>codesys-api/examples/mqtt_large_payload/</code> in the Tidal-Metals/codesys-api repo.</li>
   <li>The BCNF project was only read and was not changed.</li>

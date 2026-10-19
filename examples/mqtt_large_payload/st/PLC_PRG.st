@@ -18,6 +18,7 @@ VAR
 	IsRealFormat : BOOL := TRUE;         // two-decimal REALs formatted the way BCNF does; FALSE = integers
 	IsQos1 : BOOL := FALSE;              // BCNF publishes at QoS 0
 	IsConcatControlEnabled : BOOL;       // the 255-character demonstration; not production work
+	IsBcnfEveryScanEnabled : BOOL;       // run BCNF's StringPublication (verbatim copy) every scan, as BCNF does
 	PublishTimer : TON;
 
 	LargePayload : STRING(30000);        // about 1,500 two-decimal values
@@ -66,6 +67,10 @@ VAR
 	MaxPublishCycles : UDINT;
 	LastPublishUs : UDINT;
 	MaxPublishUs : UDINT;
+	LastBcnfBuildUs : UDINT;             // one call of BCNF's StringPublication copy
+	MaxBcnfBuildUs : UDINT;
+	BcnfBuildCount : UDINT;
+	BcnfBuildTotalUs : ULINT;            // average = BcnfBuildTotalUs / BcnfBuildCount
 END_VAR
 // ---- implementation ----
 CycleStartUs := NowUs();
@@ -80,6 +85,9 @@ IF ResetStats THEN
 	MaxPublishCycles := 0;
 	MaxPublishUs := 0;
 	PreviousCycleStartUs := 0;
+	MaxBcnfBuildUs := 0;
+	BcnfBuildCount := 0;
+	BcnfBuildTotalUs := 0;
 END_IF
 IF PreviousCycleStartUs <> 0 THEN
 	IntervalUs := ULINT_TO_UDINT(CycleStartUs - PreviousCycleStartUs);
@@ -187,6 +195,16 @@ IF LargePublisher.SendTimeout OR ConcatPublisher.SendTimeout THEN
 	TimeoutCount := TimeoutCount + 1;
 	IsLargeRequested := FALSE;
 	IsConcatRequested := FALSE;
+END_IF
+
+// What BCNF pays today: its payload strings are rebuilt in every scan, not only when publishing.
+IF IsBcnfEveryScanEnabled THEN
+	StepStartUs := NowUs();
+	BcnfStringPublicationCopy();
+	LastBcnfBuildUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
+	MaxBcnfBuildUs := MAX(MaxBcnfBuildUs, LastBcnfBuildUs);
+	BcnfBuildCount := BcnfBuildCount + 1;
+	BcnfBuildTotalUs := BcnfBuildTotalUs + LastBcnfBuildUs;
 END_IF
 
 CycleUs := ULINT_TO_UDINT(NowUs() - CycleStartUs);

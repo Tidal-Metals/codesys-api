@@ -29,6 +29,27 @@ verify_500 = load("verify_60s.json")
 verify_1100 = load("verify_1100_values_40s.json")
 verify_concat_sweep = load("verify_during_concat_control_sweep.json")
 verify_production = load("verify_production_sweep.json")
+# BCNF's StringPublication (verbatim copy) run every scan vs. not at all, publishing paused.
+bcnf_every_scan = load("bcnf_every_scan.json")["windows"]
+BCNF_PUBLISH_PERIOD_MS = 1100  # FirstPublish's 1 s TON on a 50 ms task, see expected_publishes()
+
+
+def bcnf_figures():
+    baseline, every_scan = bcnf_every_scan["baseline"], bcnf_every_scan["bcnfEveryScan"]
+    mean_us = every_scan["bcnfBuildMeanUs"]
+    builds_per_publish = BCNF_PUBLISH_PERIOD_MS / float(TASK_INTERVAL_MS)
+    return {
+        "bcnf_build_mean_ms": "%.1f" % (mean_us / 1000.0),
+        "bcnf_build_max_ms": "%.1f" % (every_scan["MaxBcnfBuildUs"] / 1000.0),
+        "bcnf_builds": "{:,}".format(every_scan["BcnfBuildCount"]),
+        "bcnf_scan_before_ms": "%.2f" % (baseline["cycleSampleMeanUs"] / 1000.0),
+        "bcnf_scan_after_ms": "%.1f" % (every_scan["cycleSampleMeanUs"] / 1000.0),
+        "bcnf_worst_before_ms": "%.1f" % (baseline["MaxCycleUs"] / 1000.0),
+        "bcnf_worst_after_ms": "%.1f" % (every_scan["MaxCycleUs"] / 1000.0),
+        "bcnf_cpu_pct": "%.0f" % (100.0 * mean_us / (TASK_INTERVAL_MS * 1000.0)),
+        "bcnf_cpu_fixed_pct": "%.2f" % (100.0 * mean_us / (BCNF_PUBLISH_PERIOD_MS * 1000.0)),
+        "bcnf_wasted": "%d of every %d" % (round(builds_per_publish) - 1, round(builds_per_publish)),
+    }
 
 
 def st_source(name, part="all"):
@@ -186,6 +207,8 @@ ISSUES = [
      "Used <code>login(OnlineChangeOption.Never, True)</code> (full download, delete foreign apps), then start and create the boot application.", "workaround"),
     ("Tooling", "API <code>/project/open</code>", "Refuses while another project is open; Windows backslash paths broke the JSON body from Git Bash.",
      "Close first; use forward slashes.", "workaround"),
+    ("BCNF (found, not changed)", "Payload rebuilt every scan", "<code>StringPublication()</code> is called from the body of <code>FB_InterlockMatrix</code>, so all seven strings are rebuilt in every 50 ms scan although they are sent about once every 1.1 s. Measured with a verbatim copy on the bench: 2.6 ms per scan on average, 3.3 ms worst case.",
+     "Call <code>StringPublication()</code> only in the scan that publishes (see <a href='#every-scan'>the fix</a>). Independent of the 255-character change.", "open"),
     ("BCNF (found, not changed)", "FirstPublish completion logic", "<code>MQTTPublish.done</code> is TRUE for one scan only. FirstPublish waits for all seven pulses in the same scan; if one lands a scan later, <code>send</code> stays TRUE, no new edge is generated and publishing stops.",
      "Clear each publisher's request on its own <code>done</code> or <code>SendTimeout</code> (as the demo does).", "open"),
     ("Library warnings", "OSCAT string constant warnings", "6 warnings about an HTML-entity table too long for STRING(253) inside OSCAT.", "Harmless; not in demo code.", "expected"),
@@ -265,6 +288,22 @@ publisher1(Topic := ADR('raw_data'), PayloadString := ADR(fullPayload1), Publish
 \tQoSin := MQTT.QoS.AtMostOnce, MRetain := FALSE, send := readyToSend AND (LEN(fullPayload1) > 0));
 // ... publisher2 to publisher7, one per group"""
 
+EVERY_SCAN_FIX_SNIPPET = """// Today, FB_InterlockMatrix body (every scan):
+ProcessMQTTMessage();
+StringPublication();                       // rebuilds all 7 strings, 20 times a second
+
+// Fix: one publish timer in POU1, shared by the build and the send
+PublishTimer(IN := NOT PublishTimer.Q, PT := T#1S);
+call_statemachine(Enable := TRUE, CurrentMqttMessage := currentMessage,
+\tCurrentMqttMessageReady := CurrentMqttMessageReady, IsPublishDue := PublishTimer.Q);
+FirstPublish(InterlockData1 := ..., IsPublishDue := PublishTimer.Q);   // replaces its own sendTimer
+
+// FB_InterlockMatrix: new input IsPublishDue : BOOL
+ProcessMQTTMessage();
+IF IsPublishDue THEN
+\tStringPublication();                   // only in the scan that publishes
+END_IF"""
+
 LIFECYCLE_SNIPPET = """IF PublishTimer.Q AND IsBrokerConnected THEN
 \tIF IsLargeRequested THEN
 \t\tSkippedBusyCount := SkippedBusyCount + 1;   // previous message still in flight: leave the buffer alone
@@ -310,6 +349,7 @@ VAR_INPUT
 BCNF_ANALOG_STRING := CONCAT(BCNF_ANALOG_STRING, REAL_TO_STRING(...));   // CONCAT caps at 255"""
 
 PROMPT = """Apply the MQTT large-payload pattern from examples/mqtt_large_payload (codesys-api repo) to the BCNF PLC project (PLC_BCNF_4_16_26.project):
+0. First, stop rebuilding the payload every scan: call FB_InterlockMatrix.StringPublication() only in the scan where FirstPublish sends (share one publish timer between them). Measured cost today: about 2.6 ms of every 50 ms scan.
 1. Add the AppendText function and replace the CONCAT-built BCNF_*_STRING payloads with one STRING(n) buffer per message built by AppendText.
 2. Pass ADR(buffer) to MQTT.MQTTPublish (PublishAsString := TRUE); remove the STRING(255) inputs of FirstPublish.
 3. Clear each publisher's request on its own done or SendTimeout instead of waiting for all done pulses in one scan.
@@ -352,8 +392,10 @@ def build_html():
         csv_json=html.escape(json.dumps(perf_csv())),
         results_json=html.escape(json.dumps(json.dumps(payload, indent=1))),
         prompt_json=html.escape(json.dumps(PROMPT)),
+        every_scan_fix=code(EVERY_SCAN_FIX_SNIPPET),
         total_values="{:,}".format(sum(data["large"]["valuesChecked"] for _, data in verifications)),
         total_messages="{:,}".format(sum(data["large"]["messages"] for _, data in verifications)),
+        **bcnf_figures()
     )
     text = TEMPLATE
     for key, value in values.items():
