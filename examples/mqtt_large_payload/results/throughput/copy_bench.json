@@ -1,0 +1,9 @@
+{
+ "what": "MEM.MemMove of 4,095 bytes (one MQTT send buffer), mean of 20 copies, PLC_PRG.IsCopyBenchRequested",
+ "samplesUs": [
+  216,
+  218,
+  212
+ ],
+ "date": "2026-10-19"
+}

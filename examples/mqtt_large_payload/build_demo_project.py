@@ -17,7 +17,8 @@ LIBRARY_PLACEHOLDERS = [
     ("MQTT", "MQTT, 1.2.0.7 (Stefan Dreyer)"),
     ("PRO_JSON", "PRO JSON, 1.0.0.16 (Pro Electric)"),
 ]
-LIBRARIES = ["SysTime, 3.5.17.0 (System)", "SysTimeCore, 3.5.17.0 (System)"]  # SysTimeGetUs for the performance counters
+LIBRARIES = ["SysTime, 3.5.17.0 (System)", "SysTimeCore, 3.5.17.0 (System)",  # SysTimeGetUs for the performance counters
+             "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)"]  # MEM.MemMove, timed as the MQTT library uses it
 REMOVED_DEVICES = ["Modbus_TCP_Client"]
 # The MQTT library allocates its buffers with __NEW; BCNF uses 50000.
 DYNAMIC_MEMORY_BYTES = 100000

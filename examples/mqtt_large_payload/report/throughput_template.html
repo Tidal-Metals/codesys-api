@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MQTT publish throughput on the CODESYS PLC</title>
+@@style@@
+<style>
+/* Diagram vocabulary: aqua = your program's data, orange = MQTT library, grey = OS and network, red = bottleneck. */
+svg.dg { width: 100%; height: auto; display: block; max-width: 980px; }
+svg.dg text { fill: var(--ink); font-size: 13px; }
+svg.dg .sub { fill: var(--ink-2); font-size: 11.5px; }
+svg.dg .small { fill: var(--muted); font-size: 10.5px; }
+svg.dg .head { font-weight: 650; font-size: 14px; }
+svg.dg .time { fill: var(--s2); font-size: 11.5px; font-weight: 600; }
+svg.dg .box { fill: var(--surface); stroke: var(--axis); stroke-width: 1.4; }
+svg.dg .comm { fill: color-mix(in srgb, var(--s2) 12%, var(--surface)); stroke: var(--s2); stroke-width: 1.6; }
+svg.dg .data { fill: color-mix(in srgb, var(--s3) 14%, var(--surface)); stroke: var(--s3); stroke-width: 1.6; }
+svg.dg .bad { fill: var(--bad-bg); stroke: var(--bad); stroke-width: 1.4; }
+svg.dg .ok { fill: var(--good-bg); stroke: var(--good); stroke-width: 1.4; }
+svg.dg .band { fill: none; stroke: var(--grid); stroke-width: 1; stroke-dasharray: 5 4; }
+svg.dg .frame { fill: none; stroke: var(--s2); stroke-width: 1.2; stroke-dasharray: 6 4; }
+svg.dg .slot { fill: none; stroke: var(--grid); stroke-width: 1; }
+svg.dg .send { fill: var(--s2); }
+svg.dg .free { fill: color-mix(in srgb, var(--s2) 30%, var(--surface)); }
+svg.dg .edge { fill: var(--s3); }
+svg.dg .wait { fill: var(--code-bg); }
+svg.dg .blocktext { fill: var(--surface); font-size: 10.5px; font-weight: 600; }
+svg.dg .arrow { stroke: var(--ink-2); stroke-width: 1.6; fill: none; marker-end: url(#ah); }
+svg.dg .arrow.o { stroke: var(--s2); marker-end: url(#aho); }
+svg.dg .arrow.d { stroke: var(--s3); marker-end: url(#ahd); }
+svg.dg .arrow.r { stroke: var(--bad); marker-end: url(#ahr); }
+svg.dg .badtext { fill: var(--bad); font-size: 11.5px; }
+.key { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.86rem; color: var(--ink-2); margin: 2px 0 8px; }
+.key span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+.charts2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 18px; margin: 10px 0; }
+.concept { background: var(--surface); border: 1px dashed var(--axis); border-radius: 8px; padding: 10px 16px; margin: 14px 0; max-width: 80ch; font-size: 0.93rem; }
+.concept strong:first-child { color: var(--accent); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-2)"/></marker>
+    <marker id="aho" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--s2)"/></marker>
+    <marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--s3)"/></marker>
+    <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--bad)"/></marker>
+  </defs>
+</svg>
+<header>
+  <h1>MQTT publish throughput on the CODESYS PLC</h1>
+  <p class="meta">2026-10-19 · Bench measurements on the P2CDS-622 at HQ · Stefan Dreyer MQTT 1.2.0.7, unmodified</p>
+  <p class="meta">Why one large MQTT message takes most of a second to leave the PLC, where the time goes, and how to send it about fifteen times faster without changing the library.</p>
+</header>
+<nav class="toc"><ul>
+  <li><a href="#summary">Summary</a></li><li><a href="#motivation">Motivation</a></li><li><a href="#path">How a publish travels</a></li>
+  <li><a href="#calls">Call by call</a></li><li><a href="#timings">Timings</a></li><li><a href="#library">Library code</a></li>
+  <li><a href="#parallel">Parallel publishers</a></li><li><a href="#fix">More calls per scan</a></li><li><a href="#adaptive">Adaptive loop</a></li>
+  <li><a href="#sizing">Sizing</a></li><li><a href="#recommend">Recommendations</a></li><li><a href="#method">Method</a></li>
+</ul></nav>
+<main>
+
+<section id="summary">
+<h2>Summary</h2>
+<div class="tldr">
+<p>The 2,000-tag <code>tag:value</code> message is @@message_kb@@ KB. With the MQTT client called once per 50 ms scan it took <strong>@@t1_ms@@ ms</strong> to leave the PLC, about @@t1_kbps@@ KB/s. The network and the broker aren't the limit. The library moves the message through a 4 KB send buffer, one buffer every two client calls, so the message waits for @@calls_needed@@ calls, one per scan.</p>
+<p>Calling the client several times per scan removes the wait. At 16 calls the same message took <strong>@@t16_ms@@ ms</strong>, @@speedup@@ times faster, and the broker received @@verify_messages@@ messages with all @@verify_values@@ values correct. The CPU cost stays the same in total, about @@cpu_message_ms@@ ms per message, but it moves into fewer scans. An idle client call still costs about @@idle_lo@@–@@idle_hi@@ µs, so the extra calls should only run while a message is in flight, within a time budget per scan.</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="v">@@t1_ms@@ ms</div><div class="l">@@message_kb@@ KB message, 1 client call per scan</div></div>
+  <div class="stat"><div class="v">@@t16_ms@@ ms</div><div class="l">same message, 16 calls per scan</div></div>
+  <div class="stat"><div class="v">@@b5_ms@@ ms</div><div class="l">adaptive loop, 5 ms budget per scan</div></div>
+  <div class="stat"><div class="v">@@per_buffer_ms@@ ms</div><div class="l">client time per 4 KB sent</div></div>
+</div>
+</section>
+
+<section id="motivation">
+<h2>Motivation</h2>
+<p class="prose">The next system has about 2,000 tags, and we want to publish them as plain <code>tag:value</code> lines rather than through the publish map. With report-by-exception most messages are small, but a full refresh carries every tag: at start-up, after a reconnect, once a minute, and whenever the bridge needs a full picture. That message is @@message_kb@@ KB for 2,000 tags and about five times that for 10,000.</p>
+<p class="prose">Measured on this PLC, a full refresh took @@t1_ms@@ ms with the 50 ms task the demo uses, and would take about twice that on the 100 ms comms task the redesign proposes. While it is in flight, no newer data can go out. At 10,000 tags a full refresh would take over three seconds, longer than the publish period. The question was whether that is a hard limit of the library or the protocol, or just a matter of how the library is called.</p>
+</section>
+
+<section id="path">
+<h2>How a publish travels</h2>
+<p class="prose">Four layers handle a message between your <code>STRING</code> and the broker. Only one of them copies the payload inside the PLC program, and it can only copy 4 KB at a time.</p>
+<figure>
+<figcaption>From the payload buffer to the bridge, with the time each step took on the bench PLC</figcaption>
+<div class="key"><span style="--c: var(--s3)">your program's data</span><span style="--c: var(--s2)">MQTT library, runs inside your task</span><span style="--c: var(--axis)">operating system and network</span></div>
+<svg class="dg" viewBox="0 0 980 536" role="img" aria-label="Data path of an MQTT publish">
+  <rect class="band" x="4" y="8" width="972" height="118" rx="8"/>
+  <text x="964" y="28" class="small" text-anchor="end">YOUR PROGRAM</text>
+  <rect class="band" x="4" y="138" width="972" height="236" rx="8"/>
+  <text x="964" y="158" class="small" text-anchor="end">MQTT LIBRARY: RUNS ONLY WHILE YOUR TASK CALLS IT</text>
+  <rect class="band" x="4" y="384" width="972" height="146" rx="8"/>
+  <text x="964" y="404" class="small" text-anchor="end">OPERATING SYSTEM AND NETWORK: NOT ON THE PLC SCAN</text>
+
+  <rect class="data" x="24" y="40" width="260" height="74" rx="8"/>
+  <text x="38" y="62" class="head">Payload STRING(32000)</text>
+  <text x="38" y="81" class="sub">built by your code: 13.8 ms for 2,000 tags</text>
+  <text x="38" y="98" class="sub">leave it untouched until done</text>
+
+  <path class="arrow d" d="M284,77 L366,77"/>
+  <text x="292" y="68" class="small">ADR + length</text>
+  <text x="292" y="95" class="small">no copy</text>
+
+  <rect class="comm" x="370" y="40" width="270" height="74" rx="8"/>
+  <text x="384" y="62" class="head">MQTTPublish (one per message)</text>
+  <text x="384" y="81" class="sub">rising edge of send starts a request</text>
+  <text x="384" y="98" class="sub">done: one-call pulse when handed over</text>
+
+  <rect class="box" x="690" y="40" width="270" height="74" rx="8"/>
+  <text x="704" y="62" class="head">Outputs your code reads</text>
+  <text x="704" y="81" class="sub">done, sendActive</text>
+  <text x="704" y="98" class="sub">SendTimeout: after 4 s, a warning only</text>
+  <path class="arrow o" d="M640,77 L686,77"/>
+
+  <path class="arrow o" d="M505,114 L505,150 L165,150 L165,172"/>
+  <text x="250" y="145" class="small">queued in the client's send list</text>
+
+  <rect class="comm" x="24" y="176" width="270" height="88" rx="8"/>
+  <text x="38" y="198" class="head">MqttClient (one per connection)</text>
+  <text x="38" y="217" class="sub">every call: slot tables, receive, keep-alive</text>
+  <text x="38" y="234" class="sub">fills the send buffer only if it is empty</text>
+  <text x="38" y="253" class="time">@@idle_lo@@–@@idle_hi@@ µs per call, even idle</text>
+
+  <path class="arrow o" d="M294,220 L366,220"/>
+  <text x="304" y="211" class="time">copy</text>
+  <text x="304" y="238" class="time">@@copy_ms@@ ms</text>
+
+  <rect class="bad" x="370" y="176" width="270" height="88" rx="8"/>
+  <text x="384" y="198" class="head">Send buffer S_BUF: 4,095 bytes</text>
+  <text x="384" y="217" class="sub">MQTT header + topic + up to ~4 KB of payload</text>
+  <text x="384" y="234" class="sub">a 26 KB payload needs @@buffers@@ buffers</text>
+  <text x="384" y="253" class="badtext">the bottleneck: one buffer per two calls</text>
+
+  <path class="arrow o" d="M640,220 L686,220"/>
+  <text x="646" y="211" class="small">whole</text>
+  <text x="646" y="238" class="small">buffer</text>
+
+  <rect class="comm" x="690" y="176" width="270" height="88" rx="8"/>
+  <text x="704" y="198" class="head">IP_CONTROL (TCP layer)</text>
+  <text x="704" y="217" class="sub">one SysSock2Send per call, non-blocking</text>
+  <text x="704" y="234" class="sub">marks the buffer free on the next call</text>
+  <text x="704" y="253" class="time">about @@socket_ms@@ ms to send 4 KB</text>
+
+  <rect class="frame" x="16" y="272" width="790" height="94" rx="8"/>
+  <text x="32" y="294" class="head">One call that sends: about @@send_call_ms@@ ms</text>
+  <text x="32" y="313" class="sub">= @@idle_ms@@ ms client bookkeeping + @@copy_ms@@ ms copy + about @@socket_ms@@ ms socket send.</text>
+  <text x="32" y="331" class="sub">The next call only sees the send finished and frees the buffer (about @@idle_ms@@ ms); the call after refills it.</text>
+  <text x="32" y="349" class="sub">Over a whole message: @@per_buffer_ms@@ ms of client time per 4 KB, about @@kb_per_ms@@ KB per ms of client time.</text>
+
+  <path class="arrow" d="M880,264 L880,420"/>
+  <text x="888" y="330" class="small">bytes on</text>
+  <text x="888" y="344" class="small">the wire</text>
+
+  <rect class="box" x="690" y="424" width="270" height="88" rx="8"/>
+  <text x="704" y="446" class="head">OS TCP socket</text>
+  <text x="704" y="465" class="sub">kernel copy, segments, retransmits</text>
+  <text x="704" y="482" class="sub">keeps sending between PLC scans</text>
+  <text x="704" y="499" class="small">QoS 0 done comes before this finishes</text>
+
+  <path class="arrow" d="M690,468 L644,468"/>
+  <text x="652" y="460" class="small">LAN</text>
+
+  <rect class="box" x="370" y="424" width="270" height="88" rx="8"/>
+  <text x="384" y="446" class="head">Broker 192.168.50.240:1883</text>
+  <text x="384" y="465" class="sub">QoS 1: PUBACK back to the client</text>
+  <text x="384" y="482" class="sub">read by the client in a later call</text>
+  <text x="384" y="499" class="small">QoS 1 message: @@qos1_ms@@ ms, @@qos1_scans@@ scans</text>
+
+  <path class="arrow" d="M370,468 L298,468"/>
+
+  <rect class="box" x="24" y="424" width="270" height="88" rx="8"/>
+  <text x="38" y="446" class="head">Bridge (subscriber)</text>
+  <text x="38" y="465" class="sub">splits the payload on newlines</text>
+  <text x="38" y="482" class="sub">tag:value lines go in directly</text>
+</svg>
+</figure>
+<ul>
+  <li><strong>Nothing runs between scans.</strong> The library has no task of its own. It advances only when your program calls <code>MqttLink.clientFB(...)</code>, and the demo and BCNF call it once per scan.</li>
+  <li><strong>The payload is read in place.</strong> <code>MQTTPublish</code> keeps the address and length of your <code>STRING</code>; the client copies from it piece by piece as buffers free up. That's why the buffer has to stay untouched until <code>done</code>, and why the library has no 255-character limit.</li>
+  <li><strong>QoS 0 <code>done</code> means handed over</strong>, not received: the client reports done when the last piece is in its send buffer. QoS 1 waits for the broker's PUBACK, which the client reads in a later call; the same message took @@qos1_ms@@ ms instead of @@t1_ms@@.</li>
+</ul>
+</section>
+
+<section id="calls">
+<h2>Call by call</h2>
+<p class="prose">Each client call does one step. A buffer is filled and handed to the socket in one call; the TCP layer only notices the send is complete on the next call, and only then marks the buffer empty. The client decides whether it may fill the buffer at the start of each call, before the TCP layer runs, so a freed buffer waits for the call after. One buffer per two calls, and the calls come once per scan.</p>
+<figure>
+<figcaption>The same @@message_kb@@ KB message, three ways of calling the client (50 ms task, one column per scan)</figcaption>
+<div class="key"><span style="--c: var(--s3)">send := TRUE / done</span><span style="--c: var(--s2)">call that fills and sends a buffer</span><span style="--c: color-mix(in srgb, var(--s2) 30%, var(--surface))">call that frees the buffer</span><span style="--c: var(--code-bg)">waiting for the next scan</span></div>
+@@timeline@@
+</figure>
+<p class="prose">With one call per scan the message spends nearly all of its @@t1_ms@@ ms waiting: each scan the client works for 2 ms or less, then nothing happens for the rest of the 50 ms. With 16 calls per scan the fourteen calls the message needs run back to back in one scan (@@c16_ms@@ ms of client time), and <code>done</code> shows up in the next.</p>
+</section>
+
+<section id="timings">
+<h2>Timings</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Step</th><th>Where</th><th>Time</th><th>How we know</th></tr></thead>
+<tbody>
+<tr><td>Build 2,000 <code>tag:value</code> lines</td><td>your code, <code>AppendZ</code></td><td>13.8 ms per full message</td><td>measured (scale test); spread at 250 tags per call it is under 5.5 ms per scan</td></tr>
+<tr><td>Start a publish</td><td><code>MQTTPublish</code></td><td>pointer and length only</td><td>library source; the request is picked up on the next client call</td></tr>
+<tr><td>A client call with nothing to send</td><td><code>MqttClient</code></td><td>@@idle_lo@@–@@idle_hi@@ µs</td><td>measured, 1 to 32 calls per scan with publishing paused</td></tr>
+<tr><td>Copy 4 KB of payload into the send buffer</td><td><code>InsertSplitPayload</code>, <code>MEM.MemMove</code></td><td>@@copy_ms@@ ms</td><td>measured: the same <code>MemMove</code> of 4,095 bytes, 20 times</td></tr>
+<tr><td>Hand 4 KB to the socket</td><td><code>IP_CONTROL</code>, <code>SysSock2Send</code></td><td>about @@socket_ms@@ ms</td><td>inferred: a sending call less bookkeeping and copy</td></tr>
+<tr><td>One call that fills and sends</td><td>all of the above</td><td>about @@send_call_ms@@ ms</td><td>measured: worst client call at one call per scan</td></tr>
+<tr><td>Client time per 4 KB, averaged</td><td>fill call + free call</td><td>@@per_buffer_ms@@ ms</td><td>measured: 16 calls sending the whole message in one scan</td></tr>
+<tr><td>@@message_kb@@ KB at QoS 0, 1 call per scan</td><td>send to done</td><td>@@t1_ms@@ ms, @@t1_scans@@ scans</td><td>measured</td></tr>
+<tr><td>@@message_kb@@ KB at QoS 1, 1 call per scan</td><td>send to done, including PUBACK</td><td>@@qos1_ms@@ ms, @@qos1_scans@@ scans</td><td>measured</td></tr>
+<tr><td>@@message_kb@@ KB at QoS 0, 16 calls per scan</td><td>send to done</td><td>@@t16_ms@@ ms</td><td>measured</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section id="library">
+<h2>The library code behind it</h2>
+<p class="prose">Excerpts from the installed library sources, shortened. The 4,095-byte size is <code>OSCAT_NETWORK_TYPES.Constants.NETWORK_BUFFER_LONG_SIZE</code>, a plain constant in a compiled library, so it can't be raised from the project.</p>
+@@lib_send_free@@
+@@lib_insert@@
+@@lib_ip_control@@
+@@lib_done@@
+</section>
+
+<section id="parallel">
+<h2>Why parallel publishers don't help</h2>
+<figure>
+<figcaption>Every publisher on a connection shares one client and one send buffer</figcaption>
+<svg class="dg" viewBox="0 0 980 266" role="img" aria-label="Parallel publishers share one send buffer">
+  <rect class="comm" x="24" y="20" width="200" height="46" rx="8"/><text x="38" y="48">MQTTPublish 1</text>
+  <rect class="comm" x="24" y="80" width="200" height="46" rx="8"/><text x="38" y="108">MQTTPublish 2</text>
+  <rect class="comm" x="24" y="140" width="200" height="46" rx="8"/><text x="38" y="168">MQTTPublish … 40</text>
+  <path class="arrow o" d="M224,43 L300,95"/><path class="arrow o" d="M224,103 L300,103"/><path class="arrow o" d="M224,163 L300,111"/>
+  <rect class="comm" x="304" y="70" width="190" height="66" rx="8"/><text x="318" y="96" class="head">One MqttClient</text><text x="318" y="116" class="sub">takes them in turn</text>
+  <path class="arrow o" d="M494,103 L546,103"/>
+  <rect class="bad" x="550" y="70" width="190" height="66" rx="8"/><text x="564" y="96" class="head">One 4 KB buffer</text><text x="564" y="116" class="badtext">per two calls</text>
+  <path class="arrow" d="M740,103 L792,103"/>
+  <rect class="box" x="796" y="70" width="170" height="66" rx="8"/><text x="810" y="96" class="head">One TCP socket</text><text x="810" y="116" class="sub">to the broker</text>
+  <text x="24" y="218" class="sub">Forty small publishers move the same bytes through the same buffer as one large one, plus forty headers.</text>
+  <text x="24" y="236" class="sub">Several connections (several MqttClients) would each get a buffer, but each adds its own idle cost every call,</text>
+  <text x="24" y="254" class="sub">and ordering across connections is lost. Calling one client more often gets the throughput without either.</text>
+</svg>
+</figure>
+</section>
+
+<section id="fix">
+<h2>The fix: more client calls per scan</h2>
+<p class="prose">The demo's <code>PLC_PRG</code> got a setting, <code>ClientCallsPerScan</code>, writable online. The 2,000-tag scale test then published its @@message_kb@@ KB message once a second at QoS 0 for 30 s per setting. "Send to done" counts from the scan that sets <code>send</code> to the one that sees <code>done</code>.</p>
+<div class="charts2">
+@@chart_publish@@
+@@chart_client@@
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Calls per scan</th><th>Send to done (ms)</th><th>Scans</th><th>KB/s</th><th>Worst client time per scan (ms)</th><th>Messages in 30 s</th><th>Time-outs</th></tr></thead>
+<tbody>
+@@fixed_rows@@
+</tbody>
+</table></div>
+<ul>
+  <li><strong>Time drops almost exactly with the number of calls</strong> until the whole message fits in one scan, at 16 calls. Beyond that the two-scan minimum (send, then done) is the floor; 32 calls only add idle calls.</li>
+  <li><strong>Nothing was lost.</strong> At 16 calls a subscriber on the HQ broker checked every message for 75 s: @@verify_messages@@ messages, @@verify_values@@ values, all correct, no gaps.</li>
+  <li><strong>The cost moves, it doesn't grow.</strong> Sending the message takes about @@cpu_message_ms@@ ms of client time either way. At one call per scan that is spread over @@t1_scans@@ scans; at 16 calls it is @@c16_ms@@ ms in one scan, which a control task can't absorb but a comms task can.</li>
+</ul>
+</section>
+
+<section id="adaptive">
+<h2>Idle calls cost too: the adaptive loop</h2>
+<p class="prose">A fixed 16 calls per scan would cost about 4.7 ms every scan even when nothing is being sent, because the client walks its tables on every call. Measured with all publishing paused:</p>
+<div class="charts2">
+@@chart_idle@@
+<div class="table-wrap"><table>
+<thead><tr><th>Idle calls per scan</th><th>Mean (ms)</th><th>Worst (ms)</th><th>Per call (µs)</th></tr></thead>
+<tbody>
+@@idle_rows@@
+</tbody>
+</table></div>
+</div>
+<p class="prose">So the demo calls the client repeatedly only while a message is in flight, and stops at a time budget:</p>
+<figure>
+<figcaption>The adaptive client loop, once per scan</figcaption>
+<svg class="dg" viewBox="0 0 980 210" role="img" aria-label="Adaptive client loop">
+  <rect class="box" x="16" y="70" width="130" height="56" rx="8"/><text x="30" y="94" class="head">Scan starts</text><text x="30" y="112" class="sub">comms task</text>
+  <path class="arrow" d="M146,98 L186,98"/>
+  <rect class="comm" x="190" y="60" width="210" height="76" rx="8"/><text x="204" y="84" class="head">Message in flight?</text><text x="204" y="103" class="sub">any publisher's sendActive,</text><text x="204" y="120" class="sub">as of the end of last scan</text>
+  <path class="arrow" d="M295,136 L295,170"/><text x="303" y="160" class="small">no</text>
+  <rect class="box" x="190" y="172" width="210" height="32" rx="8"/><text x="204" y="193" class="sub">one call: keep-alive and receive</text>
+  <path class="arrow o" d="M400,98 L446,98"/><text x="410" y="90" class="small">yes</text>
+  <rect class="comm" x="450" y="70" width="170" height="56" rx="8"/><text x="464" y="94" class="head">Call the client</text><text x="464" y="112" class="sub">moves up to 4 KB</text>
+  <path class="arrow o" d="M620,98 L666,98"/>
+  <rect class="comm" x="670" y="60" width="200" height="76" rx="8"/><text x="684" y="84" class="head">Calls &lt; 16 and</text><text x="684" y="103" class="head">time &lt; budget?</text><text x="684" y="122" class="sub">budget: 5 ms in the demo</text>
+  <path class="arrow o" d="M770,60 L770,30 L535,30 L535,66"/><text x="640" y="24" class="small">yes: call again</text>
+  <path class="arrow" d="M870,98 L900,98 L900,170"/><text x="908" y="140" class="small">no</text>
+  <rect class="box" x="760" y="172" width="210" height="32" rx="8"/><text x="774" y="193" class="sub">publishers run and see done</text>
+  <path class="arrow" d="M400,188 L756,188"/>
+</svg>
+</figure>
+@@demo_loop@@
+<p class="prose">The loop can't see the message finish within the scan: <code>sendActive</code> only updates when the publisher runs after it. In the scan after the last buffer it may still make idle calls up to the budget, about 0.3 ms each. Measured with up to 32 calls:</p>
+<div class="charts2">
+@@chart_budget@@
+<div class="table-wrap"><table>
+<thead><tr><th>Budget (ms)</th><th>Send to done (ms)</th><th>Scans</th><th>Model scans</th><th>Worst client time (ms)</th><th>Most calls in a scan</th><th>Time-outs</th></tr></thead>
+<tbody>
+@@adaptive_rows@@
+</tbody>
+</table></div>
+</div>
+<p class="prose">With a 5 ms budget the message went out in @@b5_ms@@ ms instead of @@t1_ms@@, and no scan spent more than @@b5_client_ms@@ ms in the client. A 20 ms budget gets the two-scan minimum (@@b20_ms@@ ms). The model column predicts the scans from @@per_buffer_ms@@ ms per 4 KB, allowing one buffer past the budget because the budget is checked after each call; it matches all three runs.</p>
+</section>
+
+<section id="sizing">
+<h2>Sizing</h2>
+<p class="prose">From the model above, for a full refresh in <code>tag:value</code> format (8-character names), 50 ms comms task. Larger tables scale the measured 2,000-tag message; double the times for a 100 ms task.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Tags</th><th>Message (KB)</th><th>Client time per message (ms)</th><th>1 call per scan</th><th>Adaptive, 5 ms budget</th><th>Adaptive, 10 ms budget</th></tr></thead>
+<tbody>
+@@sizing_rows@@
+</tbody>
+</table></div>
+<p class="prose">Client time per message is the CPU cost wherever it lands. A 2,000-tag full refresh every second costs about @@cpu_message_ms@@ ms of every 1,000; report-by-exception messages in between are a few KB and cost a few ms.</p>
+</section>
+
+<section id="recommend">
+<h2>Recommendations</h2>
+<ul>
+  <li><strong>Keep the MQTT client in the comms task</strong>, below the control task's priority, as the redesign proposes. Its extra calls can then take milliseconds without delaying control.</li>
+  <li><strong>Use the adaptive loop</strong> with a budget of about 5 ms per scan and at most 16 calls. That sends a 2,000-tag full refresh in about @@b5_ms@@ ms and leaves idle scans at one call.</li>
+  <li><strong>Size by bytes, not tag count.</strong> About @@kb_per_ms@@ KB per ms of client time; budget ms per scan × scans per second gives the sustained rate.</li>
+  <li><strong>Stay at QoS 0 for bulk data</strong> unless a lost message matters; QoS 1 adds a broker round trip, @@qos1_scans@@ scans instead of @@t1_scans@@ here.</li>
+  <li><strong>Don't add publishers or connections for throughput.</strong> They share the buffer, or add idle cost and lose ordering.</li>
+  <li><strong>Leave the library as it is.</strong> A larger buffer or a refill in the same call would mean maintaining a fork of a compiled library for a gain the call loop already delivers.</li>
+</ul>
+</section>
+
+<section id="method">
+<h2>Method</h2>
+<ul>
+  <li>Bench PLC P2CDS-622 at HQ, demo project <code>mqtt_large_payload_demo</code>, 50 ms task, broker at 192.168.50.240, QoS 0 unless noted. Code and scripts are in the codesys-api repo under <code>examples/mqtt_large_payload/</code>; results in <code>results/throughput/</code>.</li>
+  <li>Fixed calls: <code>measure_scale.py --client-calls N --ungated</code> equivalent (the first runs used a fixed <code>FOR</code> loop). Adaptive: <code>measure_scale.py --client-calls 32 --budget-us B</code>. Idle: <code>measure_idle_client.py</code>. Copy: <code>PLC_PRG.IsCopyBenchRequested</code>. Delivery: <code>verify_scale.py</code> on the broker.</li>
+  <li>Send-to-done times are the last message's; across 28–30 messages per run the worst was within 4 ms of it. Client times are the worst scan in the window.</li>
+  <li>The socket-send time is inferred, not measured directly: the worst one-call client time minus the idle call and the copy.</li>
+</ul>
+</section>
+</main>
+<div id="tip"></div>
+<script>
+const tip = document.getElementById("tip");
+document.querySelectorAll("svg .mark[data-tip]").forEach(mark => {
+  mark.addEventListener("mousemove", event => {
+    tip.textContent = mark.dataset.tip;
+    tip.style.left = (event.clientX + 14) + "px";
+    tip.style.top = (event.clientY + 14) + "px";
+    tip.style.opacity = 1;
+  });
+  mark.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
+});
+</script>
+</body>
+</html>

@@ -21,8 +21,15 @@ VAR
 	IsBcnfEveryScanEnabled : BOOL;       // run BCNF's StringPublication (verbatim copy) every scan, as BCNF does
 	IsTagValueEnabled : BOOL;            // publish BCNF's values as tag:value lines once a second
 	TagValueTopic : STRING(64) := 'raw_data_demo/tagvalue';
-	ClientCallsPerScan : INT := 1;       // the client sends one 4 KB buffer per two calls; more calls, more throughput
+	ClientCallsPerScan : INT := 1;       // most client calls per scan while a message is in flight (one 4 KB buffer per two calls)
+	ClientBudgetUs : ULINT := 5000;      // ... and stop calling once this much time went into the client this scan
+	IsClientLoopGated : BOOL := TRUE;    // FALSE: always make ClientCallsPerScan calls (to measure idle calls)
+	IsSendInFlight : BOOL;
 	ClientCall : INT;
+	MaxClientCalls : INT;
+	IsCopyBenchRequested : BOOL;         // time the library's payload copy: MEM.MemMove of one 4,095-byte send buffer
+	CopyBuffer : ARRAY[0..4095] OF BYTE;
+	CopyBenchUs : UDINT;                 // mean of 20 copies
 	PublishTimer : TON;
 
 	LargePayload : STRING(30000);        // about 1,500 two-decimal values
@@ -97,11 +104,21 @@ VAR
 END_VAR
 // ---- implementation ----
 CycleStartUs := NowUs();
+IF IsCopyBenchRequested THEN
+	IsCopyBenchRequested := FALSE;
+	StepStartUs := NowUs();
+	FOR Index := 1 TO 20 DO
+		MEM.MemMove(pSource := ADR(LargePayload), pDestination := ADR(CopyBuffer), uiNumberOfBytes := 4095);
+	END_FOR
+	CopyBenchUs := ULINT_TO_UDINT(NowUs() - StepStartUs) / 20;
+END_IF
+
 IF ResetStats THEN
 	ResetStats := FALSE;
 	MaxLargeBuildUs := 0;
 	MaxConcatBuildUs := 0;
 	MaxClientUs := 0;
+	MaxClientCalls := 0;
 	MaxCycleUs := 0;
 	MaxIntervalUs := 0;
 	MinIntervalUs := 16#FFFFFFFF;
@@ -125,10 +142,20 @@ END_IF
 PreviousCycleStartUs := CycleStartUs;
 
 MqttLink.ClientID := 'BENCH_MQTT_DEMO';
+// The client moves one 4 KB send buffer per two calls. While any message is in flight, call it again until
+// ClientCallsPerScan calls or ClientBudgetUs; otherwise once, for keep-alive and receiving.
+IsSendInFlight := LargePublisher.sendActive OR ConcatPublisher.sendActive OR TagValuePublisher.sendActive
+	OR ScaleTest.Publisher.sendActive;
 StepStartUs := NowUs();
-FOR ClientCall := 1 TO ClientCallsPerScan DO
+ClientCall := 0;
+REPEAT
 	MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
-END_FOR
+	ClientCall := ClientCall + 1;
+UNTIL ClientCall >= ClientCallsPerScan
+	OR_ELSE (IsClientLoopGated AND NOT IsSendInFlight)
+	OR_ELSE NowUs() - StepStartUs >= ClientBudgetUs
+END_REPEAT
+MaxClientCalls := MAX(MaxClientCalls, ClientCall);
 ClientUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
 MaxClientUs := MAX(MaxClientUs, ClientUs);
 IsBrokerConnected := MqttLink.BROKER_CONNECTED;

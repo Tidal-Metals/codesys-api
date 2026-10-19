@@ -36,6 +36,22 @@ out['steps'].append('state=' + str(on.application_state))
 session.report_progress({'step': 'boot application'})
 on.create_boot_application()
 out['steps'].append('boot application created')
+out['state'] = str(on.application_state)
+# Log out so the next request logs in fresh: the handle used for the download resolves most variables as
+# 'Invalid variable reference'. Handles are cached by application path, so dispose by path, not ''.
+session.dispose_online_application(session.find_application('')[1]['path'], True)
+out['success'] = True
+result = out
+"""
+
+LOGIN = """
+on = session.ensure_online_application('', True)
+result = {'success': True, 'state': str(on.application_state)}
+"""
+
+READBACK = """
+import time
+on = session.ensure_online_application('', True)
 names = @@NAMES@@
 deadline = time.time() + 45
 values = {}
@@ -44,11 +60,12 @@ while time.time() < deadline:
     if values['PLC_PRG.LargeSentCount'] not in ('0', 'UDINT#0'):
         break
     time.sleep(1)
-out['diagnostics'] = values
-out['state'] = str(on.application_state)
-out['success'] = True
-result = out
+result = {'success': True, 'diagnostics': values, 'state': str(on.application_state)}
 """.replace("@@NAMES@@", repr(DIAGNOSTICS))
 
 if __name__ == "__main__":
-    print(json.dumps(execute(CODE, 240), indent=1))
+    deployed = execute(CODE, 240)
+    print(json.dumps(deployed, indent=1))
+    if deployed.get("success"):
+        execute(LOGIN, 120)
+        print(json.dumps(execute(READBACK, 120), indent=1))
