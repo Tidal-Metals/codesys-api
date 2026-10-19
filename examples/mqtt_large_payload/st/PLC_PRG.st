@@ -21,6 +21,8 @@ VAR
 	IsBcnfEveryScanEnabled : BOOL;       // run BCNF's StringPublication (verbatim copy) every scan, as BCNF does
 	IsTagValueEnabled : BOOL;            // publish BCNF's values as tag:value lines once a second
 	TagValueTopic : STRING(64) := 'raw_data_demo/tagvalue';
+	ClientCallsPerScan : INT := 1;       // the client sends one 4 KB buffer per two calls; more calls, more throughput
+	ClientCall : INT;
 	PublishTimer : TON;
 
 	LargePayload : STRING(30000);        // about 1,500 two-decimal values
@@ -124,7 +126,9 @@ PreviousCycleStartUs := CycleStartUs;
 
 MqttLink.ClientID := 'BENCH_MQTT_DEMO';
 StepStartUs := NowUs();
-MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
+FOR ClientCall := 1 TO ClientCallsPerScan DO
+	MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
+END_FOR
 ClientUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
 MaxClientUs := MAX(MaxClientUs, ClientUs);
 IsBrokerConnected := MqttLink.BROKER_CONNECTED;
