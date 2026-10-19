@@ -18,6 +18,19 @@ VAR
 	PublishPeriod : TIME := T#1S;
 	Topic : STRING(64) := 'raw_data_demo/scale';
 	ResetStats : BOOL;
+	OnlyKind : INT;                     // measurement aid: 0 = all, 1 = BOOL only, 2 = DINT only, 3 = REAL only, 4 = none
+	RealDeadband : REAL := 0.5;         // report-by-exception: REAL change that counts
+
+	// Report-by-exception: last values sent, and what changed since (DetectChanges)
+	LastBools : ARRAY[1..BOOL_COUNT] OF BOOL;
+	LastInts : ARRAY[1..INT_COUNT] OF DINT;
+	LastReals : ARRAY[1..REAL_COUNT] OF REAL;
+	ChangedBools : UINT;
+	ChangedInts : UINT;
+	ChangedReals : UINT;
+	ChangeDetectUs : UDINT;
+	MaxChangeDetectUs : UDINT;
+	Kind : INT;
 
 	// Data: names as constant tag names would be stored, values refreshed every publish
 	Names : ARRAY[1..TAG_COUNT] OF STRING(9);
@@ -94,6 +107,7 @@ IF ResetStats THEN
 	MaxBuildScanUs := 0;
 	MaxPublishUs := 0;
 	MaxPublishCycles := 0;
+	MaxChangeDetectUs := 0;
 END_IF
 IF IsQos1 THEN
 	PublishQoS := MQTT.QoS.AtLeastOnce;
@@ -110,6 +124,10 @@ IF Timer.Q AND PLC_PRG.IsBrokerConnected THEN
 		StepStartUs := NowUs();
 		UpdateValues();
 		ValueUpdateUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
+		StepStartUs := NowUs();
+		DetectChanges();
+		ChangeDetectUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
+		MaxChangeDetectUs := MAX(MaxChangeDetectUs, ChangeDetectUs);
 		StepStartUs := NowUs();
 		Used := 0;
 		Payload := '';

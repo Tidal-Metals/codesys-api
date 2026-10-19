@@ -1,6 +1,18 @@
 // Action BuildTag: appends tag number Index in the selected format.
 // Values are formatted as BCNF formats each type; only the text around them differs between formats.
 // ---- implementation ----
+// Measurement aid: OnlyKind limits the build to one type (4 = none) to time each type separately.
+IF Index <= BOOL_COUNT THEN
+	Kind := 1;
+ELSIF Index <= BOOL_COUNT + INT_COUNT THEN
+	Kind := 2;
+ELSE
+	Kind := 3;
+END_IF
+IF OnlyKind <> 0 AND OnlyKind <> Kind THEN
+	RETURN;
+END_IF
+
 IF Index <= BOOL_COUNT THEN
 	ValueText := SEL(Bools[Index], '0', '1');
 ELSIF Index <= BOOL_COUNT + INT_COUNT THEN

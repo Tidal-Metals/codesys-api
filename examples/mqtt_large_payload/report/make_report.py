@@ -8,6 +8,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import tagvalue_section  # noqa: E402
+
 DEMO = Path(__file__).resolve().parents[1]
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else DEMO / "report" / "report.html"
 
@@ -60,6 +63,15 @@ def st_source(name, part="all"):
     if part == "impl":
         return implementation.rstrip()
     return declaration.rstrip() + "\n\n" + implementation.rstrip()
+
+
+def without_measurement_aid(text):
+    """Drops the OnlyKind block (a benchmarking switch) from a snippet shown as production code."""
+    start = text.find("// Measurement aid")
+    if start < 0:
+        return text
+    end = text.index("END_IF\n\n", text.index("IF OnlyKind", start)) + len("END_IF\n\n")
+    return text[:start] + text[end:]
 
 
 def code(text, lang="iecst"):
@@ -288,6 +300,66 @@ publisher1(Topic := ADR('raw_data'), PayloadString := ADR(fullPayload1), Publish
 \tQoSin := MQTT.QoS.AtMostOnce, MRetain := FALSE, send := readyToSend AND (LEN(fullPayload1) > 0));
 // ... publisher2 to publisher7, one per group"""
 
+TV_DECL_SNIPPET = """VAR CONSTANT
+\tTAG_COUNT : UINT := 2000;
+END_VAR
+VAR
+\t// Tag keys exactly as the bridge's layout has them (case-sensitive), generated from the config sheet.
+\tNames : ARRAY[1..TAG_COUNT] OF STRING(9) := ['TT-1001', 'PT-1002', 'FT-1003B', ...];
+\tPayload : STRING(32000);            // 25.9 KB measured for 2,000 tags, plus margin
+\tUsed : UDINT;                       // current length, kept by the caller
+\tValueText : STRING(40);             // one formatted value
+\tIsBuildOk : BOOL;
+END_VAR"""
+
+TV_CHUNK_SNIPPET = """// Start a message: snapshot the values first, so a build spread over several scans is consistent.
+IF Timer.Q AND PLC_PRG.IsBrokerConnected AND NOT IsBuilding AND NOT IsRequested THEN
+\tUpdateValues();                   // in production: copy the live tags into the value arrays
+\tUsed := 0;
+\tPayload := '';
+\tIsBuildOk := TRUE;
+\tNextTag := 1;
+\tIsBuilding := TRUE;
+END_IF
+
+// Build TagsPerScan tags per scan (250 -> 8 scans for 2,000 tags, under 5.5 ms per scan).
+IF IsBuilding THEN
+\tLastTag := MIN(TAG_COUNT, NextTag + TagsPerScan - 1);
+\tFOR Index := NextTag TO LastTag DO
+\t\tBuildTag();
+\tEND_FOR
+\tNextTag := LastTag + 1;
+\tIF NextTag > TAG_COUNT THEN
+\t\tIsBuilding := FALSE;
+\t\tIsRequested := IsBuildOk;      // publish only a complete message
+\tEND_IF
+END_IF
+
+Publisher(Topic := ADR(Topic), PayloadString := ADR(Payload), PublishAsString := TRUE,
+\tQoSIn := PublishQoS, MRetain := FALSE, send := IsRequested);
+IF Publisher.done OR Publisher.SendTimeout THEN
+\tIsRequested := FALSE;            // buffer may be rebuilt from the next timer tick
+END_IF"""
+
+RBE_SNIPPET = """// Report by exception: send a tag only when it changed (REALs: beyond a deadband),
+// plus every tag on a periodic full refresh so the bridge never holds a stale value for long.
+IsFullRefresh := (Sequence MOD RefreshEvery) = 0;      // e.g. RefreshEvery := 60 (about once a minute)
+FOR Index := 1 TO REAL_COUNT DO
+\tRealValue := Reals[Index];
+\tIF IsFullRefresh OR ABS(RealValue - LastReals[Index]) > RealDeadband THEN
+\t\tLastReals[Index] := RealValue;
+\t\tValueText := REAL_TO_STRING(DINT_TO_REAL(TRUNC(RealValue * 100.0 + SEL(RealValue >= 0.0, -0.5, 0.5))) / 100.0);
+\t\tIsBuildOk := IsBuildOk
+\t\t\tAND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(RealNames[Index]), Used := Used)
+\t\t\tAND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(':'), Used := Used)
+\t\t\tAND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(ValueText), Used := Used)
+\t\t\tAND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR('$N'), Used := Used);
+\tEND_IF
+END_FOR
+// ... the same for BOOL and DINT with "<>" instead of the deadband.
+// If the message doesn't fit (IsBuildOk = FALSE), send nothing and keep the LastX values unchanged
+// for that message, or the skipped changes would never be sent."""
+
 EVERY_SCAN_FIX_SNIPPET = """// Today, FB_InterlockMatrix body (every scan):
 ProcessMQTTMessage();
 StringPublication();                       // rebuilds all 7 strings, 20 times a second
@@ -368,6 +440,8 @@ def build_html():
         "performanceProduction": production_runs,
         "performanceFirstSweepWithConcatControl": concat_control_runs,
         "verification": dict((label, data) for label, data in verifications),
+        "scaleTest2000Tags": dict(("%s_per%d_qos%d" % key, run) for key, run in tagvalue_section.scale.items()),
+        "scalePerTypeCost": tagvalue_section.COSTS,
     }
     values = dict(
         chart=perf_chart(real_qos0),
@@ -393,6 +467,13 @@ def build_html():
         results_json=html.escape(json.dumps(json.dumps(payload, indent=1))),
         prompt_json=html.escape(json.dumps(PROMPT)),
         every_scan_fix=code(EVERY_SCAN_FIX_SNIPPET),
+        append_z=code(st_source("scale/AppendZ")),
+        tv_build_tag=code(without_measurement_aid(st_source("scale/ScaleTest.BuildTag", "impl"))),
+        tv_decl=code(TV_DECL_SNIPPET),
+        tv_chunk=code(TV_CHUNK_SNIPPET),
+        detect_changes=code(st_source("scale/ScaleTest.DetectChanges", "impl")),
+        rbe_snippet=code(RBE_SNIPPET),
+        **tagvalue_section.fields(),
         total_values="{:,}".format(sum(data["large"]["valuesChecked"] for _, data in verifications)),
         total_messages="{:,}".format(sum(data["large"]["messages"] for _, data in verifications)),
         **bcnf_figures()

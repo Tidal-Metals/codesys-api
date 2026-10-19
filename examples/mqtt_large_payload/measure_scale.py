@@ -15,7 +15,8 @@ from run_ide_script import execute  # noqa: E402
 
 SCALE_STATS = ["LastPayloadLength", "LastBuildUs", "MaxBuildUs", "BuildTotalUs", "BuildCount", "MaxBuildScanUs",
                "LastBuildScans", "LastPublishUs", "MaxPublishUs", "LastPublishCycles", "MaxPublishCycles",
-               "SentCount", "TimeoutCount", "OverflowCount", "SkippedBusyCount", "ValueUpdateUs", "NamesInitUs"]
+               "SentCount", "TimeoutCount", "OverflowCount", "SkippedBusyCount", "ValueUpdateUs", "NamesInitUs",
+               "ChangeDetectUs", "MaxChangeDetectUs", "ChangedBools", "ChangedInts", "ChangedReals"]
 PRG_STATS = ["CycleUs", "MaxCycleUs", "MaxIntervalUs", "MinIntervalUs", "MaxClientUs"]
 
 CODE = """
@@ -35,7 +36,7 @@ def write(values):
 previous_period = str(on.read_value('PLC_PRG.PublishPeriod'))
 write([('PLC_PRG.PublishPeriod', 'T#1H'), ('PLC_PRG.IsTagValueEnabled', 'FALSE'), ('PLC_PRG.IsBcnfEveryScanEnabled', 'FALSE'),
        ('ScaleTest.IsTagValueFormat', @@TAGVALUE@@), ('ScaleTest.TagsPerScan', '@@PER_SCAN@@'),
-       ('ScaleTest.IsQos1', @@QOS1@@), ('ScaleTest.IsEnabled', 'TRUE')])
+       ('ScaleTest.IsQos1', @@QOS1@@), ('ScaleTest.OnlyKind', '@@ONLY_KIND@@'), ('ScaleTest.IsEnabled', 'TRUE')])
 time.sleep(@@SETTLE@@)
 write([('ScaleTest.ResetStats', 'TRUE'), ('PLC_PRG.ResetStats', 'TRUE')])
 sent_before = number('ScaleTest.SentCount')
@@ -48,7 +49,7 @@ values = dict((name, number('ScaleTest.' + name)) for name in @@SCALE_STATS@@)
 values.update(dict((name, number('PLC_PRG.' + name)) for name in @@PRG_STATS@@))
 values['cycleSamplesUs'] = samples
 values['sentDuringWindow'] = values['SentCount'] - sent_before
-write([('ScaleTest.IsEnabled', 'FALSE'), ('PLC_PRG.PublishPeriod', previous_period)])
+write([('ScaleTest.IsEnabled', 'FALSE'), ('ScaleTest.OnlyKind', '0'), ('PLC_PRG.PublishPeriod', previous_period)])
 time.sleep(2)
 result = {'success': True, 'run': values, 'restoredPublishPeriod': previous_period}
 """
@@ -59,6 +60,8 @@ def main():
     parser.add_argument("--format", choices=["tagvalue", "positional"], default="tagvalue")
     parser.add_argument("--tags-per-scan", type=int, default=2000)
     parser.add_argument("--qos", type=int, choices=[0, 1], default=0)
+    parser.add_argument("--only-kind", type=int, choices=[0, 1, 2, 3, 4], default=0,
+                        help="build only BOOL (1), DINT (2), REAL (3) or no (4) tags, to time each type; tagvalue format only")
     parser.add_argument("--seconds", type=float, default=45)
     parser.add_argument("--settle", type=float, default=5)
     parser.add_argument("--out")
@@ -66,6 +69,7 @@ def main():
     code = (CODE.replace("@@SCALE_STATS@@", repr(SCALE_STATS)).replace("@@PRG_STATS@@", repr(PRG_STATS))
             .replace("@@TAGVALUE@@", repr("TRUE" if args.format == "tagvalue" else "FALSE"))
             .replace("@@PER_SCAN@@", str(args.tags_per_scan)).replace("@@QOS1@@", repr("TRUE" if args.qos else "FALSE"))
+            .replace("@@ONLY_KIND@@", str(args.only_kind))
             .replace("@@SECONDS@@", repr(args.seconds)).replace("@@SETTLE@@", repr(args.settle)))
     result = execute(code, int(args.seconds + args.settle) + 120)
     if not result.get("success"):
@@ -77,7 +81,8 @@ def main():
     run["cycleSampleMaxUs"] = max(samples) if samples else None
     if run.get("BuildCount"):
         run["buildMeanUs"] = round(run["BuildTotalUs"] / run["BuildCount"])
-    run.update(format=args.format, tagsPerScan=args.tags_per_scan, qos=args.qos, seconds=args.seconds)
+    run.update(format=args.format, tagsPerScan=args.tags_per_scan, qos=args.qos, onlyKind=args.only_kind,
+               seconds=args.seconds)
     text = json.dumps(run, indent=1)
     print(json.dumps(run))
     if args.out:

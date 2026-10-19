@@ -30,7 +30,8 @@ PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"
 ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"),
            ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),
            ("ScaleTest", "UpdateValues", "scale/ScaleTest.UpdateValues"),
-           ("ScaleTest", "BuildTag", "scale/ScaleTest.BuildTag")]
+           ("ScaleTest", "BuildTag", "scale/ScaleTest.BuildTag"),
+           ("ScaleTest", "DetectChanges", "scale/ScaleTest.DetectChanges")]
 
 
 def read_source(source_dir, name):

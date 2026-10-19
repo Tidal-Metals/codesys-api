@@ -8,14 +8,14 @@
 :root {
   --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
   --grid: #e1e0d9; --axis: #c3c2b7; --accent: #2a78d6; --code-bg: #f1f0ec;
-  --s1: #2a78d6; --s2: #eb6834; --s0: #c3c2b7;
+  --s1: #2a78d6; --s2: #eb6834; --s0: #c3c2b7; --s3: #1baf7a;
   --good: #006300; --good-bg: #e3f3e3; --warn: #8a5a00; --warn-bg: #fdf1d6; --bad: #b02a2a; --bad-bg: #fbe5e5;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
     --grid: #2c2c2a; --axis: #383835; --accent: #3987e5; --code-bg: #232321;
-    --s1: #3987e5; --s2: #d95926; --s0: #4a4a46;
+    --s1: #3987e5; --s2: #d95926; --s0: #4a4a46; --s3: #199e70;
     --good: #0ca30c; --good-bg: #13301a; --warn: #fab219; --warn-bg: #33290f; --bad: #e66767; --bad-bg: #3a1a1a;
   }
 }
@@ -69,7 +69,17 @@ svg .cat { fill: var(--ink); font-size: 13px; font-weight: 600; }
 svg .value { fill: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
 svg .budget { stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 5 4; }
 svg .budget-label { fill: var(--bad); font-size: 11px; }
-svg .s1 { fill: var(--s1); } svg .s2 { fill: var(--s2); } svg .s0 { fill: var(--s0); }
+svg .s1 { fill: var(--s1); } svg .s2 { fill: var(--s2); } svg .s0 { fill: var(--s0); } svg .s3 { fill: var(--s3); }
+svg .mini-title { fill: var(--ink); font-size: 12.5px; font-weight: 600; }
+.multiples { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px 32px; max-width: 960px; }
+.muted { color: var(--muted); font-size: 0.85rem; }
+table.compact th { white-space: normal; vertical-align: bottom; font-size: 0.85rem; }
+table.compact td, table.compact th { padding: 8px 7px; }
+.proscons { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.proscons > div { background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; padding: 6px 18px 10px; }
+.proscons h3 { margin-top: 12px; }
+.proscons ul { padding-left: 18px; }
+.legend span.s3c::before { background: var(--s3); }
 svg .mark:hover { opacity: 0.8; }
 svg.diagram .box { fill: var(--surface); stroke: var(--axis); stroke-width: 1.5; }
 svg.diagram .box.dim { stroke-dasharray: 5 4; }
@@ -109,8 +119,8 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 <nav class="toc"><ul>
   <li><a href="#summary">Summary</a></li><li><a href="#cause">Where 255 comes from</a></li><li><a href="#build">How the payload is built</a></li><li><a href="#setup">Test setup</a></li>
   <li><a href="#recipe">Recipe</a></li><li><a href="#code">Code</a></li><li><a href="#results">Results</a></li>
-  <li><a href="#performance">Performance</a></li><li><a href="#issues">What worked, what didn't</a></li>
-  <li><a href="#caveats">Not tested</a></li><li><a href="#state">Bench state and files</a></li>
+  <li><a href="#performance">Performance</a></li><li><a href="#tagvalue">tag:value at 2,000 tags</a></li><li><a href="#rbe">Report by exception</a></li><li><a href="#issues">What worked, what didn't</a></li>
+  <li><a href="#caveats">Not tested</a></li><li><a href="#state">Bench state and files</a></li><li><a href="#proscons">Pros and cons</a></li>
 </ul></nav>
 <main>
 
@@ -121,6 +131,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
     <li><strong>The MQTT library has no 255-character limit.</strong> The cap comes from CODESYS's Standard string functions (<code>CONCAT</code> and friends), which return at most 255 characters, and from passing payloads through <code>STRING(255)</code> variables. That's why declaring a <code>STRING(8000)</code> didn't help.</li>
     <li><strong>BCNF rebuilds its whole payload in every scan, though it only sends about once a second.</strong> <code>StringPublication()</code> runs from the body of the interlock FB, so all seven strings are rebuilt 20 times a second and @@bcnf_wasted@@ builds are thrown away. Measured with BCNF's own code on the bench: <strong>@@bcnf_build_mean_ms@@ ms per scan</strong> (@@bcnf_build_max_ms@@ ms worst case), about @@bcnf_cpu_pct@@% of every 50 ms cycle. Building only in the scan that publishes cuts that to about @@bcnf_cpu_fixed_pct@@%. This fix is independent of the 255-character problem and can go in first (<a href="#every-scan">details</a>).</li>
     <li><strong>One publisher is enough.</strong> Built with a pointer append instead of <code>CONCAT</code>, one message carried up to 1,100 two-decimal values (19.7 KB) to the HQ broker once a second, at QoS 0 and QoS 1. All @@total_messages@@ messages were correct, @@total_values@@ values checked, with no gaps or timeouts. We don't need 40 parallel publishers.</li>
+    <li><strong>The publish map isn't needed any more.</strong> With 2,000 tags (half BOOL, a quarter each DINT and REAL, 7–9 byte names), plain <code>tag:value</code> lines in one message cost @@build_extra_pct@@% more build time than publish-map groups (@@tv_build_ms@@ vs @@pm_build_ms@@ ms) but @@bytes_ratio@@× the bytes (@@tv_bytes_kb@@ vs @@pm_bytes_kb@@ KB), so a message takes @@tv_send_ms@@ ms to send instead of @@pm_send_ms@@ ms at QoS 0. Reporting only changed tags would shrink a typical message to an estimated @@rbe_typical_kb@@ KB, which publish-map positions can't do (<a href="#tagvalue">results</a>, <a href="#proscons">pros and cons</a>).</li>
     <li><strong>It fits in a 50 ms task, but the build is the cost to watch.</strong> With production settings (BCNF-style REAL formatting, one publish a second, no extra work), building the text takes about 36 µs per value, all in one scan: 19 ms for 500 values, 40 ms for 1,100. Every scan started on time. Sending is cheap: at most 2.5 ms per scan. BCNF's roughly 10 KB is about 550 values, so about 20 ms of build on top of its interlock logic. A separate lower-priority task for the MQTT work keeps that away from the control logic.</li>
   </ul>
 </div>
@@ -382,6 +393,98 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 </ol>
 </section>
 
+<section id="tagvalue">
+<h2>tag:value at 2,000 tags</h2>
+<p class="prose">The positional publish map exists mostly to squeeze values under the old 255-character limit. Sending each <code>tag:value</code> as its own MQTT message was tried before and was slow, because each message pays the library's send handshake, a broker delivery and a separate bridge ingest. With the limit gone, all the <code>tag:value</code> lines can travel in one message, and the bridge ingests that directly: it splits a message on newlines and looks up each <code>tag</code> without a publish map (<code>raw_ingest.go</code>; from reading the code, not run end to end).</p>
+
+<h3>BCNF's 103 values first</h3>
+<p class="prose">The same 103 values BCNF publishes today, with BCNF's own conversion expressions, as <code>tag:value</code> lines in one message built once per publish: @@bcnf_tv_bytes@@ bytes, @@bcnf_tv_build_ms@@ ms per build (@@bcnf_tv_build_max_ms@@ max), against @@bcnf_pos_build_ms@@ ms (@@bcnf_pos_build_max_ms@@ max) for BCNF's positional <code>StringPublication</code>. Sending took @@bcnf_tv_send0_ms@@ ms at QoS 0 and @@bcnf_tv_send1_ms@@ ms at QoS 1. The broker check passed for all @@bcnf_tv_messages@@ messages (@@bcnf_tv_lines@@ lines).</p>
+
+<h3>The scale test</h3>
+<p class="prose"><code>ScaleTest</code> publishes 2,000 tags once a second: 1,000 BOOL, 500 DINT and 500 REAL, named like the new system (<code>TT-1001</code>, <code>PIT-1008</code>, <code>FIT-1009V</code>, 7–9 bytes) and holding new values every message. Both formats go through the same code, so only the text around each value differs:</p>
+<ul>
+  <li><strong>publish_map:</strong> 20 group lines of 100 values, <code>[G1, 1, 0, 0, …]</code>, decoded by the bridge's publish map.</li>
+  <li><strong>tag:value:</strong> 2,000 lines, <code>TT-1001:1</code>.</li>
+</ul>
+<p class="prose">Each format ran with the whole build in one scan and spread over 8 scans (250 tags each), at QoS 0 and QoS 1, 45 s per run. The broker check recomputed every value of every message: @@scale_messages@@ messages and @@scale_values_checked@@ values, all correct. Every scan started on time and no publish timed out.</p>
+<figure>
+<figcaption>Per message, 2,000 tags, built in one scan</figcaption>
+<div class="legend"><span style="--c: var(--s1)">publish_map</span><span style="--c: var(--s2)">tag:value</span></div>
+@@scale_multiples@@
+</figure>
+<figure>
+<figcaption>Worst scan of the whole program, QoS 0, by build schedule</figcaption>
+<div class="legend"><span style="--c: var(--s1)">publish_map</span><span style="--c: var(--s2)">tag:value</span></div>
+@@scale_worst_chart@@
+</figure>
+<div class="table-wrap"><table class="compact">
+<thead><tr><th>Format</th><th class="num">Build scans</th><th class="num">QoS</th><th class="num">Bytes</th><th class="num">Build ms mean (max)</th><th class="num">Most build in a scan, ms</th><th class="num">Worst scan ms</th><th class="num">Longest gap ms</th><th class="num">Client per scan ms</th><th class="num">Request → done</th><th class="num">Time-outs</th></tr></thead>
+<tbody>
+@@scale_rows@@
+</tbody>
+</table></div>
+<h3>What it costs, by type</h3>
+<p class="prose">Formatting the value is most of the work, and it depends on the type. Measured by building one type at a time (with the loop overhead of the skipped tags subtracted):</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Type</th><th class="num">Tags</th><th class="num">Build per tag</th><th class="num">tag:value bytes per line</th><th>Example line</th></tr></thead>
+<tbody>
+@@per_type_rows@@
+</tbody>
+</table></div>
+<p class="prose">That adds up to within 5% of the measured full build. The tag name itself costs little: the whole difference between the formats is @@build_extra_pct@@%. What grows is the message, and the library moves roughly 2 KB per 50 ms scan, so sending takes about @@send_b_ms_per_kb@@ ms per KB (never less than @@send_floor_ms@@ ms).</p>
+
+<h3>Memory</h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th class="num">publish_map</th><th class="num">tag:value</th></tr></thead>
+<tbody>
+<tr><td>Payload buffer (largest message, plus margin)</td><td class="num">about 11 KB (@@pm_bytes_kb@@ KB message)</td><td class="num">about 27 KB (@@tv_bytes_kb@@ KB message)</td></tr>
+<tr><td>Tag names on the PLC</td><td class="num">none (they live in the bridge's publish map)</td><td class="num">about 20 KB (2,000 × <code>STRING(9)</code>, 10 bytes each)</td></tr>
+<tr><td>Value snapshot (1,000 BOOL, 500 DINT, 500 REAL)</td><td class="num">5 KB</td><td class="num">5 KB</td></tr>
+<tr><td>Report by exception (last-sent copies)</td><td class="num">–</td><td class="num">+5 KB</td></tr>
+<tr><td><strong>Difference</strong></td><td class="num"></td><td class="num"><strong>about 35 KB more</strong> (40 KB with RBE)</td></tr>
+</tbody>
+</table></div>
+<p class="prose">For scale, the whole bench application with all its test buffers compiles to 259 KB of global data and 336 KB of code. I haven't checked the free memory of the CPU the new system will use.</p>
+
+<h3>Appending tag:value lines properly</h3>
+<p class="prose">At 2,000 tags the append itself has to be cheap. <code>AppendText</code> (used for the demo payload) takes its piece as a <code>STRING(255)</code> input, which costs a string copy per call; four calls per line add up. <code>AppendZ</code> copies straight from the name array or value text through a pointer, and drops a partial piece if it doesn't fit:</p>
+@@append_z@@
+<p class="prose">Declarations: the names as constants generated from the config sheet, exactly as the bridge's layout spells the tag keys, and a buffer sized from the measured message:</p>
+@@tv_decl@@
+<p class="prose">One tag per call; the value is formatted the same way for both formats, and only the text around it differs:</p>
+@@tv_build_tag@@
+<p class="prose">The build loop: snapshot the values, build a few hundred tags per scan, publish only a complete message, and leave the buffer alone until the publisher reports <code>done</code>:</p>
+@@tv_chunk@@
+</section>
+
+<section id="rbe">
+<h2>Report by exception: estimated savings</h2>
+<p class="prose">Today every value is sent every second whether it changed or not. With <code>tag:value</code> lines the PLC can send only the tags that changed — a BOOL or DINT that differs from the last value sent, a REAL that moved more than a deadband — plus a periodic full refresh so the bridge is never left holding a stale value (after a bridge restart, say). The publish map can't do this per tag: every position in a group line has to be filled.</p>
+<p class="prose"><strong>These are estimates.</strong> How often tags change depends on the process, so the scenarios below are assumptions: BOOLs change rarely, DINTs (counters, states, setpoints) occasionally, REALs often unless a deadband filters out noise. The costs come from the measurements above: the per-type build costs, @@detect_ms@@ ms (@@detect_max_ms@@ ms worst case) to check all 2,000 tags for changes each publish, measured on the PLC, and the measured send time per KB.</p>
+<figure>
+<figcaption>Message size per publish (one per ~1.1 s)</figcaption>
+<div class="legend"><span style="--c: var(--s1)">publish_map, every value (measured)</span><span style="--c: var(--s2)">tag:value, every value (measured)</span><span class="s3c">tag:value, changed tags only (estimate)</span></div>
+@@rbe_chart@@
+</figure>
+<div class="table-wrap"><table>
+<thead><tr><th>Scenario</th><th class="num">Tags sent</th><th class="num">Message KB</th><th class="num">PLC build ms<br><span class="muted">incl. change check</span></th><th class="num">Send ms, QoS 0</th><th class="num">publish_map with group RBE, KB</th></tr></thead>
+<tbody>
+@@rbe_rows@@
+</tbody>
+</table></div>
+<ul>
+  <li><strong>Typical case:</strong> about @@rbe_typical_tags@@ tags change per publish, giving a @@rbe_typical_kb@@ KB message that takes about @@rbe_typical_build_ms@@ ms to build and @@rbe_typical_send_ms@@ ms to send — against @@tv_bytes_kb@@ KB, @@tv_build_ms@@ ms and @@tv_send_ms@@ ms for sending everything, and smaller than the publish map's full @@pm_bytes_kb@@ KB.</li>
+  <li><strong>The deadband matters most.</strong> REALs are the most expensive type to format and the noisiest. Without a deadband every REAL goes out every time and the message grows to about @@rbe_nodb_kb@@ KB.</li>
+  <li><strong>The full refresh</strong> costs the same as today's full message (@@tv_bytes_kb@@ KB, @@tv_build_ms@@ ms), once every @@refresh_every@@ publishes or so. Spread its build over several scans like any other.</li>
+  <li><strong>The publish map gains little from the same idea.</strong> Sending only the 100-value groups that contain a change still sends almost every group, because one changed value in 100 is enough (last column). Grouping tags by how often they change would help, at the cost of more publish-map configuration.</li>
+  <li><strong>The bridge already filters unchanged values</strong> before Sparkplug (report-by-exception there, <code>SPARKPLUG_BRIDGE_SPARKPLUG_DISABLE_RBE</code> turns it off), so downstream traffic is the same either way. What RBE on the PLC saves is PLC time, network and bridge parsing.</li>
+</ul>
+<p class="prose">The change check, as measured on the PLC:</p>
+@@detect_changes@@
+<p class="prose">And a sketch of the RBE build for the REALs. It combines the measured check and append; this exact code has not run:</p>
+@@rbe_snippet@@
+</section>
+
 <section id="issues">
 <h2>What worked, what didn't</h2>
 <p>Everything we ran into, from building the demo through deploying and measuring it.</p>
@@ -415,7 +518,58 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 </ul>
 </section>
 
+<section id="proscons">
+<h2>Pros and cons: tag:value vs publish_map</h2>
+<p class="prose">For the new system's ~2,000 tags, with the payload built once per publish by pointer append in either case. Numbers are from the bench tests above; RBE figures are estimates.</p>
+<div class="proscons">
+<div>
+<h3>tag:value lines</h3>
+<p><strong>Pros</strong></p>
+<ul>
+  <li>No publish-map configuration on the bridge, and no position coupling: adding, removing or reordering a tag on the PLC can't shift other values onto the wrong tags.</li>
+  <li>Can report by exception: an estimated @@rbe_typical_kb@@ KB typical message instead of @@tv_bytes_kb@@ KB, about @@rbe_typical_build_ms@@ ms of build instead of @@tv_build_ms@@ ms.</li>
+  <li>Self-describing and readable in MQTT Explorer or a log, which makes commissioning and debugging easier.</li>
+  <li>Optional per-tag PLC timestamp (<code>tag:value:epoch_ms</code>), which the bridge already parses.</li>
+  <li>The bridge ingests the lines directly, skipping the publish-map expansion (from the bridge code).</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+  <li>@@bytes_ratio@@× the bytes when sending everything (@@tv_bytes_kb@@ vs @@pm_bytes_kb@@ KB), so sending takes @@tv_send_ms@@ ms instead of @@pm_send_ms@@ ms at QoS 0 (@@tv_send1_ms@@ vs @@pm_send1_ms@@ ms at QoS 1). That fits a one-second publish, but not two publishes a second on a 50 ms task.</li>
+  <li>About 35 KB more PLC memory: tag names on the PLC and a bigger buffer.</li>
+  <li>@@build_extra_pct@@% more build time when sending everything (@@tv_build_ms@@ vs @@pm_build_ms@@ ms).</li>
+  <li>Tag names in the PLC must match the bridge's tag keys exactly (case-sensitive); they need to be generated from the same config sheet.</li>
+  <li>With RBE, a bridge restart leaves quiet tags unknown until the next full refresh.</li>
+  <li>Multi-line <code>tag:value</code> ingest through the bridge hasn't been tested end to end.</li>
+</ul>
+</div>
+<div>
+<h3>publish_map groups</h3>
+<p><strong>Pros</strong></p>
+<ul>
+  <li>Smallest message (@@pm_bytes_kb@@ KB) and fastest send (@@pm_send_ms@@ ms at QoS 0), leaving room to publish more often than once a second.</li>
+  <li>No tag names on the PLC; less memory.</li>
+  <li>Slightly cheaper to build (@@pm_build_ms@@ ms).</li>
+  <li>Proven on site today, and the bridge's publish map already exists.</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+  <li>Position coupling: the PLC's value order must match the bridge's publish map exactly. A wrong count rejects the whole line (<code>publish_map_value_count_mismatch</code>); a wrong order silently files values under the wrong tags.</li>
+  <li>Every tag change means editing the PLC and the publish map together.</li>
+  <li>Can't report by exception per tag; at best per group, which saves little when changes are spread out.</li>
+  <li>Unreadable without the map, so harder to debug from raw MQTT.</li>
+</ul>
+</div>
+</div>
+<h3>Either way</h3>
+<ul>
+  <li>Build once per publish, never every scan, and spread a 2,000-tag build over several scans (worst scan @@pm_worst_spread_ms@@–@@tv_worst_spread_ms@@ ms instead of @@tv_worst_one_ms@@ ms) or give MQTT its own lower-priority task.</li>
+  <li>Append with a pointer (<code>AppendZ</code>), never <code>CONCAT</code> on the running total, and never pass the payload through a <code>STRING(255)</code>.</li>
+  <li>Snapshot the values at the start of a build so a message spread over scans is consistent.</li>
+</ul>
+</section>
+
 <div class="exports">
+  <button data-copy="scale_csv">Copy 2,000-tag results as CSV</button>
   <button data-copy="csv">Copy performance table as CSV</button>
   <button data-copy="json">Copy all results as JSON</button>
   <button data-copy="prompt">Copy as prompt: apply to BCNF</button>
@@ -427,6 +581,7 @@ footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 a
 <script>
 const exportsData = {
   csv: @@csv_json@@,
+  scale_csv: @@scale_csv_json@@,
   json: @@results_json@@,
   prompt: @@prompt_json@@
 };
