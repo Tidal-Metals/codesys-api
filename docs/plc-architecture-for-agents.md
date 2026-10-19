@@ -191,6 +191,21 @@ Each of these cost time on this bench; none is obvious from the code.
   `--runscript`; IronPython's `json` fails on non-ASCII compiler messages; `insert()` on text objects clashes
   with its overloads, so use `replace()`.
 
+## Capacity on the P2CDS-622
+
+Measured 2026-10-19 with `check_compile.py` (it reports the compiler's memory statistics) and the MQTT scale
+tests in `examples/mqtt_large_payload/results/scale/`.
+
+- **Memory isn't the limit.** The code and data area grows to 50 MiB; retain is 800 KB and persistent 200 KB.
+  The skeleton costs about 260 B per tag: 134 B of tables, 44 B of worst-case payload, and the rest
+  initializer code. 10,000 tags use 3.3 MB, the current BCNF program 0.8 MB.
+- **MQTT send rate is the limit.** The library sends about 1.85 KB per client call, so throughput follows the
+  comms task interval: about 37 KB/s at 50 ms and 18 KB/s at 100 ms. `tag:value` averages 13 B per tag with
+  8-character names. A full refresh of 2,000 tags (26 KB) takes 0.64 s at 50 ms. Size the comms interval,
+  the full-refresh period and the report-by-exception deadbands so that changes per second times line length
+  stays well under that rate.
+- **Indices are `INT`:** a table above 32,767 rows needs `DINT` indices.
+
 ## When the sheet and the code disagree
 
 The sheet is the source. The current BCNF code has four AIT-1508 alarms that CONC RevB_3 doesn't define; a

@@ -79,6 +79,7 @@ try:
     for category in system.get_message_categories(True):
         system.clear_messages(category)
     app.rebuild()
+    app.generate_code()   # adds the memory statistics: code, data, highest used address per area
     messages = []
     for category in system.get_message_categories(True):
         for message in system.get_message_objects(category):
@@ -86,6 +87,8 @@ try:
             messages.append({"severity": str(message.severity), "text": text})
     report["errors"] = [m for m in messages if "error" in m["severity"].lower()]
     report["warnings"] = [m["text"] for m in messages if "warning" in m["severity"].lower() and "STRING(253)" not in m["text"]]
+    # Build statistics: code and data size, highest used address per memory area
+    report["info"] = [m["text"] for m in messages if "error" not in m["severity"].lower() and "warning" not in m["severity"].lower()]
     report["success"] = not report["errors"]
     proj.close()
 except Exception:
