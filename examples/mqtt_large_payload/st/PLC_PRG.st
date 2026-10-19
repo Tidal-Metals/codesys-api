@@ -266,6 +266,9 @@ IF TagValuePublisher.SendTimeout THEN
 	IsTagValueRequested := FALSE;
 END_IF
 
+// 2,000-tag scale test (idle unless ScaleTest.IsEnabled); inside the timed scan on purpose.
+ScaleTest();
+
 // What BCNF pays today: its payload strings are rebuilt in every scan, not only when publishing.
 IF IsBcnfEveryScanEnabled THEN
 	StepStartUs := NowUs();

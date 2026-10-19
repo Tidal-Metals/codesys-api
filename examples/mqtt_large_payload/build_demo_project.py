@@ -23,11 +23,14 @@ REMOVED_DEVICES = ["Modbus_TCP_Client"]
 DYNAMIC_MEMORY_BYTES = 100000
 # Source paths are relative to st/ without ".st".
 FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
-             ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine")]
-# BCNF's StringPublication (verbatim), called by PLC_PRG when enabled
-PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy")]
+             ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine"), ("AppendZ", "BOOL", "scale/AppendZ")]
+# BCNF's StringPublication (verbatim) and the 2,000-tag scale test, both called by PLC_PRG
+PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"),
+            ("ScaleTest", "scale/ScaleTest")]
 ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"),
-           ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue")]
+           ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),
+           ("ScaleTest", "UpdateValues", "scale/ScaleTest.UpdateValues"),
+           ("ScaleTest", "BuildTag", "scale/ScaleTest.BuildTag")]
 
 
 def read_source(source_dir, name):

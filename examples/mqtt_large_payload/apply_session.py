@@ -29,5 +29,6 @@ result = report
 
 if __name__ == "__main__":
     report = execute(CODE, 240)
-    report.pop("messages", None)
+    messages = report.pop("messages", None) or []
+    report["memory"] = [m["text"] for m in messages if "emory" in m["text"] or "address" in m["text"]]
     print(json.dumps(report, indent=1))
