@@ -1,0 +1,30 @@
+{
+ "runs": [
+  {
+   "TimeoutCount": 0,
+   "LastLargeLength": 18751,
+   "LastLargeBuildUs": 33068,
+   "MaxClientUs": 2476,
+   "MaxCycleUs": 35422,
+   "LastPublishCycles": 10,
+   "LastPublishUs": 417383,
+   "MinIntervalUs": 49742,
+   "MaxPublishCycles": 10,
+   "MaxPublishUs": 419848,
+   "LargeSentCount": 359,
+   "sentDuringRun": 41,
+   "SkippedBusyCount": 0,
+   "CycleUs": 2175,
+   "OverflowCount": 0,
+   "MaxConcatBuildUs": 0,
+   "MaxLargeBuildUs": 34414,
+   "MaxIntervalUs": 51019,
+   "ValueCount": 1100,
+   "format": "INT",
+   "qos": 0,
+   "periodMs": 1000,
+   "concatControl": false,
+   "seconds": 45
+  }
+ ]
+}

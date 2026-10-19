@@ -11,10 +11,24 @@ from pathlib import Path
 DEMO = Path(__file__).resolve().parents[1]
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else DEMO / "report" / "report.html"
 
-runs = json.loads((DEMO / "results" / "performance_sweep.json").read_text())["runs"]
-verify_500 = json.loads((DEMO / "results" / "verify_60s.json").read_text())
-verify_1100 = json.loads((DEMO / "results" / "verify_1100_values_40s.json").read_text())
-verify_sweep = json.loads((DEMO / "results" / "verify_during_sweep.json").read_text())
+RESULTS = DEMO / "results"
+
+
+def load(name):
+    return json.loads((RESULTS / name).read_text())
+
+
+# Production benchmarks: BCNF-style two-decimal REALs, one publish a second, no CONCAT copy.
+real_qos0 = load("performance_real_qos0.json")["runs"]
+real_qos1 = load("performance_real_qos1.json")["runs"]
+int_qos0 = load("performance_int_qos0.json")["runs"]
+production_runs = real_qos0 + real_qos1 + int_qos0
+# First sweep: integers every 5 s at QoS 1, with the CONCAT control copy built in the same scan.
+concat_control_runs = load("performance_with_concat_control.json")["runs"]
+verify_500 = load("verify_60s.json")
+verify_1100 = load("verify_1100_values_40s.json")
+verify_concat_sweep = load("verify_during_concat_control_sweep.json")
+verify_production = load("verify_production_sweep.json")
 
 
 def st_source(name, part="all"):
@@ -36,9 +50,9 @@ def ms(us):
 
 
 # ---------- performance chart (inline SVG, horizontal stacked bars) ----------
-def perf_chart():
+def perf_chart(runs):
     width, left, right, top, bar_h, gap = 720, 150, 30, 28, 30, 26
-    scale_max = 80.0  # ms
+    scale_max = 60.0  # ms
     plot_w = width - left - right
     height = top + len(runs) * (bar_h + gap) + 40
 
@@ -46,9 +60,9 @@ def perf_chart():
         return left + plot_w * value_ms / scale_max
 
     parts = ['<svg class="chart" viewBox="0 0 %d %d" role="img" aria-labelledby="perf-title perf-desc">' % (width, height),
-             '<title id="perf-title">Worst scan time by payload size</title>',
-             '<desc id="perf-desc">Stacked bars: payload build, CONCAT comparison copy and remaining scan work, against the 50 ms task interval.</desc>']
-    for tick in range(0, 81, 10):
+             '<title id="perf-title">Worst scan time by payload size, production settings</title>',
+             '<desc id="perf-desc">Stacked bars: payload build and remaining scan work, against the 50 ms task interval.</desc>']
+    for tick in range(0, int(scale_max) + 1, 10):
         tx = x(tick)
         parts.append('<line class="grid" x1="%.1f" x2="%.1f" y1="%d" y2="%d"/>' % (tx, tx, top - 6, height - 32))
         parts.append('<text class="tick" x="%.1f" y="%d" text-anchor="middle">%d ms</text>' % (tx, height - 14, tick))
@@ -58,16 +72,14 @@ def perf_chart():
     for index, run in enumerate(runs):
         y = top + 6 + index * (bar_h + gap)
         build = run["MaxLargeBuildUs"] / 1000.0
-        concat = run["MaxConcatBuildUs"] / 1000.0
         total = run["MaxCycleUs"] / 1000.0
-        rest = max(total - build - concat, 0.0)
-        label = "%d values" % run["ValueCount"]
+        rest = max(total - build, 0.0)
+        label = "{:,} values".format(run["ValueCount"])
         sub = "%.1f KB" % (run["LastLargeLength"] / 1000.0)
         parts.append('<text class="cat" x="%d" y="%.1f" text-anchor="end">%s</text>' % (left - 10, y + 13, label))
         parts.append('<text class="cat-sub" x="%d" y="%.1f" text-anchor="end">%s payload</text>' % (left - 10, y + 27, sub))
         cursor = left
-        segments = [("s1", "Payload build (pointer append)", build), ("s2", "CONCAT comparison copy (demo only)", concat),
-                    ("s0", "Rest of the scan", rest)]
+        segments = [("s1", "Payload build", build), ("s0", "Rest of the scan", rest)]
         for css, name, value in segments:
             seg_w = plot_w * value / scale_max
             draw_w = max(seg_w - 2, 0.8)  # 2px surface gap between fills
@@ -80,46 +92,84 @@ def perf_chart():
     return "\n".join(parts)
 
 
-def perf_rows():
+TASK_INTERVAL_MS = 50
+
+
+def expected_publishes(run):
+    # The TON restarts one scan after it fires, so the real period is PublishPeriod + one task interval.
+    return int(run["seconds"] * 1000 / (run["periodMs"] + TASK_INTERVAL_MS))
+
+
+def timing_cell(run):
+    late = run["MaxIntervalUs"] - 50000
+    if late > 2000:
+        return '<span class="bad">+%.0f ms late</span>' % (late / 1000.0)
+    return '<span class="good">on time</span>'
+
+
+def table_row(cells):
+    """cells: (text, css class) pairs; class 'num' right-aligns, 'nowrap' keeps status text on one line."""
+    return "<tr>%s</tr>" % "".join("<td class='%s'>%s</td>" % (css, text) for text, css in cells)
+
+
+def perf_rows(runs):
     rows = []
     for run in runs:
-        late = run["MaxIntervalUs"] - 50000
-        late_cell = '<span class="bad">+%.0f ms late</span>' % (late / 1000.0) if late > 2000 else '<span class="good">on time</span>'
-        rows.append("<tr><td class='num'>%d</td><td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
-                    "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td><td class='nowrap'>%s</td><td class='num'>%s</td><td class='num'>%s (%d scans)</td>"
-                    "<td class='num'>%d</td></tr>" % (
-                        run["ValueCount"], "{:,}".format(run["LastLargeLength"]), ms(run["MaxLargeBuildUs"]),
-                        ms(run["MaxConcatBuildUs"]), ms(run["CycleUs"]), ms(run["MaxCycleUs"]), ms(run["MaxIntervalUs"]), late_cell,
-                        ms(run["MaxClientUs"]), "%.0f ms" % (run["MaxPublishUs"] / 1000.0), run["MaxPublishCycles"],
-                        run["TimeoutCount"]))
+        expected = expected_publishes(run)
+        rows.append(table_row([
+            (run["format"], ""), (str(run["qos"]), "num"), ("{:,}".format(run["ValueCount"]), "num"),
+            ("{:,}".format(run["LastLargeLength"]), "num"), (ms(run["MaxLargeBuildUs"]), "num"),
+            (ms(run["CycleUs"]), "num"), (ms(run["MaxCycleUs"]), "num"), (ms(run["MaxIntervalUs"]), "num"),
+            (timing_cell(run), "nowrap"), (ms(run["MaxClientUs"]), "num"),
+            ("%.0f ms (%d scans)" % (run["MaxPublishUs"] / 1000.0, run["MaxPublishCycles"]), "num"),
+            ("%d / %d" % (run["sentDuringRun"], expected), "num"), (str(run["TimeoutCount"]), "num"),
+        ]))
+    return "\n".join(rows)
+
+
+def control_rows():
+    """The first sweep (CONCAT copy in the timed scan) next to production REAL/QoS 1 at the same size."""
+    rows = []
+    real_by_size = dict((run["ValueCount"], run) for run in real_qos1)
+    for run in concat_control_runs:
+        real = real_by_size.get(run["ValueCount"])
+        rows.append(table_row([
+            ("{:,}".format(run["ValueCount"]), "num"), (ms(run["MaxLargeBuildUs"]), "num"),
+            (ms(run["MaxConcatBuildUs"]), "num"), (ms(run["MaxCycleUs"]), "num"), (timing_cell(run), "nowrap"),
+            (ms(real["MaxCycleUs"]) if real else "–", "num"), (timing_cell(real) if real else "–", "nowrap"),
+        ]))
     return "\n".join(rows)
 
 
 def perf_csv():
-    header = "values,payload_bytes,build_ms,concat_copy_ms,normal_scan_ms,worst_scan_ms,max_scan_interval_ms,client_max_ms,send_to_puback_ms,send_to_puback_scans,timeouts"
+    header = ("format,qos,values,payload_bytes,build_ms,sampled_scan_ms,worst_scan_ms,max_scan_interval_ms,"
+              "client_max_ms,request_to_done_ms,request_to_done_scans,sent,expected,timeouts")
     lines = [header]
-    for run in runs:
+    for run in production_runs:
         lines.append(",".join(str(v) for v in [
-            run["ValueCount"], run["LastLargeLength"], ms(run["MaxLargeBuildUs"]), ms(run["MaxConcatBuildUs"]),
+            run["format"], run["qos"], run["ValueCount"], run["LastLargeLength"], ms(run["MaxLargeBuildUs"]),
             ms(run["CycleUs"]), ms(run["MaxCycleUs"]), ms(run["MaxIntervalUs"]), ms(run["MaxClientUs"]),
-            "%.0f" % (run["MaxPublishUs"] / 1000.0), run["MaxPublishCycles"], run["TimeoutCount"]]))
+            "%.0f" % (run["MaxPublishUs"] / 1000.0), run["MaxPublishCycles"], run["sentDuringRun"],
+            expected_publishes(run), run["TimeoutCount"]]))
     return "\n".join(lines)
 
 
 def verify_row(label, data):
     large = data["large"]
     concat = data["concat"]
+    concat_cell = "%d × %s B" % (concat["messages"], "/".join(str(b) for b in concat["bytes"])) if concat["messages"] else "off"
     return ("<tr><td>%s</td><td class='num'>%d</td><td class='num'>%s</td><td class='num'>%s–%s</td><td>%s</td>"
-            "<td>%s</td><td class='num'>%d × %s B</td></tr>" % (
+            "<td>%s</td><td class='num'>%s</td></tr>" % (
                 label, large["messages"], "{:,}".format(large["valuesChecked"]), "{:,}".format(large["bytesMin"]),
-                "{:,}".format(large["bytesMax"]), '<span class="good">all exact</span>' if large["allExact"] else '<span class="bad">failures</span>',
-                "none" if not large["sequenceGaps"] else large["sequenceGaps"], concat["messages"],
-                "/".join(str(b) for b in concat["bytes"])))
+                "{:,}".format(large["bytesMax"]), '<span class="good">all correct</span>' if large["allExact"] else '<span class="bad">failures</span>',
+                "none" if not large["sequenceGaps"] else ", ".join(str(g) for g in large["sequenceGaps"]), concat_cell))
 
 
 ISSUES = [
-    ("Demo code", "CONCAT into a STRING(8000)", "Stopped at exactly 255 characters on the PLC (LastConcatLength = 255) and on the wire (33/33 messages of 255 B, a clean prefix of the full text).",
+    ("Demo code", "CONCAT into a STRING(8000)", "Stopped at exactly 255 characters on the PLC (LastConcatLength = 255) and on the wire (all 53 control messages were 255 B, a clean prefix of the full text).",
      "Intentional control channel. The Standard library string functions return at most 255 characters; build long text with a pointer append (AppendText) instead.", "expected"),
+    ("Measurement", "First timing sweep", "Built the CONCAT control copy in the same scan as the real payload, so its worst-scan numbers (74.5 ms and a 25 ms late scan at 1,100 values) included work production would never do. It also used integers instead of BCNF's REAL formatting and published every 5 s instead of every second.",
+     "Control copy now off by default (<code>IsConcatControlEnabled</code>); re-measured with BCNF-style REALs, one publish a second, QoS 0 and 1. The first sweep is kept below for comparison only.", "fixed"),
     ("Demo code", "Local variable named <code>Mqtt</code>", "\"'QoS' is no component of 'MQTT_IN_OUT'\": ST names are case-insensitive, so the variable hid the <code>MQTT</code> library namespace.",
      "Renamed to <code>MqttLink</code>.", "fixed"),
     ("Project setup", "Application dynamic memory off", "22 × \"No memory for dynamic object creation defined for application\". The library allocates with __NEW.",
@@ -155,8 +205,8 @@ IF PublishTimer.Q AND MqttLink.BROKER_CONNECTED AND NOT IsLargeRequested THEN
 \tLargeUsed := 0;
 \tLargePayload := '';
 \tIsBuildOk := TRUE;
-\tFOR Index := 0 TO ValueCount + 2 DO
-\t\tBuildLine();   // Line := 'DEMO_V12:5012$N' etc.; CONCAT is fine for one short line
+\tFOR Index := 0 TO ValueCount + 3 DO
+\t\tBuildLine();   // Line := 'DEMO_V12:50.12$N' etc.; CONCAT is fine for one short line
 \t\tIsBuildOk := IsBuildOk AND AppendText(pBuffer := ADR(LargePayload),
 \t\t\tCapacity := SIZEOF(LargePayload), Text := Line, Used := LargeUsed);
 \tEND_FOR
@@ -165,9 +215,9 @@ END_IF
 
 LargePublisher(
 \tTopic := ADR(LargeTopic),
-\tPayloadString := ADR(LargePayload),   // pointer to the STRING(20000): no 255-character copy anywhere
+\tPayloadString := ADR(LargePayload),   // pointer to the STRING(30000): no 255-character copy anywhere
 \tPublishAsString := TRUE,
-\tQoSIn := MQTT.QoS.AtLeastOnce,
+\tQoSIn := PublishQoS,                  // AtMostOnce (BCNF today) or AtLeastOnce
 \tMRetain := FALSE,
 \tsend := IsLargeRequested);
 
@@ -179,7 +229,7 @@ END_IF"""
 DECL_SNIPPET = """VAR
 \tMqttLink : MQTT.MQTT_IN_OUT;      // not "Mqtt": that would hide the MQTT namespace
 \tLargePublisher : MQTT.MQTTPublish;
-\tLargePayload : STRING(20000);     // size for the largest message + margin
+\tLargePayload : STRING(30000);     // size for the largest message + margin
 \tLargeUsed : UDINT;                // current length, kept so appends never rescan the buffer
 \tLine : STRING(80);
 END_VAR
@@ -219,19 +269,23 @@ PROMPT = """Apply the MQTT large-payload pattern from examples/mqtt_large_payloa
 
 
 def build_html():
-    s500, s1100 = verify_500, verify_1100
+    verifications = [
+        ("Production sweep: REAL, QoS 0 and 1, every second", verify_production),
+        ("INT, 500 values, CONCAT control on, 60 s", verify_500),
+        ("INT, 1,100 values, CONCAT control on, 40 s", verify_1100),
+        ("INT sweep 50 / 500 / 1,100, CONCAT control on", verify_concat_sweep),
+    ]
     payload = {
-        "performance": runs,
-        "verification": {"500_values_60s": s500, "1100_values_40s": s1100, "sweep_170s": verify_sweep},
+        "performanceProduction": production_runs,
+        "performanceFirstSweepWithConcatControl": concat_control_runs,
+        "verification": dict((label, data) for label, data in verifications),
     }
     values = dict(
-        chart=perf_chart(),
-        perf_rows=perf_rows(),
-        verify_rows="\n".join([
-            verify_row("500 values, 60 s", s500),
-            verify_row("1,100 values, 40 s", s1100),
-            verify_row("Sweep 50 / 500 / 1,100, 170 s", verify_sweep),
-        ]),
+        chart=perf_chart(real_qos0),
+        perf_rows=perf_rows(production_runs),
+        control_rows=control_rows(),
+        verify_rows="\n".join(verify_row(label, data) for label, data in verifications),
+        concat_messages=sum(data["concat"]["messages"] for _, data in verifications),
         issue_rows=issue_rows(),
         append_text=code(st_source("AppendText")),
         decl_snippet=code(DECL_SNIPPET),
@@ -243,8 +297,8 @@ def build_html():
         csv_json=html.escape(json.dumps(perf_csv())),
         results_json=html.escape(json.dumps(json.dumps(payload, indent=1))),
         prompt_json=html.escape(json.dumps(PROMPT)),
-        total_values="{:,}".format(s500["large"]["valuesChecked"] + s1100["large"]["valuesChecked"] + verify_sweep["large"]["valuesChecked"]),
-        total_messages=s500["large"]["messages"] + s1100["large"]["messages"] + verify_sweep["large"]["messages"],
+        total_values="{:,}".format(sum(data["large"]["valuesChecked"] for _, data in verifications)),
+        total_messages="{:,}".format(sum(data["large"]["messages"] for _, data in verifications)),
     )
     text = TEMPLATE
     for key, value in values.items():

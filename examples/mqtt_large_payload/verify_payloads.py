@@ -1,11 +1,14 @@
 """Subscribe to the demo topics on the HQ broker and check every published value.
 
 Large payload (raw_data_demo) lines, built on the PLC without CONCAT:
-    DEMO_SEQ:<seq>  DEMO_COUNT:<n>  DEMO_V1..DEMO_Vn:<seq*1000+i>  DEMO_END:<seq>
+    DEMO_SEQ:<seq>  DEMO_COUNT:<n>  [DEMO_FORMAT:INT|REAL]  DEMO_V1..DEMO_Vn  DEMO_END:<seq>
+Value i is seq*1000+i (INT, compared exactly) or that divided by 100 (REAL, two decimals,
+compared to within REAL_TOLERANCE because the PLC formats single-precision floats).
+Messages without DEMO_FORMAT are the original integer format.
 The CONCAT copy (raw_data_demo/concat) carries the same text; its length shows the 255 cap.
 
 Usage: python verify_payloads.py --seconds 60 [--out result.json]
-Exit code 0 only if at least one large message arrived and every one was complete and exact.
+Exit code 0 only if at least one large message arrived and every one was complete and correct.
 """
 import argparse
 import json
@@ -17,44 +20,70 @@ import paho.mqtt.client as mqtt
 
 LARGE_TOPIC = "raw_data_demo"
 CONCAT_TOPIC = "raw_data_demo/concat"
-
-
-def expected_text(sequence, count):
-    lines = ["DEMO_SEQ:%d" % sequence, "DEMO_COUNT:%d" % count]
-    lines += ["DEMO_V%d:%d" % (index, sequence * 1000 + index) for index in range(1, count + 1)]
-    lines.append("DEMO_END:%d" % sequence)
-    return "".join(line + "\n" for line in lines)
+REAL_TOLERANCE = 0.006
 
 
 def header_value(text, key):
     prefix = key + ":"
-    for line in text.split("\n", 2)[:2]:
-        if line.startswith(prefix) and line[len(prefix):].isdigit():
-            return int(line[len(prefix):])
+    for line in text.split("\n", 3)[:3]:
+        if line.startswith(prefix):
+            return line[len(prefix):]
     return None
+
+
+def header_int(text, key):
+    value = header_value(text, key)
+    return int(value) if value is not None and value.isdigit() else None
+
+
+def value_problem(line, index, sequence, value_format):
+    """Returns None when the line holds the expected value, else a description."""
+    name, _, value = line.partition(":")
+    if name != "DEMO_V%d" % index:
+        return "line %r where DEMO_V%d was expected" % (line, index)
+    raw = sequence * 1000 + index
+    if value_format == "INT":
+        return None if value == str(raw) else "DEMO_V%d is %r, expected %d" % (index, value, raw)
+    try:
+        received = float(value)
+    except ValueError:
+        return "DEMO_V%d is not a number: %r" % (index, value)
+    expected = raw / 100.0
+    return None if abs(received - expected) <= REAL_TOLERANCE else "DEMO_V%d is %s, expected %.2f" % (index, value, expected)
 
 
 def check_large(payload):
     text = payload.decode("ascii", errors="replace")
-    sequence, count = header_value(text, "DEMO_SEQ"), header_value(text, "DEMO_COUNT")
-    report = {"sequence": sequence, "count": count, "bytes": len(payload)}
+    sequence, count = header_int(text, "DEMO_SEQ"), header_int(text, "DEMO_COUNT")
+    value_format = header_value(text, "DEMO_FORMAT")
+    report = {"sequence": sequence, "count": count, "format": value_format or "INT", "bytes": len(payload)}
     if sequence is None or count is None:
         report.update(ok=False, problem="missing DEMO_SEQ/DEMO_COUNT header")
         return report
-    expected = expected_text(sequence, count)
-    report["valuesChecked"] = count
-    if text == expected:
-        report["ok"] = True
-        return report
-    mismatch = next((i for i, (a, b) in enumerate(zip(text, expected)) if a != b), min(len(text), len(expected)))
-    report.update(ok=False, problem="differs from expected at byte %d" % mismatch,
-                  expectedBytes=len(expected), received=text[max(0, mismatch - 40):mismatch + 40])
+    lines = text.split("\n")
+    header_lines = 3 if value_format else 2
+    expected_lines = header_lines + count + 2  # values, DEMO_END, empty string after the final newline
+    problem = None
+    if len(lines) != expected_lines or lines[-1] != "":
+        problem = "%d lines, expected %d (truncated or extra data)" % (len(lines), expected_lines)
+    elif lines[-2] != "DEMO_END:%d" % sequence:
+        problem = "trailer is %r" % lines[-2]
+    else:
+        for index in range(1, count + 1):
+            problem = value_problem(lines[header_lines + index - 1], index, sequence, report["format"])
+            if problem:
+                break
+    report["ok"] = problem is None
+    if problem:
+        report["problem"] = problem
+    else:
+        report["valuesChecked"] = count
     return report
 
 
 def check_concat(payload, large_by_sequence):
     text = payload.decode("ascii", errors="replace")
-    sequence = header_value(text, "DEMO_SEQ")
+    sequence = header_int(text, "DEMO_SEQ")
     full = large_by_sequence.get(sequence)
     report = {"sequence": sequence, "bytes": len(payload), "endsWithEndLine": "DEMO_END:" in text}
     if full is not None:

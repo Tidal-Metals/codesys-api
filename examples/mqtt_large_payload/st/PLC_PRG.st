@@ -1,6 +1,7 @@
 PROGRAM PLC_PRG
-// Publishes one large MQTT payload with the unmodified Stefan Dreyer MQTT 1.2.0.7 library,
-// plus a CONCAT-built copy of the same text to show where the 255-character cap comes from.
+// Publishes one large MQTT payload with the unmodified Stefan Dreyer MQTT 1.2.0.7 library.
+// Optionally also publishes a CONCAT-built copy of the same text, which shows where the
+// 255-character cap comes from; it is off by default so the timings match production.
 // The *Us/*Cycles variables measure what large payloads cost the PLC; write ResetStats to clear maxima.
 VAR
 	MqttLink : MQTT.MQTT_IN_OUT;          // not "Mqtt": ST names are case-insensitive and would hide the MQTT namespace
@@ -8,23 +9,30 @@ VAR
 	ConcatPublisher : MQTT.MQTTPublish;
 	IsInitialized : BOOL;
 
+	// Settings, writable online
 	BrokerUrl : STRING(64) := '192.168.50.240:1883';
 	LargeTopic : STRING(64) := 'raw_data_demo';
 	ConcatTopic : STRING(64) := 'raw_data_demo/concat';
-	ValueCount : UINT := 500;            // lines per message; writable online
-	PublishPeriod : TIME := T#5S;
+	ValueCount : UINT := 500;            // values per message
+	PublishPeriod : TIME := T#1S;        // BCNF publishes once a second
+	IsRealFormat : BOOL := TRUE;         // two-decimal REALs formatted the way BCNF does; FALSE = integers
+	IsQos1 : BOOL := FALSE;              // BCNF publishes at QoS 0
+	IsConcatControlEnabled : BOOL;       // the 255-character demonstration; not production work
 	PublishTimer : TON;
 
-	LargePayload : STRING(20000);
+	LargePayload : STRING(30000);        // about 1,500 two-decimal values
 	LargeUsed : UDINT;
 	ConcatPayload : STRING(8000);        // the "bigger string" approach that still truncates
 	Line : STRING(80);                   // one short line; CONCAT is fine below 255
+	PublishQoS : MQTT.QoS;
 
 	IsLargeRequested : BOOL;
 	IsConcatRequested : BOOL;
 	IsBuildOk : BOOL;
 	Sequence : UDINT;
 	Index : UINT;
+	ValueIndex : UINT;
+	RealValue : REAL;
 
 	// Diagnostics, readable online
 	IsBrokerConnected : BOOL;
@@ -102,34 +110,42 @@ IF PublishTimer.Q AND IsBrokerConnected THEN
 		SkippedBusyCount := SkippedBusyCount + 1;
 	ELSE
 		Sequence := Sequence + 1;
-		// Lines: DEMO_SEQ, DEMO_COUNT, DEMO_V1..DEMO_Vn (= Sequence*1000 + i), DEMO_END.
+		// Lines: DEMO_SEQ, DEMO_COUNT, DEMO_FORMAT, DEMO_V1..DEMO_Vn, DEMO_END (see BuildLine).
 		StepStartUs := NowUs();
 		LargeUsed := 0;
 		LargePayload := '';
 		IsBuildOk := TRUE;
-		FOR Index := 0 TO ValueCount + 2 DO
+		FOR Index := 0 TO ValueCount + 3 DO
 			BuildLine();
 			IsBuildOk := IsBuildOk AND AppendText(pBuffer := ADR(LargePayload), Capacity := SIZEOF(LargePayload), Text := Line, Used := LargeUsed);
 		END_FOR
 		LastLargeBuildUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
 		MaxLargeBuildUs := MAX(MaxLargeBuildUs, LastLargeBuildUs);
 
-		StepStartUs := NowUs();
 		ConcatPayload := '';
-		FOR Index := 0 TO ValueCount + 2 DO
-			BuildLine();
-			ConcatPayload := CONCAT(ConcatPayload, Line);
-		END_FOR
-		LastConcatBuildUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
-		MaxConcatBuildUs := MAX(MaxConcatBuildUs, LastConcatBuildUs);
+		LastConcatBuildUs := 0;
+		IF IsConcatControlEnabled THEN
+			StepStartUs := NowUs();
+			FOR Index := 0 TO ValueCount + 3 DO
+				BuildLine();
+				ConcatPayload := CONCAT(ConcatPayload, Line);
+			END_FOR
+			LastConcatBuildUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
+			MaxConcatBuildUs := MAX(MaxConcatBuildUs, LastConcatBuildUs);
+		END_IF
 
 		IF NOT IsBuildOk THEN
 			OverflowCount := OverflowCount + 1;
 		END_IF
 		LastLargeLength := LargeUsed;
 		LastConcatLength := INT_TO_UDINT(LEN(ConcatPayload));
+		IF IsQos1 THEN
+			PublishQoS := MQTT.QoS.AtLeastOnce;
+		ELSE
+			PublishQoS := MQTT.QoS.AtMostOnce;
+		END_IF
 		IsLargeRequested := IsBuildOk;
-		IsConcatRequested := TRUE;
+		IsConcatRequested := IsConcatControlEnabled;
 		LargeRequestUs := NowUs();
 		LargeBusyCycles := 0;
 	END_IF
@@ -139,7 +155,7 @@ LargePublisher(
 	Topic := ADR(LargeTopic),
 	PayloadString := ADR(LargePayload),
 	PublishAsString := TRUE,
-	QoSIn := MQTT.QoS.AtLeastOnce,
+	QoSIn := PublishQoS,
 	MRetain := FALSE,
 	send := IsLargeRequested);
 
@@ -147,7 +163,7 @@ ConcatPublisher(
 	Topic := ADR(ConcatTopic),
 	PayloadString := ADR(ConcatPayload),
 	PublishAsString := TRUE,
-	QoSIn := MQTT.QoS.AtLeastOnce,
+	QoSIn := PublishQoS,
 	MRetain := FALSE,
 	send := IsConcatRequested AND NOT IsLargeRequested);
 
@@ -157,7 +173,7 @@ END_IF
 IF LargePublisher.done THEN
 	IsLargeRequested := FALSE;
 	LargeSentCount := LargeSentCount + 1;
-	// Send request to PUBACK (QoS 1), including the scans spent copying the payload out.
+	// Request to done: PUBACK at QoS 1, payload handed to TCP at QoS 0; includes the scans spent copying it out.
 	LastPublishUs := ULINT_TO_UDINT(NowUs() - LargeRequestUs);
 	MaxPublishUs := MAX(MaxPublishUs, LastPublishUs);
 	LastPublishCycles := LargeBusyCycles;

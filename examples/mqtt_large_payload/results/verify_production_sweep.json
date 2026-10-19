@@ -1,0 +1,18 @@
+{
+ "broker": "192.168.50.240:1883",
+ "seconds": 420.0,
+ "large": {
+  "messages": 381,
+  "allExact": true,
+  "valuesChecked": 255750,
+  "bytesMin": 841,
+  "bytesMax": 19742,
+  "sequenceGaps": [],
+  "failures": []
+ },
+ "concat": {
+  "messages": 0,
+  "bytes": [],
+  "samples": []
+ }
+}

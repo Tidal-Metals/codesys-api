@@ -41,7 +41,7 @@ deadline = time.time() + 45
 values = {}
 while time.time() < deadline:
     values = dict((name, str(on.read_value(name))) for name in names)
-    if values['PLC_PRG.LargeSentCount'] not in ('0', 'UDINT#0') and values['PLC_PRG.ConcatSentCount'] not in ('0', 'UDINT#0'):
+    if values['PLC_PRG.LargeSentCount'] not in ('0', 'UDINT#0'):
         break
     time.sleep(1)
 out['diagnostics'] = values
