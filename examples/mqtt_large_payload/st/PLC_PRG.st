@@ -19,6 +19,8 @@ VAR
 	IsQos1 : BOOL := FALSE;              // BCNF publishes at QoS 0
 	IsConcatControlEnabled : BOOL;       // the 255-character demonstration; not production work
 	IsBcnfEveryScanEnabled : BOOL;       // run BCNF's StringPublication (verbatim copy) every scan, as BCNF does
+	IsTagValueEnabled : BOOL;            // publish BCNF's values as tag:value lines once a second
+	TagValueTopic : STRING(64) := 'raw_data_demo/tagvalue';
 	PublishTimer : TON;
 
 	LargePayload : STRING(30000);        // about 1,500 two-decimal values
@@ -71,6 +73,25 @@ VAR
 	MaxBcnfBuildUs : UDINT;
 	BcnfBuildCount : UDINT;
 	BcnfBuildTotalUs : ULINT;            // average = BcnfBuildTotalUs / BcnfBuildCount
+
+	// BCNF's values in tag:value format (BcnfStringPublicationCopy.BuildTagValue), built once per publish
+	TagValuePublisher : MQTT.MQTTPublish;
+	TagValueTimer : TON;
+	TagValueQoS : MQTT.QoS;
+	IsTagValueRequested : BOOL;
+	TagValueRequestUs : ULINT;
+	TagValueBusyCycles : UDINT;
+	TagValueSentCount : UDINT;
+	TagValueTimeoutCount : UDINT;
+	LastTagValueLength : UDINT;
+	LastTagValueBuildUs : UDINT;
+	MaxTagValueBuildUs : UDINT;
+	TagValueBuildCount : UDINT;
+	TagValueBuildTotalUs : ULINT;
+	LastTagValuePublishUs : UDINT;
+	MaxTagValuePublishUs : UDINT;
+	LastTagValuePublishCycles : UDINT;
+	MaxTagValuePublishCycles : UDINT;
 END_VAR
 // ---- implementation ----
 CycleStartUs := NowUs();
@@ -88,6 +109,11 @@ IF ResetStats THEN
 	MaxBcnfBuildUs := 0;
 	BcnfBuildCount := 0;
 	BcnfBuildTotalUs := 0;
+	MaxTagValueBuildUs := 0;
+	TagValueBuildCount := 0;
+	TagValueBuildTotalUs := 0;
+	MaxTagValuePublishUs := 0;
+	MaxTagValuePublishCycles := 0;
 END_IF
 IF PreviousCycleStartUs <> 0 THEN
 	IntervalUs := ULINT_TO_UDINT(CycleStartUs - PreviousCycleStartUs);
@@ -107,6 +133,7 @@ IF NOT IsInitialized THEN
 	IsInitialized := TRUE;
 	LargePublisher.SetMqttInOut(MQTT_IN_OUT := MqttLink);
 	ConcatPublisher.SetMqttInOut(MQTT_IN_OUT := MqttLink);
+	TagValuePublisher.SetMqttInOut(MQTT_IN_OUT := MqttLink);
 END_IF
 
 PublishTimer(IN := NOT PublishTimer.Q, PT := PublishPeriod);
@@ -195,6 +222,48 @@ IF LargePublisher.SendTimeout OR ConcatPublisher.SendTimeout THEN
 	TimeoutCount := TimeoutCount + 1;
 	IsLargeRequested := FALSE;
 	IsConcatRequested := FALSE;
+END_IF
+
+// BCNF's values as tag:value lines: built only in the scan that publishes, sent as one message.
+IF IsQos1 THEN
+	TagValueQoS := MQTT.QoS.AtLeastOnce;
+ELSE
+	TagValueQoS := MQTT.QoS.AtMostOnce;
+END_IF
+TagValueTimer(IN := IsTagValueEnabled AND NOT TagValueTimer.Q, PT := T#1S);
+IF TagValueTimer.Q AND IsBrokerConnected AND NOT IsTagValueRequested THEN
+	StepStartUs := NowUs();
+	BcnfStringPublicationCopy.BuildTagValue();
+	LastTagValueBuildUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
+	MaxTagValueBuildUs := MAX(MaxTagValueBuildUs, LastTagValueBuildUs);
+	TagValueBuildCount := TagValueBuildCount + 1;
+	TagValueBuildTotalUs := TagValueBuildTotalUs + LastTagValueBuildUs;
+	LastTagValueLength := BcnfStringPublicationCopy.TagValueUsed;
+	IsTagValueRequested := BcnfStringPublicationCopy.IsTagValueBuildOk;
+	TagValueRequestUs := NowUs();
+	TagValueBusyCycles := 0;
+END_IF
+TagValuePublisher(
+	Topic := ADR(TagValueTopic),
+	PayloadString := ADR(BcnfStringPublicationCopy.TagValuePayload),
+	PublishAsString := TRUE,
+	QoSIn := TagValueQoS,
+	MRetain := FALSE,
+	send := IsTagValueRequested);
+IF IsTagValueRequested THEN
+	TagValueBusyCycles := TagValueBusyCycles + 1;
+END_IF
+IF TagValuePublisher.done THEN
+	IsTagValueRequested := FALSE;
+	TagValueSentCount := TagValueSentCount + 1;
+	LastTagValuePublishUs := ULINT_TO_UDINT(NowUs() - TagValueRequestUs);
+	MaxTagValuePublishUs := MAX(MaxTagValuePublishUs, LastTagValuePublishUs);
+	LastTagValuePublishCycles := TagValueBusyCycles;
+	MaxTagValuePublishCycles := MAX(MaxTagValuePublishCycles, LastTagValuePublishCycles);
+END_IF
+IF TagValuePublisher.SendTimeout THEN
+	TagValueTimeoutCount := TagValueTimeoutCount + 1;
+	IsTagValueRequested := FALSE;
 END_IF
 
 // What BCNF pays today: its payload strings are rebuilt in every scan, not only when publishing.

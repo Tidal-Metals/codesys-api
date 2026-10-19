@@ -1,0 +1,12 @@
+{
+ "topic": "raw_data_demo/tagvalue",
+ "seconds": 130.0,
+ "messages": 95,
+ "linesPerMessage": 103,
+ "linesChecked": 9785,
+ "allCorrect": true,
+ "bytes": [
+  1682
+ ],
+ "failures": []
+}

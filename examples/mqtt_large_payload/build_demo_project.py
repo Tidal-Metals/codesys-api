@@ -21,10 +21,13 @@ LIBRARIES = ["SysTime, 3.5.17.0 (System)", "SysTimeCore, 3.5.17.0 (System)"]  # 
 REMOVED_DEVICES = ["Modbus_TCP_Client"]
 # The MQTT library allocates its buffers with __NEW; BCNF uses 50000.
 DYNAMIC_MEMORY_BYTES = 100000
-FUNCTIONS = [("AppendText", "BOOL"), ("NowUs", "ULINT")]
-ACTIONS = [("PLC_PRG", "BuildLine")]
-# (object name, source path under st/): BCNF's StringPublication, called by PLC_PRG when enabled
+# Source paths are relative to st/ without ".st".
+FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
+             ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine")]
+# BCNF's StringPublication (verbatim), called by PLC_PRG when enabled
 PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy")]
+ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"),
+           ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue")]
 
 
 def read_source(source_dir, name):
@@ -78,10 +81,10 @@ def add_libraries(libman, steps):
 
 
 def write_sources(application, source_dir, steps):
-    for name, return_type in FUNCTIONS:
+    for name, return_type, source_name in FUNCTIONS:
         pou = direct_child(application, name) or application.create_pou(
             name=name, type=PouType.Function, return_type=return_type)
-        declaration, implementation = read_source(source_dir, name)
+        declaration, implementation = read_source(source_dir, source_name)
         pou.textual_declaration.replace(declaration)
         pou.textual_implementation.replace(implementation)
     for name, source_name in PROGRAMS:
@@ -89,10 +92,10 @@ def write_sources(application, source_dir, steps):
         declaration, implementation = read_source(source_dir, source_name)
         pou.textual_declaration.replace(declaration)
         pou.textual_implementation.replace(implementation)
-    for parent_name, action_name in ACTIONS:
+    for parent_name, action_name, source_name in ACTIONS:
         parent = direct_child(application, parent_name)
         action = direct_child(parent, action_name) or parent.create_action(action_name)
-        action.textual_implementation.replace(read_source(source_dir, parent_name + "." + action_name)[1])
+        action.textual_implementation.replace(read_source(source_dir, source_name)[1])
     program = direct_child(application, "PLC_PRG")
     declaration, implementation = read_source(source_dir, "PLC_PRG")
     program.textual_declaration.replace(declaration)
