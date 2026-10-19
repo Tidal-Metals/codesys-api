@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Large MQTT payloads from CODESYS: the 255-character limit, a bench demo and performance</title>
+<style>
+:root {
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --accent: #2a78d6; --code-bg: #f1f0ec;
+  --s1: #2a78d6; --s2: #eb6834; --s0: #c3c2b7;
+  --good: #006300; --good-bg: #e3f3e3; --warn: #8a5a00; --warn-bg: #fdf1d6; --bad: #b02a2a; --bad-bg: #fbe5e5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --accent: #3987e5; --code-bg: #232321;
+    --s1: #3987e5; --s2: #d95926; --s0: #4a4a46;
+    --good: #0ca30c; --good-bg: #13301a; --warn: #fab219; --warn-bg: #33290f; --bad: #e66767; --bad-bg: #3a1a1a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header, main { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+header { padding-top: 32px; padding-bottom: 8px; }
+h1 { font-size: 1.7rem; line-height: 1.25; margin: 0 0 6px; }
+h2 { font-size: 1.3rem; margin: 40px 0 10px; padding-top: 8px; border-top: 1px solid var(--grid); }
+h3 { font-size: 1.05rem; margin: 24px 0 6px; }
+.meta { color: var(--ink-2); margin: 0; }
+p, li, .prose { max-width: 72ch; }
+a { color: var(--accent); }
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 0.88em; }
+:not(pre) > code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre.code { background: var(--code-bg); padding: 14px 16px; border-radius: 8px; overflow-x: auto; line-height: 1.45; max-width: 100%; }
+nav.toc { position: sticky; top: 0; z-index: 5; background: var(--page); border-bottom: 1px solid var(--grid); }
+nav.toc ul { max-width: 1080px; margin: 0 auto; padding: 8px 24px; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.9rem; }
+nav.toc a { text-decoration: none; }
+.tldr { background: var(--surface); border: 1px solid var(--grid); border-left: 4px solid var(--accent); border-radius: 8px; padding: 14px 20px; margin: 20px 0; }
+.tldr ul { margin: 6px 0; padding-left: 20px; }
+.callout { background: var(--warn-bg); border-radius: 8px; padding: 12px 18px; margin: 18px 0; max-width: 80ch; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 18px 0; }
+.stat { background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; padding: 12px 14px; }
+.stat .n { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.stat .l { color: var(--ink-2); font-size: 0.88rem; }
+table { border-collapse: collapse; width: 100%; background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; font-size: 0.92rem; margin: 10px 0; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; text-align: left; }
+th { position: sticky; top: 38px; background: var(--surface); font-weight: 600; color: var(--ink-2); }
+tbody tr:hover { background: var(--code-bg); }
+.table-wrap { overflow-x: auto; }
+.table-wrap th { position: static; white-space: normal; font-size: 0.85rem; }
+#perf-table td, #perf-table th { padding: 8px 8px; }
+#perf-table th { white-space: normal; vertical-align: bottom; }
+td.nowrap { white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.good { color: var(--good); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+.pill.good { background: var(--good-bg); color: var(--good); } .pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); } .pill.muted { background: var(--code-bg); color: var(--ink-2); }
+figure { margin: 18px 0; background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; padding: 14px 16px 8px; }
+figcaption { color: var(--ink-2); font-size: 0.9rem; margin-bottom: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.88rem; color: var(--ink-2); margin: 4px 0 6px; }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+svg.chart { width: 100%; height: auto; display: block; }
+svg .grid { stroke: var(--grid); stroke-width: 1; }
+svg .tick, svg .cat-sub { fill: var(--muted); font-size: 11px; }
+svg .cat { fill: var(--ink); font-size: 13px; font-weight: 600; }
+svg .value { fill: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+svg .budget { stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 5 4; }
+svg .budget-label { fill: var(--bad); font-size: 11px; }
+svg .s1 { fill: var(--s1); } svg .s2 { fill: var(--s2); } svg .s0 { fill: var(--s0); }
+svg .mark:hover { opacity: 0.8; }
+svg.diagram .box { fill: var(--surface); stroke: var(--axis); stroke-width: 1.5; }
+svg.diagram .box.dim { stroke-dasharray: 5 4; }
+svg.diagram text { fill: var(--ink); font-size: 13px; }
+svg.diagram .sub { fill: var(--ink-2); font-size: 11.5px; }
+svg.diagram .arrow { stroke: var(--accent); stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+svg.diagram .arrow.dim { stroke: var(--muted); stroke-dasharray: 5 4; marker-end: url(#arrowhead-dim); }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--page); font-size: 0.82rem; padding: 6px 9px; border-radius: 6px; opacity: 0; transition: opacity 0.08s; max-width: 340px; z-index: 20; }
+details { margin: 10px 0; } summary { cursor: pointer; font-weight: 600; }
+.exports { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 40px; }
+button { font: inherit; font-size: 0.92rem; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--axis); background: var(--surface); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--accent); }
+.ok-msg { color: var(--good); font-size: 0.9rem; align-self: center; min-width: 6em; }
+footer { color: var(--muted); font-size: 0.85rem; max-width: 1080px; margin: 0 auto; padding: 0 24px 40px; }
+@media print {
+  nav.toc, .exports, #tip { display: none; }
+  details { display: block; } details > * { display: block; }
+  th { position: static; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Large MQTT payloads from CODESYS: the 255-character limit, a bench demo and performance</h1>
+  <p class="meta">2026-10-19 · Bench PLC P2CDS-622 · CODESYS V3.5 SP22 Patch 1 · MQTT library 1.2.0.7 (Stefan Dreyer), unmodified</p>
+  <p class="meta">Why the BCNF PLC could only publish about 250 characters per message, proof on the bench that one message can carry 17.6 KB, and what larger payloads cost the PLC.</p>
+</header>
+<nav class="toc"><ul>
+  <li><a href="#summary">Summary</a></li><li><a href="#cause">Where 255 comes from</a></li><li><a href="#setup">Test setup</a></li>
+  <li><a href="#recipe">Recipe</a></li><li><a href="#code">Code</a></li><li><a href="#results">Results</a></li>
+  <li><a href="#performance">Performance</a></li><li><a href="#issues">What worked, what didn't</a></li>
+  <li><a href="#caveats">Not tested</a></li><li><a href="#state">Bench state and files</a></li>
+</ul></nav>
+<main>
+
+<section id="summary">
+<div class="tldr">
+  <strong>Summary</strong>
+  <ul>
+    <li><strong>The MQTT library has no 255-character limit.</strong> The cap comes from CODESYS's Standard string functions (<code>CONCAT</code> and friends), which return at most 255 characters, and from passing payloads through <code>STRING(255)</code> variables. That's why declaring a <code>STRING(8000)</code> didn't help.</li>
+    <li><strong>One publisher is enough.</strong> Built with a pointer append instead of <code>CONCAT</code>, a single message carried 500 and 1,100 values (7.9 KB and 17.6 KB) to the HQ broker. All @@total_messages@@ messages were exact, @@total_values@@ values checked, with no gaps or timeouts. We don't need 40 parallel publishers.</li>
+    <li><strong>Sending is cheap; building is not.</strong> The library sends the payload over several scans at no more than 2.4 ms per scan. Building the text costs about 30 µs per value, all in one scan. At 1,100 values that pushed a 50 ms task 25 ms late (with the demo's <code>CONCAT</code> comparison copy included). Run the MQTT build in its own lower-priority task.</li>
+  </ul>
+</div>
+<div class="stats">
+  <div class="stat"><div class="n">17.6 KB</div><div class="l">largest single message, sent exactly</div></div>
+  <div class="stat"><div class="n">@@total_values@@</div><div class="l">values checked on the broker, 0 wrong</div></div>
+  <div class="stat"><div class="n">255 B</div><div class="l">every CONCAT-built message, as predicted</div></div>
+  <div class="stat"><div class="n">~30 µs</div><div class="l">PLC time to format one value into the payload</div></div>
+</div>
+</section>
+
+<section id="cause">
+<h2>Where the 255-character limit comes from</h2>
+<p>The BCNF project (<code>PLC_BCNF_4_16_26.project</code>) builds each payload with <code>CONCAT</code> into a <code>STRING(255)</code> and hands it to <code>FirstPublish</code> through <code>STRING(255)</code> inputs. Both cut the text at 255 characters before the MQTT library ever sees it.</p>
+@@bcnf_snippet@@
+<p>The library itself measures string payloads by scanning to the terminating zero and splits large payloads across its TCP buffer. Excerpts from the 1.2.0.7 source, dumped from the installed library:</p>
+@@library_snippet@@
+<p>The maintainer says the same on GitHub. In <a href="https://github.com/stefandreyer/CODESYS-MQTT/issues/17">issue #17</a> he notes that the library has no string-size limit and that CODESYS's own string functions only handle 255 characters, which is why the library has its own pointer-based helpers. <a href="https://github.com/stefandreyer/CODESYS-MQTT/issues/76">Issue #76</a> ("Limited String payload size") ended with long JSON payloads working; the confusion there was the debugger showing only 80 characters behind a pointer. <code>COM_CONFIG.MaxPayloadSize</code> (default 2000) limits <em>received</em> messages only.</p>
+<div class="callout"><strong>About the 255 you noticed in the results:</strong> that was deliberate. Alongside the real payload, the demo builds the same text with <code>CONCAT</code> into a <code>STRING(8000)</code> and publishes it on <code>raw_data_demo/concat</code>. That reproduces what the team tried. It came out at exactly 255 characters every time (<code>LastConcatLength = 255</code> on the PLC, and 255 bytes on the wire), cut off mid-line as a clean prefix of the full message. The pointer-built payload in the same scan, from the same lines, arrived complete.</div>
+</section>
+
+<section id="setup">
+<h2>Test setup</h2>
+<figure>
+<svg class="diagram" viewBox="0 0 960 230" role="img" aria-label="Bench PLC publishes to the HQ broker; a PC verifier subscribes to the demo topics; the production bridge only subscribes to raw_data">
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+    <marker id="arrowhead-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+  </defs>
+  <g><rect class="box" x="10" y="40" width="250" height="110" rx="10"/>
+    <text x="26" y="66" font-weight="600">Bench PLC P2CDS-622</text>
+    <text class="sub" x="26" y="88">MainTask cyclic 50 ms, priority 1</text>
+    <text class="sub" x="26" y="106">PLC_PRG: build payload + 2 publishers</text>
+    <text class="sub" x="26" y="124">MQTT 1.2.0.7, QoS 1, every 5 s</text></g>
+  <path class="arrow" d="M260,95 L360,95"/>
+  <text class="sub" x="266" y="84">raw_data_demo</text><text class="sub" x="266" y="114">…/concat</text>
+  <g><rect class="box" x="370" y="40" width="230" height="110" rx="10"/>
+    <text x="386" y="66" font-weight="600">HQ broker</text>
+    <text class="sub" x="386" y="88">192.168.50.240:1883</text>
+    <text class="sub" x="386" y="106">anonymous clients allowed</text>
+    <text class="sub" x="386" y="124">live production raw_data traffic</text></g>
+  <path class="arrow" d="M600,95 L700,95"/>
+  <g><rect class="box" x="710" y="40" width="240" height="110" rx="10"/>
+    <text x="726" y="66" font-weight="600">PC verifier</text>
+    <text class="sub" x="726" y="88">verify_payloads.py, QoS 1</text>
+    <text class="sub" x="726" y="106">recomputes every value</text>
+    <text class="sub" x="726" y="124">and checks sequence gaps</text></g>
+  <path class="arrow dim" d="M485,150 L485,180"/>
+  <g><rect class="box dim" x="370" y="182" width="230" height="40" rx="8"/>
+    <text class="sub" x="384" y="207">sparkplug-bridge: raw_data only, not used</text></g>
+</svg>
+<figcaption>The demo publishes on its own topics so the production bridge and historian never see it. The PLC and the broker are on the same HQ LAN (192.168.50.0/24).</figcaption>
+</figure>
+<p>Each message is a set of lines the PC can recompute exactly: <code>DEMO_SEQ:&lt;seq&gt;</code>, <code>DEMO_COUNT:&lt;n&gt;</code>, then <code>DEMO_V1</code> to <code>DEMO_Vn</code> with value <code>seq × 1000 + i</code>, then <code>DEMO_END:&lt;seq&gt;</code>. A missing trailer, wrong value or skipped sequence number fails the check. The <code>TAG:value</code> line format is the one the bridge parses on <code>raw_data</code>.</p>
+</section>
+
+<section id="recipe">
+<h2>Recipe: publishing a large payload from CODESYS</h2>
+<ol>
+  <li><strong>One buffer per message, sized for the largest payload plus margin</strong>, e.g. <code>LargePayload : STRING(20000)</code>. At about 16 bytes per line, 20,000 bytes holds about 1,150 values.</li>
+  <li><strong>Build the text with a pointer append</strong> (<code>AppendText</code> below), not <code>CONCAT</code>. <code>CONCAT</code> and <code>REAL_TO_STRING</code> are fine for one short piece under 255 characters; only the running total has to avoid them. Keep the current length in a variable so each append doesn't rescan the buffer.</li>
+  <li><strong>Hand the publisher a pointer to the buffer</strong>: <code>PayloadString := ADR(LargePayload)</code>, <code>PublishAsString := TRUE</code>. Don't copy the payload through <code>STRING(255)</code> inputs or variables on the way.</li>
+  <li><strong>Leave the buffer alone while a publish is in flight.</strong> The library reads it through the pointer over several scans. Rebuild only after <code>done</code> or <code>SendTimeout</code>.</li>
+  <li><strong>Treat <code>done</code> and <code>SendTimeout</code> as one-scan pulses.</strong> Clear each publisher's own request on either. Don't wait for several publishers' <code>done</code> in the same scan; that's the stall risk in BCNF's <code>FirstPublish</code>.</li>
+  <li><strong>Turn on dynamic memory</strong> in Application Properties › Build (the demo uses 100,000 bytes, BCNF already has 50,000). Without it the library won't compile.</li>
+  <li><strong>Don't name a variable <code>Mqtt</code></strong>: ST names are case-insensitive, so it hides the <code>MQTT</code> library namespace.</li>
+  <li><strong>Keep the build out of the control task.</strong> Put the build and publish in a lower-priority task (e.g. 100 ms) that copies a snapshot of the values first, or spread the build over several scans. See <a href="#performance">Performance</a>.</li>
+</ol>
+</section>
+
+<section id="code">
+<h2>Code</h2>
+<h3>AppendText: append without the 255-character cap</h3>
+@@append_text@@
+<h3>Declarations and client</h3>
+@@decl_snippet@@
+<h3>Build and publish</h3>
+@@publish_snippet@@
+<details><summary>BuildLine action (formats one line)</summary>
+@@build_line@@
+</details>
+<details><summary>NowUs: microsecond clock for the performance counters</summary>
+<p>Needs the SysTimeCore library; the call has to be qualified.</p>
+@@now_us@@
+</details>
+<p>Full sources and scripts are in the codesys-api repo under <code>examples/mqtt_large_payload/</code>: <code>st/</code> holds the ST, <code>build_demo_project.py</code> builds the project headless from a copy of the bench project, and <code>apply_session.py</code>, <code>deploy_demo.py</code>, <code>measure_performance.py</code> and <code>verify_payloads.py</code> run the rest.</p>
+</section>
+
+<section id="results">
+<h2>Results: did every value arrive?</h2>
+<p>The verifier subscribes on the HQ broker and rebuilds each expected message from its sequence number and count, so every byte is compared, not just the length.</p>
+<table>
+<thead><tr><th>Run</th><th class="num">Large messages</th><th class="num">Values checked</th><th class="num">Bytes per message</th><th>Content</th><th>Sequence gaps</th><th class="num">CONCAT copies</th></tr></thead>
+<tbody>
+@@verify_rows@@
+</tbody>
+</table>
+<p>The message size grows slightly within a run because the values gain digits as the sequence number climbs (7,429 B at sequence 1, 7,931 B from sequence 10).</p>
+</section>
+
+<section id="performance">
+<h2>Performance</h2>
+<p>Measured on the PLC with <code>SysTimeCore.SysTimeGetUs</code>. Each size ran for 35 s (about 7 publishes) after a stats reset, with the verifier running in parallel. Values are maxima over the run unless marked otherwise. MainTask is cyclic at 50 ms. Hover a bar for its value; the table below has the same data.</p>
+<figure>
+<figcaption>Worst scan time by payload size</figcaption>
+<div class="legend"><span style="--c: var(--s1)">Payload build (pointer append)</span><span style="--c: var(--s2)">CONCAT comparison copy (demo only)</span><span style="--c: var(--s0)">Rest of the scan</span></div>
+@@chart@@
+</figure>
+<div class="table-wrap"><table id="perf-table">
+<thead><tr><th class="num">Values</th><th class="num">Payload B</th><th class="num">Build ms</th><th class="num">CONCAT copy ms</th><th class="num">Normal scan ms</th><th class="num">Worst scan ms</th><th class="num">Longest scan gap ms</th><th>Task timing</th><th class="num">Client per scan ms</th><th class="num">Send → PUBACK</th><th class="num">Timeouts</th></tr></thead>
+<tbody>
+@@perf_rows@@
+</tbody>
+</table></div>
+<h3>What the numbers say</h3>
+<ul>
+  <li><strong>Sending large payloads is cheap.</strong> The client copies the payload out over several scans and never took more than 2.4 ms in one scan, even at 17.6 KB.</li>
+  <li><strong>The build is the expensive part</strong>: about 30 µs per value (1.9 ms for 50, 15 ms for 500, 33 ms for 1,100), almost all of it number-to-text conversion and the short <code>CONCAT</code>s that format each line. It all happens in one scan.</li>
+  <li><strong>At 1,100 values the scan overran.</strong> Build plus the demo's <code>CONCAT</code> copy came to 74 ms, so one scan per publish started 25 ms late. Without the comparison copy the build alone is 33 ms, two thirds of the 50 ms cycle before any interlock logic runs. In BCNF that would likely overrun too.</li>
+  <li><strong>Latency floor of 4–5 scans.</strong> Even a 727-byte message took 5 scans (about 200 ms) from request to PUBACK, because of the library's state machine and the QoS 1 handshake. 17.6 KB took 13–14 scans (about 0.55–0.6 s). At a 50 ms task that's roughly 25–30 KB/s per client, plenty for 10–20 KB once a second.</li>
+  <li><strong>40 small publishers wouldn't be faster.</strong> They'd do the same formatting work, and each message pays the 4–5 scan handshake through the one client.</li>
+</ul>
+<h3>Recommendations for BCNF</h3>
+<ol>
+  <li><strong>Move the MQTT build and publish into a separate lower-priority task</strong> (e.g. 100 ms), copying a snapshot of the published values at the start of each build. A long build then can't delay the interlock task. This is the main fix.</li>
+  <li><strong>If it has to stay in the main task, build over several scans</strong> (e.g. 200 lines per scan) and publish when the buffer is complete.</li>
+  <li><strong>Format with fewer intermediate strings</strong>: append the name, the colon and the value straight into the buffer instead of nesting <code>CONCAT</code>s. I'd expect this to cut the build time noticeably, but I haven't measured it.</li>
+</ol>
+</section>
+
+<section id="issues">
+<h2>What worked, what didn't</h2>
+<p>Everything we ran into, from building the demo through deploying and measuring it.</p>
+<table>
+<thead><tr><th>Area</th><th>What</th><th>What happened</th><th>Fix or note</th><th>Status</th></tr></thead>
+<tbody>
+@@issue_rows@@
+</tbody>
+</table>
+<p><strong>Worked first time:</strong> the unmodified MQTT library sending 17.6 KB in one message; QoS 1 publishing to the HQ broker without credentials; the bounded pointer append; downloading to the bench PLC with a full download plus boot application; changing the payload size online without a new download.</p>
+</section>
+
+<section id="caveats">
+<h2>Not tested</h2>
+<ul>
+  <li><strong>Bridge ingest.</strong> The demo used its own topics, so the sparkplug-bridge never parsed these messages. Its <code>raw_data</code> parser splits a payload on newlines and has no size check of its own, but the broker's and client's packet-size limits weren't checked and a large ingest through it hasn't been run.</li>
+  <li><strong>BCNF's real load.</strong> The bench application does nothing besides MQTT. BCNF's interlock logic, serial Modbus and task layout will add to the scan.</li>
+  <li><strong>Faults.</strong> No broker restart, cable pull or network congestion tests. The library's reconnect and the <code>SendTimeout</code> path weren't exercised.</li>
+  <li><strong>Sample size.</strong> One 35 s run per size, about 7 messages each. The maxima look stable across runs, but this is not a soak test.</li>
+  <li><strong>QoS 0</strong> (what BCNF uses today) wasn't measured; the demo uses QoS 1 so <code>done</code> means the broker acknowledged the message.</li>
+</ul>
+</section>
+
+<section id="state">
+<h2>Bench state and files</h2>
+<ul>
+  <li>The bench PLC is running the demo as its boot application and publishes to <code>raw_data_demo</code> and <code>raw_data_demo/concat</code> every 5 s. <strong>The Modbus bench application is no longer on the PLC.</strong> To restore it, open <code>codesys_projects/modbus_tcp_bench/modbus_tcp_bench.project</code>, do a full download and create the boot application (see <code>docs/modbus-bench.md</code>).</li>
+  <li>Demo project: <code>~/projects/codesys_projects/mqtt_large_payload_demo/mqtt_large_payload_demo.project</code> (a copy of the bench project with the Modbus client removed; ETH and network settings unchanged).</li>
+  <li>Sources, scripts and result JSON: <code>codesys-api/examples/mqtt_large_payload/</code> (not committed yet).</li>
+  <li>The BCNF project was only read and was not changed.</li>
+</ul>
+</section>
+
+<div class="exports">
+  <button data-copy="csv">Copy performance table as CSV</button>
+  <button data-copy="json">Copy all results as JSON</button>
+  <button data-copy="prompt">Copy as prompt: apply to BCNF</button>
+  <span class="ok-msg" id="copied" aria-live="polite"></span>
+</div>
+</main>
+<footer>Generated from the demo's sources and result files in codesys-api/examples/mqtt_large_payload.</footer>
+<div id="tip" role="tooltip"></div>
+<script>
+const exportsData = {
+  csv: @@csv_json@@,
+  json: @@results_json@@,
+  prompt: @@prompt_json@@
+};
+const copied = document.getElementById("copied");
+document.querySelectorAll("button[data-copy]").forEach(button => {
+  button.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(exportsData[button.dataset.copy]);
+      copied.textContent = "Copied ✓";
+    } catch (error) {
+      copied.textContent = "Copy failed";
+    }
+    setTimeout(() => { copied.textContent = ""; }, 1800);
+  });
+});
+const tip = document.getElementById("tip");
+document.querySelectorAll("svg .mark[data-tip]").forEach(mark => {
+  mark.addEventListener("mousemove", event => {
+    tip.textContent = mark.dataset.tip;
+    tip.style.left = (event.clientX + 14) + "px";
+    tip.style.top = (event.clientY + 14) + "px";
+    tip.style.opacity = 1;
+  });
+  mark.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
+});
+document.querySelectorAll("table thead th").forEach((th, column) => {
+  th.style.cursor = "pointer";
+  th.title = "Sort";
+  th.addEventListener("click", () => {
+    const tbody = th.closest("table").querySelector("tbody");
+    const rows = Array.from(tbody.rows);
+    const ascending = th.dataset.dir !== "asc";
+    th.dataset.dir = ascending ? "asc" : "desc";
+    const key = row => {
+      const text = row.cells[column].textContent.trim();
+      const number = parseFloat(text.replace(/[,+]/g, ""));
+      return isNaN(number) ? text.toLowerCase() : number;
+    };
+    rows.sort((a, b) => (key(a) > key(b) ? 1 : key(a) < key(b) ? -1 : 0) * (ascending ? 1 : -1));
+    rows.forEach(row => tbody.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

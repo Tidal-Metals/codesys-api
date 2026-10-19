@@ -1,0 +1,42 @@
+{
+ "broker": "192.168.50.240:1883",
+ "seconds": 40.0,
+ "large": {
+  "messages": 8,
+  "allExact": true,
+  "valuesChecked": 8800,
+  "bytesMin": 17633,
+  "bytesMax": 17633,
+  "sequenceGaps": [],
+  "failures": []
+ },
+ "concat": {
+  "messages": 8,
+  "bytes": [
+   255
+  ],
+  "samples": [
+   {
+    "sequence": 19,
+    "bytes": 255,
+    "endsWithEndLine": false,
+    "fullBytes": 17633,
+    "isPrefixOfFull": true
+   },
+   {
+    "sequence": 20,
+    "bytes": 255,
+    "endsWithEndLine": false,
+    "fullBytes": 17633,
+    "isPrefixOfFull": true
+   },
+   {
+    "sequence": 21,
+    "bytes": 255,
+    "endsWithEndLine": false,
+    "fullBytes": 17633,
+    "isPrefixOfFull": true
+   }
+  ]
+ }
+}
