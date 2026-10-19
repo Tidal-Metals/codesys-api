@@ -52,6 +52,12 @@ This is a CODESYS REST API wrapper that provides HTTP endpoints for interacting 
 - `results/` - Operation results (JSON files)
 - `ScriptLib/Stubs/scriptengine/` - CODESYS API type stubs and documentation
 
+## PLC Program Architecture
+
+Before writing PLC Structured Text or a generator that produces it from config sheets, read
+`docs/plc-architecture-for-agents.md`: the invariants every program keeps, the generator workflow and the
+CODESYS facts that cost time. The compiled reference skeleton is `examples/plc_architecture/`.
+
 ## Modbus Bench
 
 Before testing or changing the PLC, gateways, RS485 simulators or COM ports, read

@@ -1,0 +1,158 @@
+{
+ "libraries": [
+  "SysTimeRtc, 3.5.17.0 (System)"
+ ],
+ "objects": [
+  {
+   "kind": "enum",
+   "name": "E_Quality"
+  },
+  {
+   "kind": "enum",
+   "name": "E_TagKind"
+  },
+  {
+   "kind": "enum",
+   "name": "E_CommandResult"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_TagConfig"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_TagState"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_Command"
+  },
+  {
+   "kind": "fb",
+   "name": "FB_CommandQueue"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_CommandQueue",
+   "name": "Push",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_CommandQueue",
+   "name": "Pop",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "function",
+   "name": "F_NowMs",
+   "returns": "ULINT"
+  },
+  {
+   "kind": "function",
+   "name": "F_WallClockMs",
+   "returns": "ULINT"
+  },
+  {
+   "kind": "function",
+   "name": "F_FindTag",
+   "returns": "INT"
+  },
+  {
+   "kind": "function",
+   "name": "F_IsNumberText",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "fb",
+   "name": "FB_CommandReceiver"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_CommandReceiver",
+   "name": "PublishReceived",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "gvl",
+   "name": "GVL_Tags"
+  },
+  {
+   "kind": "program",
+   "name": "PRG_Control"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "ReadInputs"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "ApplyCommands"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "CheckCommand"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "ComputeValues"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "EvaluateAlarms"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "EvaluatePermissives"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "WriteOutputs"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "ServeSnapshot"
+  },
+  {
+   "kind": "program",
+   "name": "PRG_Comms"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Comms",
+   "name": "PublishData"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Comms",
+   "name": "AppendTag"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Comms",
+   "name": "CommitSent"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Comms",
+   "name": "ForgetMessage"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Comms",
+   "name": "PublishAcks"
+  }
+ ],
+ "callers": [
+  "PRG_Control();",
+  "PRG_Comms();"
+ ]
+}
