@@ -128,6 +128,7 @@ IF Timer.Q AND PLC_PRG.IsBrokerConnected THEN
 		StepStartUs := NowUs();
 		UpdateValues();
 		SysTimeRtc.SysTimeRtcHighResGet(pTimestamp := StampMs);
+		StampMs := LINT_TO_ULINT(ULINT_TO_LINT(StampMs) + ClockSync.OffsetMs);   // UTC, see ClockSync
 		ValueUpdateUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
 		StepStartUs := NowUs();
 		DetectChanges();

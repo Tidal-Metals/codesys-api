@@ -187,6 +187,12 @@ Each of these cost time on this bench; none is obvious from the code.
 - **Libraries are often qualified-only:** `SysTimeCore.SysTimeGetUs`, `SysTimeRtc.SysTimeRtcHighResGet`.
 - **Unused I/O isn't updated.** A mapped variable no program reads stays 0 unless the device has
   `io_always_mapping` (see `docs/modbus-bench.md`).
+- **Wall-clock time comes from NTP, and the clock is never stepped far while running.** Use
+  `SNTP.SNTPGetUTCTime` (SNTP Service SL) against 192.168.50.240 with `uiSNTPPort := 123` and a high
+  `uiOwnPort` set explicitly: without them it fails with `INIT_ERROR`. A 4-hour
+  `SysTimeRtcHighResSet` on a running application stopped it on an exception. Correct in small steps,
+  or keep an offset as `examples/mqtt_large_payload/st/clock/ClockSync.st` does. Ages and timeouts
+  use the monotonic clock (`F_NowMs`), never the wall clock.
 - **Scripting:** adding objects fails while logged in (log out first); `__file__` is undefined under
   `--runscript`; IronPython's `json` fails on non-ASCII compiler messages; `insert()` on text objects clashes
   with its overloads, so use `replace()`.

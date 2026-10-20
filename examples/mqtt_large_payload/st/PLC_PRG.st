@@ -297,6 +297,9 @@ IF TagValuePublisher.SendTimeout THEN
 	IsTagValueRequested := FALSE;
 END_IF
 
+// UTC from the NTP server for the scale test's timestamps (and the PLC's clock, if enabled).
+ClockSync();
+
 // 2,000-tag scale test (idle unless ScaleTest.IsEnabled); inside the timed scan on purpose.
 ScaleTest();
 

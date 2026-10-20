@@ -19,7 +19,7 @@ its addresses and baud rates are out of date.
 ## Topology (last verified 2026-09-28)
 
 ```
-PLC P2CDS-622-DEV  ETH1 .123 / ETH2 .125 (bench traffic uses ETH2)
+PLC P2CDS-622-DEV  ETH1 .123 carries all traffic; ETH2 (.125) has been unplugged for a long time
  ├─ Modbus TCP → PC TCP simulator   192.168.50.155:502  unit 1     (modbus_tcp_slave_sim.py)
  └─ Modbus TCP → NE2-D11P           192.168.50.153 A:502 units 1–5, B:1502 units 6–10
                     └─ RS485 115200 8N1 → COM18 (FTDI BG01GGR2) Go worker, units 1–10
@@ -227,8 +227,16 @@ against NE2 unit 2.
   of the old IDE, with no dialog visible to UI automation. `/plc/login` reports
   `certificateTrustError: "This functionality is no longer supported!"`, so the API cannot
   pre-trust certificates on SP22. If a login stalls, ask someone at the desktop.
-- After an online change, cached online reads can fail with "Invalid variable reference" for
-  every name. `POST /plc/logout` then `/plc/login` fixes it.
+- After an online change or a download, cached online reads can fail with "Invalid variable
+  reference" for most names. `POST /plc/logout` then `/plc/login` fixes it. In a session script,
+  dispose the handle by its application path: `session.dispose_online_application('')` looks up
+  the literal key `''` and disposes nothing (see `examples/mqtt_large_payload/deploy_demo.py`).
+- The PLC's clock runs on UTC from the NTP server at 192.168.50.240 since 2026-10-20. Before, it
+  held local time and was 84 s off. It drifts about 30 ms an hour. Stepping the clock 4 hours
+  while the application ran stopped the application on an exception (operating state 4129) and
+  dropped the IDE's connection; the IDE's "no connection to device" dialog then blocked the API's
+  script thread until someone closed it. A warm reset and start recovered it. Set the clock with
+  the application stopped, or correct it only in small steps.
 - The NA111-E does not forward Modbus exception replies. The simulator answered exception 02
   four times, and the PC client timed out.
 - The PLC task interval, not baud, dominated the round time. Raising baud from 38,400 to

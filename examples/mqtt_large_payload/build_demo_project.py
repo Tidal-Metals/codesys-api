@@ -19,7 +19,8 @@ LIBRARY_PLACEHOLDERS = [
 ]
 LIBRARIES = ["SysTime, 3.5.17.0 (System)", "SysTimeCore, 3.5.17.0 (System)",  # SysTimeGetUs for the performance counters
              "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)",  # MEM.MemMove, timed as the MQTT library uses it
-             "SysTimeRtc, 3.5.17.0 (System)"]  # wall-clock timestamps in the scale test
+             "SysTimeRtc, 3.5.17.0 (System)",  # wall-clock timestamps in the scale test
+             "SNTP Service SL, 1.9.0.0 (CODESYS)"]  # ClockSync: UTC from the NTP server
 REMOVED_DEVICES = ["Modbus_TCP_Client"]
 # The MQTT library allocates its buffers with __NEW; BCNF uses 50000.
 DYNAMIC_MEMORY_BYTES = 100000
@@ -28,7 +29,7 @@ FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
              ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine"), ("AppendZ", "BOOL", "scale/AppendZ")]
 # BCNF's StringPublication (verbatim) and the 2,000-tag scale test, both called by PLC_PRG
 PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"),
-            ("ScaleTest", "scale/ScaleTest")]
+            ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync")]
 ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"),
            ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),
            ("ScaleTest", "UpdateValues", "scale/ScaleTest.UpdateValues"),
