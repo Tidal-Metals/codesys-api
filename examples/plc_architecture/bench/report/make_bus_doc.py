@@ -74,6 +74,12 @@ for n, name in ((30, "native_serial_block30"), (120, "native_serial_block120")):
     per_unit = median(rates(run[name], "serial").values())
     rtu_points.append((n, (1000.0 / per_unit - t6) / 9.0))
 rtu_fit = fit([rtu_points[0], rtu_points[-1]])
+# ModbusFB RTU sweep: the line's request rate with nine blocks at N registers and the ME31's at 6, one each per round.
+fb_rtu_sweep = load("block_size_rtu_fb.json")["rows"]
+fb_t6 = next(1000.0 / (r["requests"] / r["seconds"]) for r in fb_rtu_sweep if r["count"] == 6)
+fb_rtu_points = [(r["count"], fb_t6 if r["count"] == 6 else (10 * 1000.0 / (r["requests"] / r["seconds"]) - fb_t6) / 9.0)
+                 for r in fb_rtu_sweep]
+fb_rtu_fit = fit([fb_rtu_points[0], fb_rtu_points[-1]])
 rtu_wire_6 = (8 + 5 + 2 * 6) * 10 / 9.6 + 2 * 3.5 * 10 / 9.6     # request + reply + two 3.5-character gaps, 10-bit characters
 
 
@@ -191,11 +197,13 @@ request_chart = stacked("Time per request (10 registers on TCP, 6 on RTU)", [
 
 block_regs_chart = lines("Registers per second vs block size", [
     ("ModbusFB TCP (115200 behind the NA111-E)", "s1", [(n, n * r, "%d registers: %s req/s, %s registers/s" % (n, f(r), f(n * r, 0))) for n, r in tcp_fb_rows]),
+    ("ModbusFB RTU 9600", "s3", [(n, n * 1000.0 / t, "%d registers: %s ms per request, %s registers/s" % (n, f(t), f(n * 1000.0 / t, 0))) for n, t in fb_rtu_points]),
     ("Native RTU 9600", "s2", [(n, n * 1000.0 / t, "%d registers: %s ms per request, %s registers/s" % (n, f(t), f(n * 1000.0 / t, 0))) for n, t in rtu_points]),
 ], 125, 2800, "registers/s", y_step=700)
 block_time_chart = lines("Time per request vs block size", [
     ("ModbusFB TCP", "s1", [(n, 1000.0 / r, "%d registers: %s ms" % (n, f(1000.0 / r))) for n, r in tcp_fb_rows]),
     ("PC through the gateway", "s0", [(r["registers"], r["medianMs"], "%d registers: %s ms median" % (r["registers"], f(r["medianMs"]))) for r in block_pc]),
+    ("ModbusFB RTU 9600", "s3", [(n, t, "%d registers: %s ms" % (n, f(t))) for n, t in fb_rtu_points]),
     ("Native RTU 9600", "s2", [(n, t, "%d registers: %s ms" % (n, f(t))) for n, t in rtu_points]),
 ], 125, 300, "ms", y_step=50)
 
@@ -252,6 +260,7 @@ CSV = buffer.getvalue()
 BLOCK_CSV = "interface,registers,ms_per_request,registers_per_second\n" + "".join(
     ["ModbusFB TCP,%d,%.1f,%.0f\n" % (n, 1000.0 / r, n * r) for n, r in tcp_fb_rows]
     + ["PC via gateway,%d,%.1f,%.0f\n" % (r["registers"], r["medianMs"], r["registers"] * 1000.0 / r["medianMs"]) for r in block_pc]
+    + ["ModbusFB RTU 9600,%d,%.1f,%.0f\n" % (n, t, n * 1000.0 / t) for n, t in fb_rtu_points]
     + ["Native RTU 9600,%d,%.1f,%.0f\n" % (n, t, n * 1000.0 / t) for n, t in rtu_points])
 PROMPT = ("Plan the Modbus side of a CODESYS P2CDS-622 program from the bench rules in docs/modbus-bench.md and the "
           "Doc Shelf report projects/codesys/modbus-interfaces: one ModbusFB ClientTCP per gateway when more units sit behind "
@@ -362,10 +371,12 @@ page = """<!DOCTYPE html>
 <div class="table-wrap"><table class="compact"><thead><tr><th>Path</th><th class="num">Fixed per request</th><th class="num">Per register</th><th class="num">Merge reads across gaps shorter than</th></tr></thead><tbody>
 <tr><td>ModbusFB TCP through the NA111-E (5 ms bus task)</td><td class="num">@@TCP_A@@ ms</td><td class="num">@@TCP_B@@ ms</td><td class="num">always (125 max)</td></tr>
 <tr><td>PC through the NA111-E (no PLC task)</td><td class="num">@@PC_A@@ ms</td><td class="num">@@PC_B@@ ms</td><td class="num">about @@PC_GAP@@ registers</td></tr>
+<tr><td>ModbusFB RTU at 9600 baud (5 ms bus task)</td><td class="num">@@FBRTU_A@@ ms</td><td class="num">@@FBRTU_B@@ ms</td><td class="num">about @@FBRTU_GAP@@ registers</td></tr>
 <tr><td>Native RTU at 9600 baud</td><td class="num">@@RTU_A@@ ms</td><td class="num">@@RTU_SLOPE@@ ms</td><td class="num">about @@GAP@@ registers</td></tr>
 </tbody></table></div>
 <div class="multiples"><div>@@BLOCK_REGS@@</div><div>@@BLOCK_TIME@@</div></div>
 <p>On TCP the per-request overhead dominates, so a block of 125 registers moves @@BLK125_REGS@@ registers a second where single-register reads move @@BLK1_RATE@@. On RTU the wire time per register is real (2 bytes, about 2.1 ms at 9600), so reading unused registers is only worth it across small gaps: a gap costs its wire time, a separate request costs about @@RTU_A@@ ms.</p>
+<p>On RTU, ModbusFB and native land on top of each other: ModbusFB is about @@FBRTU_EXTRA@@ ms slower per request at every block size, against about @@FB_OVH5@@ ms on TCP. Its task-cycle state changes still happen, but on a 9600 line most of them fall inside the time it waits for the reply anyway; on TCP the reply is back in a few milliseconds and the cycles are all that's left.</p>
 <ul>
   <li>Group a device's points into as few contiguous blocks as its register map allows. The generator should merge across gaps below the threshold for that line's baud rate.</li>
   <li>Check each device's limits before merging: many devices cap a read below 125 registers, and some refuse a read that touches an undefined register. The bench simulator ignored such a read entirely (no reply, a timeout), which is the worst case.</li>
@@ -545,6 +556,8 @@ fields = {
     "NATIVE_GAIN": pct(native_rtu_sat / fb_rtu_sat - 1),
     "BUS5": f(bus_5["meanExecUs"] / 1000.0, 2), "BUS5_PCT": pct(bus_5["meanExecUs"] / 5000.0),
     "BUS2": f(bus_2["meanExecUs"] / 1000.0, 2), "BUS2_PCT": pct(bus_2["meanExecUs"] / 2000.0),
+    "FBRTU_A": f(fb_rtu_fit[0], 0), "FBRTU_B": f(fb_rtu_fit[1]), "FBRTU_GAP": "%d" % round(fb_rtu_fit[0] / fb_rtu_fit[1]),
+    "FBRTU_EXTRA": f(median(fb - nt for (_, fb), (_, nt) in zip(sorted(p for p in fb_rtu_points if p[0] in (6, 30, 120)), rtu_points)), 0),
     "RTU_LOAD": pct(t6 / 1000.0), "BLK_GAIN": f(blk125[0] * blk125[1] / blk1[1], 0), "RTU_MAX": f(rtu_max, 0),
     "LINE_RATE": line_rate_chart, "REQUEST": request_chart, "BLOCK_REGS": block_regs_chart, "BLOCK_TIME": block_time_chart, "DEAD": dead_chart,
     "RUN_TABLE": table_html(HEAD, table_rows, NUMERIC, "runs"),

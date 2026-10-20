@@ -1,0 +1,46 @@
+{
+ "line": 2,
+ "blocks": 10,
+ "sweptBlocks": 9,
+ "skipUnits": [
+  1
+ ],
+ "rows": [
+  {
+   "errors": 1,
+   "seconds": 40.45,
+   "requests": 795,
+   "lastRequestUs": 46294,
+   "count": 6,
+   "perSecond": 19.65,
+   "msPerRequest": 50.9
+  },
+  {
+   "errors": 0,
+   "seconds": 40.45,
+   "requests": 424,
+   "lastRequestUs": 100181,
+   "count": 30,
+   "perSecond": 10.48,
+   "msPerRequest": 95.4
+  },
+  {
+   "errors": 0,
+   "seconds": 40.45,
+   "requests": 265,
+   "lastRequestUs": 72497,
+   "count": 60,
+   "perSecond": 6.55,
+   "msPerRequest": 152.7
+  },
+  {
+   "errors": 0,
+   "seconds": 40.44,
+   "requests": 152,
+   "lastRequestUs": 284362,
+   "count": 120,
+   "perSecond": 3.76,
+   "msPerRequest": 266.0
+  }
+ ]
+}

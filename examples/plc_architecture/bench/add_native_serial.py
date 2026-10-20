@@ -1,6 +1,6 @@
 """Add a native Modbus serial master (Modbus_COM + Modbus_Client_COM_Port) to the project open in the session.
 
-Usage: python examples/plc_architecture/bench/add_native_serial.py [--com 2] [--baud 9600]
+Usage: python examples/plc_architecture/bench/add_native_serial.py [--com 2] [--baud 9600] [--remove]
 Same device types and versions as BCNF's serial masters. Also sets the PLC's terminal-block port (parameter 8001)
 to RS485, the parity (default NONE) and the master's auto-restart. Servers and channels go under it with
 modbus_device_driver_runner.py (masterPath "Modbus_COM.Modbus_Client_COM_Port"), which checks the channels
@@ -59,12 +59,31 @@ result = {'success': True, 'steps': steps}
 """
 
 
+REMOVE = """
+on = scriptengine.online.create_online_application(scriptengine.projects.primary.active_application)
+if on.is_logged_in:
+    on.logout()
+proj = scriptengine.projects.primary
+plc = [c for c in proj.get_children() if getattr(c, 'is_device', False)][0]
+removed = [c.get_name() for c in plc.get_children() if c.get_name() == 'Modbus_COM']
+for c in plc.get_children():
+    if c.get_name() == 'Modbus_COM':
+        c.remove()
+proj.save()
+result = {'success': True, 'removed': removed}
+"""
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--com", default="2")
     parser.add_argument("--baud", default="9600")
     parser.add_argument("--parity", default="NONE", choices=["NONE", "EVEN", "ODD"])
+    parser.add_argument("--remove", action="store_true", help="delete the Modbus_COM subtree (to hand the port back to ModbusFB)")
     args = parser.parse_args()
+    if args.remove:
+        print(json.dumps(execute(REMOVE, 120), indent=1))
+        return 0
     print(json.dumps(execute(CODE.replace("@@COM@@", args.com).replace("@@BAUD@@", args.baud).replace("@@PARITY@@", args.parity), 120), indent=1))
     return 0
 

@@ -136,7 +136,8 @@ tmp/arch_bench/src/expected_bus_values.json` measure and check every value at th
 The serial line runs either as ModbusFB line 2 (`apply_bench.py 2000`) or as native servers
 (`apply_bench.py 2000 --serial native`, after `add_native_serial.py --com 1` and the runner on the generated
 `tmp/arch_bench/src/native_serial.json`). The two can't share COM1, so switching back to ModbusFB means
-deleting the Modbus_COM subtree first. **The bench was left on the native variant (2026-10-20).** A download
+deleting the Modbus_COM subtree first (`add_native_serial.py --remove`). **The bench was left on the ModbusFB
+variant (2026-10-20, values verified 304/304).** A download
 resets online changes; the bench's comms defaults (`FULL_REFRESH_EVERY` 1, `ClientBudgetUs` 10000) are
 therefore generated, not set online.
 
@@ -150,8 +151,9 @@ Full results, charts and the decision table: Doc Shelf
   task) or 64 (2 ms), against 5 ms per request through the gateway from a PC.
 - Native TCP runs in the Ethernet node's own task: 66 req/s per connection, 329/s for five on the NA111-E,
   but one connection per unit, and at full speed it took 15% more of the control task's time.
-- RTU at 9600 is wire-bound either way (about 34 ms + 2.1 ms per register; 20-22 small requests/s). Merge
-  reads across gaps shorter than about 16 registers; on TCP always merge (26.7 ms + 0.18 ms per register).
+- RTU at 9600 is wire-bound either way (native about 34 ms + 2.1 ms per register, ModbusFB about 4 ms more
+  per request; 20-22 small requests/s). Merge reads across gaps shorter than about 16 registers; on TCP
+  always merge (26.7 ms + 0.18 ms per register).
 - A dead device: ModbusFB's back-off keeps its neighbours at 85-97% of their rate; native polls it every cycle
   and waits the full timeout: 71% on RTU at 1 s cycles, about 1% behind a gateway at 10 ms cycles.
 - Tools: `measure_bus.py`, `run_bus_series.ps1`, `sweep_block_size.py`, `time_gateway.py`, `summarize_bus.py`.
