@@ -24,7 +24,7 @@
       "wired": true,
       "wiredTo": "USB-RS485 adapter BG041BD0 (PC COM12) and the Ebyte ME31 thermocouple module (9600 8N1, unit 1), in parallel",
       "polarity": "The PLC terminal on the adapter's TX+ is the + line; on an Ebyte device that is A",
-      "verified": "2026-10-20: transmits (requests intact on the bus) but never receives: RXD LED stays dark while a real ME31 and a simulator answer on the wire. Fails identically with a native Modbus_COM master after a clean power cycle, ModbusFB, and raw SysCom (vendor sequence). Configuration matches AutomationDirect docs, BCNF and PLC_DEH. Next: pin 3-4 idle voltage, RJ12 in RS485, another unit. See docs/modbus-bench.md, The PLC's own serial port."
+      "verified": "2026-10-20: transmits (requests intact on the bus) but never receives: RXD LED stays dark while a real ME31 and a simulator answer on the wire. Fails identically with a native Modbus_COM master after a clean power cycle, ModbusFB, and raw SysCom (vendor sequence). Configuration matches AutomationDirect docs, BCNF and PLC_DEH. Pin 3 to GND idle = +1.08 V: RS485 mode is applied. Next: RJ12 in RS485, another unit. See docs/modbus-bench.md, The PLC's own serial port."
     }
   },
   "adapters": {

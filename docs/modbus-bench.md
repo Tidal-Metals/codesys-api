@@ -74,8 +74,9 @@ TRUE before judging them.
     mode; baud and parity; COM numbering (vendor docs: COM1 = RJ12, COM2 = 4-pin terminal block); port
     state left over from SysCom use (power-cycled with a native-only application); reply timing (the
     ME31 answers after 30–50 ms).
-  - **Not yet tested:** pin 3 to pin 4 voltage at idle (about -5 V would mean the port is physically still
-    RS232); the RJ12 port in RS485 mode (pins 3 +, 4 -, 1/6 GND); this project on another P2CDS-622; the
+  - **Measured:** pin 3 (TXRX-) to pin 4 (GND) at idle = +1.08 V, an RS485 level, so the RS485 setting is
+    applied (RS232 would sit near -5 V). The receive path inside this unit is the prime suspect.
+  - **Not yet tested:** pin 2 to pin 4 at idle (should be clearly above pin 3); the RJ12 port in RS485 mode (pins 3 +, 4 -, 1/6 GND); this project on another P2CDS-622; the
     bench unit's firmware against the field units'. Record the answer here and in the inventory seed.
 - **Check order for a serial problem (would have found this in 20 minutes, not a day):**
   1. Sniff the bus (`sniff_serial.py`, below): are the PLC's requests intact?
