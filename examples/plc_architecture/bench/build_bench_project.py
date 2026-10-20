@@ -80,6 +80,17 @@ def configure_tasks(app, tasks, steps):
         steps.append("task %s: %s, priority %s, %s" % (name, spec["interval"], spec["priority"], ", ".join(spec["pous"])))
 
 
+def set_device_parameters(proj, values, steps):
+    # Host parameters of the PLC device itself (e.g. 8000/8001: the serial ports' mode).
+    device = [obj for obj in proj.get_children(False) if getattr(obj, "is_device", False)][0]
+    for connector in device.connectors:
+        for parameter in connector.host_parameters:
+            key = str(parameter.id)
+            if key in values and str(parameter.value) != values[key]:
+                parameter.value = values[key]
+                steps.append("device parameter %s (%s) = %s" % (key, parameter.visible_name, values[key]))
+
+
 def apply_bench(proj, source_dir, steps):
     with io.open(os.path.join(source_dir, "manifest.json"), encoding="utf-8") as handle:
         manifest = json.load(handle)
@@ -93,6 +104,7 @@ def apply_bench(proj, source_dir, steps):
     created = [item["name"] for item in manifest["objects"] if ensure_object(app, item, source_dir)]
     steps.append("objects written: %d, created: %s" % (len(manifest["objects"]), ", ".join(created) or "none"))
     configure_tasks(app, manifest["tasks"], steps)
+    set_device_parameters(proj, manifest.get("deviceParameters", {}), steps)
     for category in system.get_message_categories(True):
         system.clear_messages(category)
     app.rebuild()

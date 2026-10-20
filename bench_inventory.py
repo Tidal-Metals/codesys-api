@@ -58,13 +58,24 @@ def _read_json(path: str) -> dict[str, Any]:
 
 
 def load_registry() -> dict[str, dict[str, dict[str, Any]]]:
-    registry = {"adapters": {}, "gateways": {}}
+    registry = {"adapters": {}, "gateways": {}, "plc": {}}
     for source in (_read_json(SEED_PATH), _read_json(LOCAL_PATH)):
         for serial, entry in (source.get("adapters") or {}).items():
             registry["adapters"].setdefault(normalize_adapter_serial(serial), {}).update(entry)
         for mac, entry in (source.get("gateways") or {}).items():
             registry["gateways"].setdefault(normalize_mac(mac), {}).update(entry)
+        # The bench PLC's own interfaces: what each is wired to and what has been verified on it.
+        for name, entry in (source.get("plc") or {}).items():
+            if isinstance(entry, dict):
+                registry["plc"].setdefault(name, {}).update(entry)
+            else:
+                registry["plc"][name] = entry
     return registry
+
+
+def describe_plc(registry=None) -> dict[str, Any]:
+    """The bench PLC's interfaces as recorded in the inventory (reported by GET /api/v1/bench)."""
+    return (registry or load_registry())["plc"]
 
 
 def register(kind: str, key: str, fields: dict[str, Any]) -> dict[str, Any]:

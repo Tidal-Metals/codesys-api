@@ -279,7 +279,13 @@ class CodesysPersistentSession(object):
         return self.register_trusts_certificate_for_device(root_device_path, None)
 
     def dispose_online_application(self, application_path, logout_first):
-        key = self._online_key(application_path)
+        # Handles are cached under the resolved application path (see ensure_online_application), so '' must be
+        # resolved the same way; the raw '' key matched nothing and the stale handle survived a download.
+        try:
+            application_info = self.find_application(self._normalize_path(application_path))[1]
+            key = self._online_key(application_info["path"])
+        except Exception:
+            key = self._online_key(application_path)
         return self._dispose_online_entry(key, logout_first)
 
     def dispose_all_online_applications(self, logout_first):

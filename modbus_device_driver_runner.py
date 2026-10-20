@@ -126,7 +126,8 @@ def start_simulator(manifest_path: str, serial: dict[str, Any], dry_run: bool) -
 def plc_payload_for_device(manifest: dict[str, Any], device: dict[str, Any]) -> dict[str, Any]:
     plc = manifest.get("plc", {})
     return {
-        "mode": "script",
+        # "script" is the deprecated path: on 2026-10-20 it reported success and left the device with no channels.
+        "mode": "native",
         "masterPath": device.get("masterPath", plc.get("masterPath")),
         "slaveAddress": int(device.get("slaveAddress", device.get("unit", device.get("serverAddress", 1)))),
         "replace": True,
@@ -207,6 +208,14 @@ def apply_plc_devices(base_url: str, api_key: str, manifest: dict[str, Any], dry
                 channel_payload,
                 timeout=180,
             )
+            listed = request_json(base_url, api_key, "GET",
+                                  "/api/v1/modbus/devices/{0}/channels".format(urllib.parse.quote(name)), None, timeout=120)
+            wanted = len(device.get("channels", []))
+            found = len(listed.get("channels") or [])
+            result["channelCheck"] = {"wanted": wanted, "found": found}
+            if found < wanted:
+                raise RuntimeError("Device {0} has {1} channel(s) after creation, manifest asks for {2}; "
+                                   "a server with no channel is never polled".format(name, found, wanted))
 
         update_fields: dict[str, Any] = {}
         if "responseTimeout" in device:

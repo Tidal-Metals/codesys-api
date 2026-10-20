@@ -1,7 +1,7 @@
 """Download the two-task bench to the bench PLC through the IDE session, start it, make it the boot app.
 
 Run from the repo root with arch_bench.project open in the session (after apply_bench.py):
-    python examples/plc_architecture/bench/deploy_bench.py
+    python examples/plc_architecture/bench/deploy_bench.py [project name; default arch_bench]
 Full download: it replaces whatever runs on the PLC. Redeploy the MQTT demo afterwards to restore it.
 """
 import json
@@ -15,7 +15,7 @@ DOWNLOAD = """
 import time
 from scriptengine import OnlineChangeOption
 p = scriptengine.projects.primary
-assert p.path.replace('\\\\', '/').endswith('/arch_bench.project'), p.path
+assert p.path.replace('\\\\', '/').endswith('/@@PROJECT@@.project'), p.path
 on = session.ensure_online_application('', False)
 on.login(OnlineChangeOption.Never, True)
 if 'run' not in str(on.application_state).lower():
@@ -47,8 +47,10 @@ result = {'success': True, 'state': str(on.application_state),
 """
 
 if __name__ == "__main__":
-    deployed = execute(DOWNLOAD, 300)
+    project = sys.argv[1] if len(sys.argv) > 1 else "arch_bench"
+    deployed = execute(DOWNLOAD.replace("@@PROJECT@@", project), 300)
     print(json.dumps(deployed, indent=1))
     if deployed.get("success"):
         execute(LOGIN, 120)
-        print(json.dumps(execute(READBACK, 120), indent=1))
+        if project == "arch_bench":
+            print(json.dumps(execute(READBACK, 120), indent=1))

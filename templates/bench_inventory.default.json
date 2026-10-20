@@ -1,4 +1,19 @@
 {
+  "plc": {
+    "model": "P2CDS-622 (CODESYS V3.5 SP22 Patch 1)",
+    "ETH1": {"ip": "192.168.50.123", "wired": true, "notes": "Carries all PLC traffic: IDE, Modbus TCP, MQTT"},
+    "ETH2": {"ip": "192.168.50.125", "wired": false, "notes": "Unplugged; no answer to ping is expected"},
+    "COM1": {"connector": "RJ12 jack", "deviceParameter": 8000, "wired": false, "notes": "Nothing connected; don't test it"},
+    "COM2": {
+      "connector": "terminal block (2-wire RS485)",
+      "deviceParameter": 8001,
+      "option": "16#0003 = RS485 (0 disabled, 1 RS232)",
+      "wired": true,
+      "wiredTo": "USB-RS485 adapter BG041BD0 (PC COM12); was the Ebyte ME31 thermocouple module, 9600 8N1 unit 1",
+      "polarity": "The PLC terminal on the adapter's TX+ is the + line; on an Ebyte device that is A",
+      "verified": "2026-10-20: the PLC's requests reach the adapter intact (sniffed). The PLC has never accepted a reply on this port: ModbusFB and native both time out, and the ME31 never answered either. Nothing earlier in the repo shows this port working."
+    }
+  },
   "adapters": {
     "BG01GGR2": {
       "label": "Bench RS485 adapter on the NE2-D11P bus (simulated units 1-10)",
@@ -7,6 +22,10 @@
     "BG00XX03": {
       "label": "Bench RS485 adapter on the NA111-E bus (simulated unit 11)",
       "wiredTo": "0C-3D-5E-88-FD-2A"
+    },
+    "BG041BD0": {
+      "label": "RS485 adapter on the PLC's terminal block (PLC COM2), 9600 8N1",
+      "notes": "Simulates the PLC's own serial devices (examples/plc_architecture/bench/bus_sim.py) or listens (bench/sniff_serial.py) when no simulator owns it. TX+ = the + line."
     }
   },
   "gateways": {

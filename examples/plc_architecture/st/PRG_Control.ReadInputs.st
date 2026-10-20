@@ -2,6 +2,7 @@
 // its last good raw value, marked, instead of whatever the I/O image holds. Requests and setpoints are not
 // inputs: they only change through ApplyCommands.
 // ---- implementation ----
+CollectBusInputs();     // devices on the Modbus lines (bus task)
 FOR Index := 1 TO GVL_Tags.TAG_COUNT DO
 	IF NOT GVL_Tags.TagConfig[Index].IsWritable THEN
 		IF NOT GVL_Tags.SourceIsHealthy[GVL_Tags.TagConfig[Index].Source] THEN

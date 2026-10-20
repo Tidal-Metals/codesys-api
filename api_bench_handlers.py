@@ -221,6 +221,7 @@ class BenchHandlersMixin:
             "reservations": self.bench.reservations.list(),
             "jobs": {"counts": self.bench.jobs.counts(), "recent": self.bench.jobs.list(5)},
             "simulators": [_simulator_summary(row) for row in simulators],
+            "plc": bench_inventory.describe_plc(),
             "adapters": adapters,
             "gateways": gateways,
             "warnings": warnings,

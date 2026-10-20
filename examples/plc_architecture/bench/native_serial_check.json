@@ -1,0 +1,25 @@
+{
+  "serial": {"port": "COM12", "baudrate": 9600, "bytesize": 8, "parity": "N", "stopbits": 1, "timeout": 1.0},
+  "plc": {"masterPath": "Modbus_COM.Modbus_Client_COM_Port"},
+  "devices": [
+    {
+      "name": "TC_SIM_1",
+      "unit": 1,
+      "slaveAddress": 1,
+      "responseTimeout": 1000,
+      "channels": [
+        {
+          "name": "TC_SIM_1_TEMPS",
+          "accessType": 4,
+          "readOffset": "0x0190",
+          "readLength": 6,
+          "writeOffset": "0",
+          "writeLength": "0",
+          "trigger": 5,
+          "cycleTime": 100,
+          "errorHandling": "true"
+        }
+      ]
+    }
+  ]
+}

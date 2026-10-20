@@ -2,7 +2,12 @@
 
 How the CODESYS PLC, the Ebyte TCP-to-RTU gateways, the PC's RS485 simulators and this API fit
 together, and how to test or change them without breaking another agent's run. Updated
-2026-09-30. The state below comes from recorded tests; verify it live before relying on it.
+2026-10-20. The state below comes from recorded tests; verify it live before relying on it.
+
+**What is physically wired is data, not prose:** `GET /api/v1/bench` returns a `plc` section (each PLC
+port: wired or not, to what, polarity, what has been verified) and the adapters by USB serial. It comes
+from `templates/bench_inventory.default.json`. When wiring changes, or a port is proven, update that file in
+the same session; a fact left only in chat is lost by the next session.
 
 Gateway internals (web API, enums, save sequence, client limits) live in the device profiles and
 are not repeated here:
@@ -16,15 +21,15 @@ Other references: [Go RTU simulator](../tools/modbus-rtu-sim/README.md),
 [remote IDE access](../FIELD_ACCESS.md). The README's "P2CDS-622 Modbus bench" section is history;
 its addresses and baud rates are out of date.
 
-## Topology (last verified 2026-09-28)
+## Topology (last verified 2026-10-20)
 
 ```
-PLC P2CDS-622-DEV  ETH1 .123 carries all traffic; ETH2 (.125) has been unplugged for a long time
- ├─ Modbus TCP → PC TCP simulator   192.168.50.155:502  unit 1     (modbus_tcp_slave_sim.py)
- └─ Modbus TCP → NE2-D11P           192.168.50.153 A:502 units 1–5, B:1502 units 6–10
+PLC P2CDS-622-DEV  ETH1 .123 carries all traffic. ETH2 (.125) is unplugged. COM1 (RJ12) is not connected.
+ ├─ Modbus TCP → NA111-E            192.168.50.67:502
+ │                  └─ RS485 115200 8N1 → COM11 (FTDI BG00XX03) Go worker, units 11–40 (bench/bus_sim.py)
+ ├─ COM2 terminal block, 2-wire RS485 9600 8N1 → COM12 (FTDI BG041BD0) Go worker, units 1–10, or a listener
+ └─ (2026-09-28 setup, NE2 not on the network on 2026-10-20) Modbus TCP → NE2-D11P 192.168.50.153
                     └─ RS485 115200 8N1 → COM18 (FTDI BG01GGR2) Go worker, units 1–10
-PC → NA111-E                        192.168.50.67:502 (no PLC module yet)
-                    └─ RS485 115200 8N1 → COM11 (FTDI BG00XX03) Go worker, unit 11
 ```
 
 | Item | Value |
@@ -47,6 +52,38 @@ differs from `expectedIp`. Always find a gateway by MAC before using an address.
 `PLC_PRG.TenMonitorEnable` to FALSE, which makes the error counters read 0 regardless; set it
 TRUE before judging them.
 
+## The PLC's own serial port (terminal block, COM2)
+
+- **Port facts:** COM2 in CODESYS is the terminal block, device parameter `8001`, `16#0003` = RS485; COM1
+  is the RJ12 jack (parameter `8000`), unused here. The terminal block is 2-wire. On the COM12 adapter the
+  PLC's + line is TX+; on an Ebyte device + is A. Reversed polarity shows as bytes at the right times but
+  wrong values (`fd f7 fd df` for `01 04 01 90 00 06 71 d9`).
+- **Status 2026-10-20: transmit works, receive does not yet.** The PLC's requests arrive intact at COM12,
+  and the simulator answers them, but the PLC never accepts a reply: ModbusFB (every RTS mode) and a native
+  Modbus_COM master both time out, and a real Ebyte ME31 never answered either. Nothing earlier in the repo
+  shows the PLC's own serial port working on this bench; earlier RTU tests all went through a gateway.
+  Open candidates: the PLC's receive path or wiring, a ground reference, the replies arriving faster
+  (2.5 ms) than the port turns around. Record the answer in the inventory seed when found.
+- **Look at the wire first:** `examples/plc_architecture/bench/sniff_serial.py COM12` listens read-only.
+  Only when no simulator owns COM12 (`GET /api/v1/bench` → adapters → owner); stop or move the
+  simulator first. `bench/scan_serial.py` cycles port, baud, parity and RTS mode on the running bench app.
+- **Native master:** `bench/add_native_serial.py` adds Modbus_COM + Modbus_Client_COM_Port (BCNF's device
+  types; parity as the quoted literal `'NONE'`, auto-restart on). Then `modbus_device_driver_runner.py
+  <manifest> --skip-simulator` adds servers and channels and fails if a channel is missing; a server with no
+  channel shows an orange triangle and is never polled. A channel nobody reads also needs
+  `PATCH /api/v1/modbus/devices/<server>` `{"alwaysUpdateVariables": "AlwaysInBusCycle"}`.
+  `bench/native_serial_check.json` is a one-device example.
+
+## Architecture bench (two or three tasks, 2,000 tags)
+
+`examples/plc_architecture/bench/`: the redesign skeleton with a generated 2,000-tag table, a 50 ms control
+task, a 5 ms bus task (Modbus lines from generated tables, ModbusFB) and a 50 ms MQTT task, in
+`~/projects/codesys_projects/arch_bench/arch_bench.project`. `bus_sim.py apply` starts both simulated
+buses (COM11 behind the NA111-E, COM12 on the terminal block); `apply_bench.py` writes the sources and tasks
+(logged out); `deploy_bench.py [project]` downloads; `measure_bench.py` and `verify_arch.py --expected
+tmp/arch_bench/src/expected_bus_values.json` measure and check every value at the broker. Results go in
+`bench/results/`. ModbusFB reads coils as one byte per coil, not packed bits.
+
 ## Bench API for agents
 
 Start every session with `GET /api/v1/bench`. It returns the IDE session heartbeat, active
@@ -67,7 +104,9 @@ schema is at `/openapi.json` and `/docs`.
 
 Reservations are advisory for unclaimed equipment: an unreserved scope is open to everyone. A
 reserved one returns 423 to anyone without its token on simulator apply, PLC login/logout/
-deploy/bind-ip, online write and app start/stop. Reads never need a token. `/script/execute`
+deploy/bind-ip, online write and app start/stop, including the holder's own calls: keep the token
+(e.g. in `tmp/<task>/reservation.json`) and send it every time. Session scripts (`run_ide_script.execute`)
+bypass reservations. Reads never need a token. `/script/execute`
 honors `timeout` (up to 300 s) and runs scripts in one namespace, so their functions can call
 each other.
 
@@ -228,9 +267,13 @@ against NE2 unit 2.
   `certificateTrustError: "This functionality is no longer supported!"`, so the API cannot
   pre-trust certificates on SP22. If a login stalls, ask someone at the desktop.
 - After an online change or a download, cached online reads can fail with "Invalid variable
-  reference" for most names. `POST /plc/logout` then `/plc/login` fixes it. In a session script,
-  dispose the handle by its application path: `session.dispose_online_application('')` looks up
-  the literal key `''` and disposes nothing (see `examples/mqtt_large_payload/deploy_demo.py`).
+  reference" for most names. `POST /plc/logout` then `/plc/login` fixes it. Until the IDE session is
+  restarted with the fixed `PERSISTENT_SESSION.py`, `session.dispose_online_application('')` disposes
+  nothing; dispose by application path (`session.find_application('')[1]['path']`), as the deploy
+  scripts do.
+- A modal IDE dialog ("no connection to device", a certificate prompt) blocks the API's script thread:
+  `session/status` stays `busy` on one request. Ask someone at the desktop to close it.
+- After a PLC power cycle, wait until ETH1 answers ping and port 11740 accepts, then log out and in.
 - The PLC's clock runs on UTC from the NTP server at 192.168.50.240 since 2026-10-20. Before, it
   held local time and was 84 s off. It drifts about 30 ms an hour. Stepping the clock 4 hours
   while the application ran stopped the application on an exception (operating state 4129) and

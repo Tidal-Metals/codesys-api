@@ -186,6 +186,24 @@ class InventoryTests(unittest.TestCase):
             with self.assertRaises(bench_inventory.InventoryError):
                 bench_inventory.register("gateways", "not-a-mac", {})
 
+    def test_plc_interfaces_come_from_seed_with_local_overrides(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            seed, local = os.path.join(tmp, "seed.json"), os.path.join(tmp, "inv.json")
+            with open(seed, "w", encoding="utf-8") as handle:
+                json.dump({"plc": {"model": "P2CDS-622", "COM2": {"wired": True, "verified": "TX only"}}}, handle)
+            with open(local, "w", encoding="utf-8") as handle:
+                json.dump({"plc": {"COM2": {"verified": "TX and RX"}}}, handle)
+            with mock.patch.object(bench_inventory, "SEED_PATH", seed), mock.patch.object(bench_inventory, "LOCAL_PATH", local):
+                plc = bench_inventory.describe_plc()
+        self.assertEqual(plc["model"], "P2CDS-622")
+        self.assertEqual(plc["COM2"], {"wired": True, "verified": "TX and RX"})
+
+    def test_shipped_seed_records_which_plc_ports_are_wired(self):
+        plc = bench_inventory.load_registry()["plc"]
+        self.assertFalse(plc["ETH2"]["wired"])
+        self.assertFalse(plc["COM1"]["wired"])
+        self.assertTrue(plc["COM2"]["wired"])
+
 
 class RoutingTests(unittest.TestCase):
     def test_routes(self):

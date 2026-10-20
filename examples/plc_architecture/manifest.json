@@ -1,6 +1,8 @@
 {
  "libraries": [
-  "SysTimeRtc, 3.5.17.0 (System)"
+  "SysTimeRtc, 3.5.17.0 (System)",
+  "ModbusFB, 4.5.0.0 (CODESYS)",
+  "SysCom, 3.5.17.0 (System)"
  ],
  "objects": [
   {
@@ -16,6 +18,14 @@
    "name": "E_CommandResult"
   },
   {
+   "kind": "enum",
+   "name": "E_BusFunction"
+  },
+  {
+   "kind": "enum",
+   "name": "E_BusFormat"
+  },
+  {
    "kind": "struct",
    "name": "ST_TagConfig"
   },
@@ -26,6 +36,22 @@
   {
    "kind": "struct",
    "name": "ST_Command"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_BusLine"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_BusBlock"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_BusEntry"
+  },
+  {
+   "kind": "struct",
+   "name": "ST_BusWrite"
   },
   {
    "kind": "fb",
@@ -83,8 +109,17 @@
    "name": "GVL_Tags"
   },
   {
+   "kind": "gvl",
+   "name": "GVL_Bus"
+  },
+  {
    "kind": "program",
    "name": "PRG_Control"
+  },
+  {
+   "kind": "action",
+   "parent": "PRG_Control",
+   "name": "CollectBusInputs"
   },
   {
    "kind": "action",
@@ -154,10 +189,49 @@
    "kind": "action",
    "parent": "PRG_Comms",
    "name": "PublishAcks"
+  },
+  {
+   "kind": "fb",
+   "name": "FB_BusLine"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_BusLine",
+   "name": "CallClient",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_BusLine",
+   "name": "CallRequest",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_BusLine",
+   "name": "StartNext",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_BusLine",
+   "name": "FinishRequest",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "method",
+   "parent": "FB_BusLine",
+   "name": "Decode",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "program",
+   "name": "PRG_Bus"
   }
  ],
  "callers": [
   "PRG_Control();",
-  "PRG_Comms();"
+  "PRG_Comms();",
+  "PRG_Bus();"
  ]
 }
