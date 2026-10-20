@@ -23,11 +23,16 @@ ELSE
 END_IF
 
 IF IsTagValueFormat THEN
-	// TT-1001:1
+	// TT-1001:1, or TT-1001:1:1792445443883 with a timestamp
+	IF TimestampMode = 2 THEN
+		StampText := CONCAT(':', ULINT_TO_STRING(StampMs));   // same time, converted again: what a per-tag time costs
+	END_IF
 	IsBuildOk := IsBuildOk
 		AND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(Names[Index]), Used := Used)
 		AND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(':'), Used := Used)
 		AND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(ValueText), Used := Used)
+		AND_THEN (TimestampMode = 0
+			OR_ELSE AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(StampText), Used := Used))
 		AND_THEN AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR('$N'), Used := Used);
 ELSE
 	// [G1, v1, v2, ... v100]

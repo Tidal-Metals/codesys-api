@@ -1,0 +1,32 @@
+{
+ "topic": "raw_data_demo/scale",
+ "seconds": 48.0,
+ "byFormat": {
+  "tagvalue": {
+   "messages": 36,
+   "allCorrect": true,
+   "valuesChecked": 72000,
+   "bytesMin": 53870,
+   "bytesMax": 53874,
+   "sequenceGaps": [],
+   "failures": [],
+   "timestamped": 36,
+   "arrivalMinusStampMs": {
+    "min": 14484290.8,
+    "median": 14484295.6,
+    "max": 14485090.2,
+    "spread": 799.4
+   }
+  },
+  "positional": {
+   "messages": 0,
+   "allCorrect": false,
+   "valuesChecked": 0,
+   "bytesMin": 0,
+   "bytesMax": 0,
+   "sequenceGaps": [],
+   "failures": []
+  }
+ },
+ "unparsed": []
+}

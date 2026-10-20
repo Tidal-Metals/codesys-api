@@ -20,6 +20,8 @@ VAR
 	ResetStats : BOOL;
 	OnlyKind : INT;                     // measurement aid: 0 = all, 1 = BOOL only, 2 = DINT only, 3 = REAL only, 4 = none
 	RealDeadband : REAL := 0.5;         // report-by-exception: REAL change that counts
+	TimestampMode : INT;                // tag:value only. 0 = none; 1 = "tag:value:ms", the snapshot time formatted once
+	                                    // per message; 2 = the same, but converted to text again for every line
 
 	// Report-by-exception: last values sent, and what changed since (DetectChanges)
 	LastBools : ARRAY[1..BOOL_COUNT] OF BOOL;
@@ -39,11 +41,13 @@ VAR
 	Reals : ARRAY[1..REAL_COUNT] OF REAL;
 	Prefixes : ARRAY[0..11] OF STRING(3) := ['TT', 'PT', 'FT', 'LT', 'XV', 'HS', 'ZS', 'PIT', 'FIT', 'TIT', 'LIT', 'AIT'];
 	Suffixes : ARRAY[0..3] OF STRING(1) := ['A', 'B', 'S', 'V'];
-	Payload : STRING(40000);
+	Payload : STRING(80000);            // 2,000 timestamped lines need about 54 KB
 	Used : UDINT;
 	ValueText : STRING(40);
 	Header : STRING(40);
 	RealValue : REAL;
+	StampMs : ULINT;                    // wall clock (ms since 1970) when this message's values were taken
+	StampText : STRING(24);             // ':' and StampMs as text
 
 	// State
 	IsNamesReady : BOOL;
@@ -123,6 +127,7 @@ IF Timer.Q AND PLC_PRG.IsBrokerConnected THEN
 		Sequence := Sequence + 1;
 		StepStartUs := NowUs();
 		UpdateValues();
+		SysTimeRtc.SysTimeRtcHighResGet(pTimestamp := StampMs);
 		ValueUpdateUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
 		StepStartUs := NowUs();
 		DetectChanges();
@@ -137,6 +142,7 @@ IF Timer.Q AND PLC_PRG.IsBrokerConnected THEN
 			Header := CONCAT(CONCAT('[SCALE_SEQ, ', UDINT_TO_STRING(Sequence)), ']$N');
 		END_IF
 		IsBuildOk := AppendZ(pBuffer := ADR(Payload), Capacity := SIZEOF(Payload), pText := ADR(Header), Used := Used);
+		StampText := CONCAT(':', ULINT_TO_STRING(StampMs));
 		LastBuildUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
 		LastBuildScans := 0;
 		NextTag := 1;
