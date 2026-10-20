@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # IronPython, inside the API's CODESYS session (see apply_bench.py): writes generated bench sources
 # (make_bench_sources.py) into the open project, sets up the two tasks and rebuilds. Idempotent: existing
-# objects are rewritten, missing ones created. The project must not be logged in when objects are added.
+# objects are rewritten, missing ones created, the manifest's "obsolete" ones removed. The project must not be
+# logged in when objects are added.
 import io
 import json
 import os
@@ -101,6 +102,12 @@ def apply_bench(proj, source_dir, steps):
         if library not in existing:
             libman.add_library(library)
             steps.append("added library " + library)
+    for item in manifest.get("obsolete", []):
+        parent = app if "parent" not in item else find_child(app, item["parent"])
+        obj = find_child(parent, item["name"]) if parent is not None else None
+        if obj is not None:
+            obj.remove()
+            steps.append("removed " + ".".join([item.get("parent", ""), item["name"]]).lstrip("."))
     created = [item["name"] for item in manifest["objects"] if ensure_object(app, item, source_dir)]
     steps.append("objects written: %d, created: %s" % (len(manifest["objects"]), ", ".join(created) or "none"))
     configure_tasks(app, manifest["tasks"], steps)

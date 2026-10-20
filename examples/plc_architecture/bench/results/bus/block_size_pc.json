@@ -1,0 +1,40 @@
+{
+ "note": "PC -> NA111-E (Modbus TCP) -> RS485 115200 -> simulated unit 12, FC03 from offset 0, 60 sequential requests each, TCP_NODELAY (time_gateway.py). FTDI latency 1 ms.",
+ "rows": [
+  {
+   "registers": 1,
+   "minMs": 2.8,
+   "medianMs": 3.0,
+   "p95Ms": 6.1,
+   "maxMs": 7.0
+  },
+  {
+   "registers": 10,
+   "minMs": 4.7,
+   "medianMs": 5.0,
+   "p95Ms": 8.3,
+   "maxMs": 9.1
+  },
+  {
+   "registers": 30,
+   "minMs": 7.9,
+   "medianMs": 8.8,
+   "p95Ms": 12.0,
+   "maxMs": 12.2
+  },
+  {
+   "registers": 60,
+   "minMs": 13.5,
+   "medianMs": 14.8,
+   "p95Ms": 18.0,
+   "maxMs": 20.2
+  },
+  {
+   "registers": 125,
+   "minMs": 25.8,
+   "medianMs": 28.9,
+   "p95Ms": 30.0,
+   "maxMs": 30.5
+  }
+ ]
+}

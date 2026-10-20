@@ -36,12 +36,13 @@
       "wiredTo": "B0-CB-D8-4E-88-BB"
     },
     "BG00XX03": {
-      "label": "Bench RS485 adapter on the NA111-E bus (simulated unit 11)",
-      "wiredTo": "0C-3D-5E-88-FD-2A"
+      "label": "Bench RS485 adapter on the NA111-E bus (simulated units 11-40)",
+      "wiredTo": "0C-3D-5E-88-FD-2A",
+      "notes": "FTDI latency timer 1 ms (default 16 ms adds ~16 ms per request): bench/set_ftdi_latency.ps1"
     },
     "BG041BD0": {
-      "label": "RS485 adapter on the PLC's terminal block (PLC COM2), 9600 8N1",
-      "notes": "Simulates the PLC's own serial devices (examples/plc_architecture/bench/bus_sim.py) or listens (bench/sniff_serial.py) when no simulator owns it. TX+ = the + line."
+      "label": "RS485 adapter on the PLC's RJ12 port (PLC COM1), with the Ebyte ME31, 9600 8N1",
+      "notes": "Simulates the PLC's own serial devices (examples/plc_architecture/bench/bus_sim.py) or listens (bench/sniff_serial.py) when no simulator owns it. TX+ = the + line. FTDI latency timer 1 ms: bench/set_ftdi_latency.ps1."
     }
   },
   "gateways": {

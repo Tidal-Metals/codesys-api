@@ -31,7 +31,7 @@ END_IF
 Source := Block.Source;
 IF IsDone THEN
 	GVL_Bus.SourceWriting[Source] := TRUE;
-	Decode();
+	F_BusDecode(FirstEntry := Block.FirstEntry, EntryCount := Block.EntryCount, Words := Words, Bits := Bits);
 	GVL_Bus.SourceLastGoodMs[Source] := NowMs;
 	GVL_Bus.SourceHealthy[Source] := TRUE;
 	GVL_Bus.SourceFailCount[Source] := 0;

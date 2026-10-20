@@ -211,6 +211,13 @@ tests in `examples/mqtt_large_payload/results/scale/`.
   the full-refresh period and the report-by-exception deadbands so that changes per second times line length
   stays well under that rate.
 - **Indices are `INT`:** a table above 32,767 rows needs `DINT` indices.
+- **Modbus lines have a request budget.** ModbusFB (`FB_BusLine`) spends about five bus-task cycles per request:
+  about 34 requests/s per TCP connection at a 5 ms bus task. RTU at 9600 carries about 20 small requests/s with
+  either ModbusFB or native. Native TCP servers are faster but take one gateway connection each (NA111-E: 6).
+  The generator merges a device's registers into blocks across short gaps (always on TCP, under about 16
+  registers at 9600), checks each line's requests per second against these figures, and gives every native
+  server a health hold-off. Numbers and the ModbusFB/native choice: `docs/modbus-bench.md`, "ModbusFB vs
+  native, TCP vs RTU".
 
 ## When the sheet and the code disagree
 

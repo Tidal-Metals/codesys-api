@@ -2,7 +2,9 @@
 
 Run from the repo root, with ~/projects/codesys_projects/arch_bench/arch_bench.project open in the session and
 not logged in (a copy of the MQTT demo project: device, MQTT library, dynamic memory, AppendZ):
-    python examples/plc_architecture/bench/apply_bench.py [tag_count]
+    python examples/plc_architecture/bench/apply_bench.py [tag_count] [--serial native] [--native-cycle-ms 1000]
+Options after the tag count go to make_bench_sources.py. For --serial native the servers must exist first
+(add_native_serial.py, then modbus_device_driver_runner.py on the generated native_serial.json).
 Download afterwards with deploy_bench.py.
 """
 import json
@@ -32,5 +34,5 @@ result = report
 
 if __name__ == "__main__":
     tags = sys.argv[1] if len(sys.argv) > 1 else "2000"
-    subprocess.run([sys.executable, str(BENCH / "make_bench_sources.py"), tags, str(SOURCE_DIR)], check=True)
+    subprocess.run([sys.executable, str(BENCH / "make_bench_sources.py"), tags, str(SOURCE_DIR)] + sys.argv[2:], check=True)
     print(json.dumps(execute(CODE, 300), indent=1))

@@ -1,6 +1,15 @@
-METHOD Decode : BOOL
-// Turns the active block's reply into GVL_Bus.Raw for each of its entries. Called with the source's
-// SourceWriting flag set. A sentinel ("no reading") becomes NaN, so the tag goes INVALID in ComputeValues.
+FUNCTION F_BusDecode : BOOL
+// Turns one block's reply into GVL_Bus.Raw for each of its entries. Call it with the source's SourceWriting
+// flag set. A sentinel ("no reading") becomes NaN, so the tag goes INVALID in ComputeValues. Independent of
+// the transport: FB_BusLine passes a ModbusFB reply, a native device-tree channel its mapped input image.
+VAR_INPUT
+	FirstEntry : INT;
+	EntryCount : INT;
+END_VAR
+VAR_IN_OUT
+	Words : ARRAY[0..124] OF WORD;      // register reply, first register at index 0
+	Bits : ARRAY[0..1999] OF BYTE;      // bit reply, one byte per bit
+END_VAR
 VAR
 	Index : INT;
 	Entry : ST_BusEntry;
@@ -11,7 +20,7 @@ VAR
 	NanBits : DWORD := 16#7FC00000;
 END_VAR
 // ---- implementation ----
-FOR Index := Block.FirstEntry TO Block.FirstEntry + Block.EntryCount - 1 DO
+FOR Index := FirstEntry TO FirstEntry + EntryCount - 1 DO
 	Entry := GVL_Bus.Entries[Index];
 	IF Entry.Format = E_BusFormat.SINGLE_BIT THEN
 		RawInt := SEL(Bits[Entry.Offset] <> 0, 0, 1);   // ModbusFB unpacks bit replies: one byte per coil (bench, 2026-10-20)
@@ -44,4 +53,4 @@ FOR Index := Block.FirstEntry TO Block.FirstEntry + Block.EntryCount - 1 DO
 	END_IF
 	GVL_Bus.Raw[Entry.TagIndex] := Value;
 END_FOR
-Decode := TRUE;
+F_BusDecode := TRUE;

@@ -1,0 +1,27 @@
+{
+ "topic": "raw_data_demo/arch",
+ "seconds": 75.0,
+ "messages": 68,
+ "complete": 68,
+ "problems": [],
+ "bytesMin": 24442,
+ "bytesMax": 24917,
+ "gapMinS": 1.019,
+ "gapMaxS": 1.155,
+ "gapMeanS": 1.104,
+ "bus": {
+  "messages": 68,
+  "minMatch": 298,
+  "maxMatch": 304,
+  "mismatches": 0,
+  "mismatchSample": [],
+  "nanMin": 4,
+  "nanMax": 10,
+  "temperatureRange": [
+   24.2,
+   24.7
+  ],
+  "lastSetpoint": 20.0,
+  "lastSetpointFeedback": 20.0
+ }
+}

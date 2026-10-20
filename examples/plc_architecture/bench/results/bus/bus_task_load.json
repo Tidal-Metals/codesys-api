@@ -1,0 +1,29 @@
+{
+ "note": "PRG_BusTask body (PRG_Bus with the ModbusFB gateway line, PRG_NativeSerial decoding ten native servers, PRG_SerialProbe idle), wall time per cycle including preemption by the control task; 20 s windows (bench/../tmp bus_load.py).",
+ "runs": [
+  {
+   "busTaskMs": 5,
+   "meanExecUs": 915,
+   "maxExecUs": 6007,
+   "condition": "gateway line 1 s periods"
+  },
+  {
+   "busTaskMs": 5,
+   "meanExecUs": 933,
+   "maxExecUs": 5847,
+   "condition": "after gateway saturation"
+  },
+  {
+   "busTaskMs": 2,
+   "meanExecUs": 844,
+   "maxExecUs": 6198,
+   "condition": "gateway line saturated, native serial 10 ms"
+  },
+  {
+   "busTaskMs": 5,
+   "meanExecUs": 873,
+   "maxExecUs": 6629,
+   "condition": "plus five native TCP servers at 10 ms"
+  }
+ ]
+}

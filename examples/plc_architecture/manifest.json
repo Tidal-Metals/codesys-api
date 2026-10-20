@@ -81,6 +81,11 @@
   },
   {
    "kind": "function",
+   "name": "F_BusDecode",
+   "returns": "BOOL"
+  },
+  {
+   "kind": "function",
    "name": "F_WallClockMs",
    "returns": "ULINT"
   },
@@ -216,12 +221,6 @@
    "kind": "method",
    "parent": "FB_BusLine",
    "name": "FinishRequest",
-   "returns": "BOOL"
-  },
-  {
-   "kind": "method",
-   "parent": "FB_BusLine",
-   "name": "Decode",
    "returns": "BOOL"
   },
   {

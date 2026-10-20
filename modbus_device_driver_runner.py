@@ -243,6 +243,8 @@ def apply_plc_devices(base_url: str, api_key: str, manifest: dict[str, Any], dry
                 "variable": variable_name,
                 "createVariable": bool(mapping.get("createVariable", False)),
             }
+            if "leafIndex" in mapping:        # one word of a multi-register channel; default is word 0 only
+                mapping_payload["leafIndex"] = int(mapping["leafIndex"])
             if dry_run:
                 result["mappings"].append({"channel": channel_name, "dryRun": True, "payload": mapping_payload})
             else:

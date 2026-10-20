@@ -1,16 +1,21 @@
 """Generate the bench sources: the architecture skeleton with an N-tag table, its Modbus bus, and the bench programs.
 
-Usage: python examples/plc_architecture/bench/make_bench_sources.py <tag_count> <out_dir>
+Usage: python examples/plc_architecture/bench/make_bench_sources.py <tag_count> <out_dir> [--serial fb|native]
+           [--native-cycle-ms 1000] [--bus-task-ms 5]
 Tag mix as in the MQTT scale test: 50 % BOOL, 25 % INT, 25 % REAL, names <prefix>-<4 digits>[suffix]; the
 skeleton's four example tags stay first so its hand-written logic compiles. Bus (GVL_Bus), bench sources:
   line 1  TCP to the NA111-E (192.168.50.67:502) -> RS485 115200 -> simulated units 11-40 (bus_sim.py)
           each unit: FC03 registers 0-9; 0-3 -> INT tags, 4-7 -> REAL tags (x0.1); unit 11 also register 9 ->
           the read-back of a setpoint written from a TIC-..._SP tag, and coils 0-9 -> BOOL tags
-  line 2  the PLC's RJ12 jack (COM1) -> USB adapter COM12 -> simulated units 1-10 shaped like the Ebyte
-          ME31 thermocouple module, 9600 8N1: FC04 registers 400-405 -> six temperatures (x0.1, -999 = open)
+  line 2  the PLC's RJ12 jack (COM1), 9600 8N1: a real Ebyte ME31 thermocouple module (unit 1) and simulated
+          units 2-10 shaped like it (USB adapter COM12): FC04 registers 400-405 -> six temperatures (x0.1, -999 = open)
+With --serial native, line 2 is the device tree's Modbus_COM master instead (one server per unit, its channel
+mapped to GVL_Native.Unit<n>); PRG_NativeSerial feeds those images through the same decode table, and
+native_serial.json is the modbus_device_driver_runner.py manifest for the servers.
 Every other tag is local (source 0) and moved by PRG_SimInputs. PRG_Comms gets bench topics and its own
 client id, and its tuning constants become variables. Also writes expected_bus_values.json for verify_arch.py.
 """
+import argparse
 import json
 import re
 import shutil
@@ -22,8 +27,15 @@ SKELETON = BENCH.parent
 sys.path.insert(0, str(BENCH))
 import bus_sim  # noqa: E402
 
-count = int(sys.argv[1])
-out = Path(sys.argv[2])
+parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("count", type=int)
+parser.add_argument("out", type=Path)
+parser.add_argument("--serial", choices=["fb", "native"], default="fb")
+parser.add_argument("--native-cycle-ms", type=int, default=1000, help="native channel cycle time")
+parser.add_argument("--bus-task-ms", type=int, default=5, help="BusTask interval")
+options = parser.parse_args()
+count, out = options.count, options.out
+IS_NATIVE = options.serial == "native"
 GATEWAY = (192, 168, 50, 67)
 SERIAL_COM = 1                      # the RJ12 jack: the bench unit's terminal block (COM2) does not receive
 COIL_PATTERN = bus_sim.COILS
@@ -52,7 +64,7 @@ def take(kind):
 
 
 blocks, entries, writes, expected = [], [], [], {}
-SOURCE_COUNT = len(bus_sim.UNITS) + len(bus_sim.SERIAL_UNITS)
+SOURCE_COUNT = len(bus_sim.UNITS) + 1 + len(bus_sim.SERIAL_UNITS)
 
 
 def add_block(line, unit, function, start, count_, period, source, block_entries):
@@ -93,18 +105,57 @@ for source, unit in enumerate(bus_sim.UNITS, start=1):
             expected[rows[tag]["Name"]] = state
         add_block(1, unit, "READ_COILS", 0, len(COIL_PATTERN), 1000, source, coil_entries)
 
-for number, unit in enumerate(bus_sim.SERIAL_UNITS):
+for number, unit in enumerate([bus_sim.ME31_UNIT] + bus_sim.SERIAL_UNITS):
     source = len(bus_sim.UNITS) + 1 + number
     me31_entries = []
     for channel in range(bus_sim.CHANNELS):
         tag = take("REAL")
         rows[tag].update(Source=str(source), MinValue="-250.0", MaxValue="1400.0")
         me31_entries.append({"Offset": channel, "Format": "E_BusFormat.INT16", "HasSentinel": "TRUE", "Sentinel": -999, "TagIndex": tag})
+        if unit == bus_sim.ME31_UNIT:
+            expected[rows[tag]["Name"]] = "temperature"     # real readings: plausible, or NaN for an open channel
+            continue
         raw = bus_sim.temperature_raw(unit, channel)
         expected[rows[tag]["Name"]] = "nan" if raw == -999 else round(raw * 0.1, 2)
     add_block(2, unit, "READ_INPUT_REGISTERS", bus_sim.TEMPERATURE_REGISTER, bus_sim.CHANNELS, 1000, source, me31_entries)
 for index in rows:
     rows[index].setdefault("Source", "0")
+
+
+NATIVE_DEVICES = [("TC_U%d" % unit, unit) for unit in [bus_sim.ME31_UNIT] + bus_sim.SERIAL_UNITS]
+
+
+def write_native(out_dir, manifest):
+    """GVL_Native, PRG_NativeSerial (+ Take) and the device-tree manifest for the serial line's servers."""
+    serial_blocks = [(index + 1, block) for index, block in enumerate(blocks) if block["Line"] == 2]
+    gvl = ["// Bench, generated (--serial native): input images of the serial servers' channels (device-tree I/O\n"
+           "// mapping, FC04 registers 400-405), refreshed by the bus cycle task.\nVAR_GLOBAL"]
+    calls = []
+    for number, ((name, unit), (block_index, block)) in enumerate(zip(NATIVE_DEVICES, serial_blocks), start=1):
+        assert block["UnitId"] == unit
+        gvl.append("\tUnit%d : ARRAY[0..%d] OF WORD;" % (unit, bus_sim.CHANNELS - 1))
+        calls.append("Take(Number := %d, Block := %d, IsError := %s.xError, Image := GVL_Native.Unit%d);"
+                     % (number, block_index, name, unit))
+    gvl.append("END_VAR\n")
+    (out_dir / "st" / "GVL_Native.st").write_text("\n".join(gvl), encoding="utf-8")
+    template = (BENCH / "st_native" / "PRG_NativeSerial.st").read_text(encoding="utf-8")
+    program = (template.replace("@@COUNT@@", str(len(calls)))
+               .replace("@@CALLS@@", "\n".join(calls)))
+    (out_dir / "st" / "PRG_NativeSerial.st").write_text(program, encoding="utf-8")
+    shutil.copy(BENCH / "st_native" / "PRG_NativeSerial.Take.st", out_dir / "st" / "PRG_NativeSerial.Take.st")
+    patch(out_dir / "st" / "PRG_BusTask.st", [("PRG_SerialProbe();", "PRG_NativeSerial();     // native serial line\nPRG_SerialProbe();")])
+    manifest["objects"] += [{"kind": "gvl", "name": "GVL_Native"}, {"kind": "program", "name": "PRG_NativeSerial"},
+                            {"kind": "method", "parent": "PRG_NativeSerial", "name": "Take", "returns": "BOOL"}]
+    devices = [{"name": name, "unit": unit, "slaveAddress": unit, "responseTimeout": 500,
+                "channels": [{"name": name + "_TEMPS", "accessType": 4, "readOffset": "0x%04X" % bus_sim.TEMPERATURE_REGISTER,
+                              "readLength": bus_sim.CHANNELS, "writeOffset": "0", "writeLength": "0", "trigger": 5,
+                              "cycleTime": options.native_cycle_ms, "errorHandling": "true"}],
+                # A mapping covers one word (leafIndex), so each register maps to its array element.
+                "mappings": [{"channel": name + "_TEMPS", "leafIndex": word, "variable": "Application.GVL_Native.Unit%d[%d]" % (unit, word)}
+                             for word in range(bus_sim.CHANNELS)]}
+               for name, unit in NATIVE_DEVICES]
+    native = {"plc": {"masterPath": "Modbus_COM.Modbus_Client_COM_Port"}, "devices": devices}
+    (out_dir / "native_serial.json").write_text(json.dumps(native, indent=1), encoding="utf-8")
 
 
 def literal(fields):
@@ -146,13 +197,18 @@ patch(gvl_path, [("StaleAfter := T#3S, Source := 1),", "StaleAfter := T#3S, Sour
 
 lines = ("(Address := [%d, %d, %d, %d], Port := 502, ReplyTimeoutMs := 500)" % GATEWAY,
          "(IsSerial := TRUE, ComPort := %d, Baudrate := 9600, Parity := 0, ReplyTimeoutMs := 500)" % SERIAL_COM)
+# Native: no ModbusFB line 2 (the device tree owns the port); its blocks stay in the table, unpolled by
+# FB_BusLine, as the decode description PRG_NativeSerial uses.
+lines = lines[:1] if IS_NATIVE else lines
 gvl_bus = (SKELETON / "st" / "GVL_Bus.st").read_text(encoding="utf-8")
 header, rest = gvl_bus.split("{attribute 'qualified_only'}", 1)
 body = rest[rest.index("\t// Bus task -> control task."):]
 bus_sources = ", ".join(["FALSE"] + ["TRUE"] * SOURCE_COUNT)
-gvl_bus = ("// Bench bus, generated by bench/make_bench_sources.py: NA111-E units 11-40 and units 1-10 on the PLC's terminal block.\n"
+serial_kind = "native device tree, see PRG_NativeSerial" if IS_NATIVE else "ModbusFB line 2"
+gvl_bus = ("// Bench bus, generated by bench/make_bench_sources.py: NA111-E units 11-40, and units 1-10 on the PLC's RJ12 port\n"
+           "// (" + serial_kind + ").\n"
            "{attribute 'qualified_only'}\nVAR_GLOBAL CONSTANT\n"
-           "\tLINE_COUNT : INT := 2;\n\tBLOCK_COUNT : INT := %d;\n\tENTRY_COUNT : INT := %d;\n\tWRITE_COUNT : INT := %d;\n"
+           "\tLINE_COUNT : INT := %d;\n\tBLOCK_COUNT : INT := %d;\n\tENTRY_COUNT : INT := %d;\n\tWRITE_COUNT : INT := %d;\n"
            "\tFAIL_LIMIT : UINT := 3;\n\tBACKOFF_MS : UDINT := 5000;\nEND_VAR\nVAR_GLOBAL\n"
            "\t// Settings, writable online (a line reads them when it connects: PRG_Bus.Reconnect)\n"
            "\tLines : ARRAY[1..LINE_COUNT] OF ST_BusLine := [\n\t\t%s];\n"
@@ -160,7 +216,7 @@ gvl_bus = ("// Bench bus, generated by bench/make_bench_sources.py: NA111-E unit
            "\tEntries : ARRAY[1..ENTRY_COUNT] OF ST_BusEntry := [\n\t\t%s];\n"
            "\tWrites : ARRAY[1..WRITE_COUNT] OF ST_BusWrite := [\n\t\t%s];\n"
            "\tIsBusSource : ARRAY[0..GVL_Tags.SOURCE_COUNT] OF BOOL := [%s];\n\n"
-           % (len(blocks), len(entries), len(writes), ",\n\t\t".join(lines), ",\n\t\t".join(literal(b) for b in blocks),
+           % (len(lines), len(blocks), len(entries), len(writes), ",\n\t\t".join(lines), ",\n\t\t".join(literal(b) for b in blocks),
               ",\n\t\t".join(literal(e) for e in entries), ",\n\t\t".join(literal(w) for w in writes), bus_sources)
            + body.replace("OF BOOL := [TRUE, TRUE, TRUE];", "OF BOOL := [%d(TRUE)];" % (SOURCE_COUNT + 1)))
 (out / "st" / "GVL_Bus.st").write_text(gvl_bus, encoding="utf-8")
@@ -172,6 +228,10 @@ patch(out / "st" / "PRG_Comms.st", [
     ("TopicAcks : STRING(64) := 'plc_acks/CONC-BCNF-PLC';", "TopicAcks : STRING(64) := 'plc_acks/BENCH-ARCH-TEST';"),
     ("Payload : STRING(32000);", "Payload : STRING(%d);" % (count * 44)),
     ("MqttLink.ClientID := 'CONC-BCNF-PLC';", "MqttLink.ClientID := 'BENCH-ARCH-TEST';"),
+    # Bench defaults, so a download keeps them: every message complete (verify_arch checks every value), and
+    # the 10 ms client budget the 2,000-tag benches ran with.
+    ("FULL_REFRESH_EVERY : UDINT := 60;", "FULL_REFRESH_EVERY : UDINT := 1;"),
+    ("ClientBudgetUs : ULINT := 5000;", "ClientBudgetUs : ULINT := 10000;"),
 ])
 # FULL_REFRESH_EVERY = 1 means every message carries all tags (MOD 1 is never 1).
 patch(out / "st" / "PRG_Comms.PublishData.st", [
@@ -184,10 +244,15 @@ manifest = json.loads((SKELETON / "manifest.json").read_text(encoding="utf-8"))
 for name in ("PRG_SimInputs", "PRG_ControlTask", "PRG_CommsTask", "PRG_SerialProbe", "PRG_BusTask"):
     manifest["objects"].append({"kind": "program", "name": name})
 manifest["tasks"] = {"MainTask": {"pous": ["PRG_ControlTask"], "priority": "1", "interval": "t#50ms"},
-                     "BusTask": {"pous": ["PRG_BusTask"], "priority": "5", "interval": "t#5ms"},
+                     "BusTask": {"pous": ["PRG_BusTask"], "priority": "5", "interval": "t#%dms" % options.bus_task_ms},
                      "CommsTask": {"pous": ["PRG_CommsTask"], "priority": "10", "interval": "t#50ms"}}
 manifest["deviceParameters"] = {"8000": "16#0003", "8001": "16#0003"}   # RJ12 and terminal-block serial ports: RS485
 manifest.pop("callers", None)
+manifest["obsolete"] = [{"parent": "FB_BusLine", "name": "Decode"}]     # now F_BusDecode
+if IS_NATIVE:
+    write_native(out, manifest)
+else:
+    manifest["obsolete"] += [{"name": "PRG_NativeSerial"}, {"name": "GVL_Native"}]
 (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
 (out / "expected_bus_values.json").write_text(json.dumps(expected, indent=1), encoding="utf-8")
 print("%d tags, %d sources, %d blocks, %d entries, %d writes -> %s" % (count, SOURCE_COUNT, len(blocks), len(entries), len(writes), out))

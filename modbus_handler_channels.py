@@ -316,6 +316,12 @@ class ModbusChannelMixin:
 
         if not kwargs:
             return {"success": False, "error": "No fields to update"}
+        resized = [key for key in ("readLength", "writeLength") if key in kwargs]
+        if resized:
+            # Changing only the config leaves the channel's I/O image at the old size; on the bench (2026-10-20)
+            # the server then stopped polling with no error flag.
+            return {"success": False, "error": "Changing %s needs the channel rebuilt: recreate it (POST "
+                    ".../channels/bulk with replace, or modbus_device_driver_runner.py)" % " and ".join(resized)}
 
         script = modbus_scripts.update_channel(
             device_name=groups["device"],
