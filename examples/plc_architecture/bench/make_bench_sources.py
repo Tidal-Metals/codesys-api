@@ -181,7 +181,7 @@ text = (out / "st" / "PRG_Comms.st").read_text(encoding="utf-8")
 assert "CONC-BCNF" not in text and "'raw_data'" not in text, "production names left in PRG_Comms"
 
 manifest = json.loads((SKELETON / "manifest.json").read_text(encoding="utf-8"))
-for name in ("PRG_SimInputs", "PRG_ControlTask", "PRG_CommsTask", "PRG_BusTask"):
+for name in ("PRG_SimInputs", "PRG_ControlTask", "PRG_CommsTask", "PRG_SerialProbe", "PRG_BusTask"):
     manifest["objects"].append({"kind": "program", "name": name})
 manifest["tasks"] = {"MainTask": {"pous": ["PRG_ControlTask"], "priority": "1", "interval": "t#50ms"},
                      "BusTask": {"pous": ["PRG_BusTask"], "priority": "5", "interval": "t#5ms"},

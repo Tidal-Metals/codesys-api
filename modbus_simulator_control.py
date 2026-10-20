@@ -387,6 +387,22 @@ def apply_simulator(buses: list[dict[str, Any]]) -> dict[str, Any]:
         return _apply_simulator(buses)
 
 
+def stop_simulator(port: str) -> dict[str, Any]:
+    """Stop the manager's worker on one PC COM port, freeing it (e.g. to listen on the bus). Others keep running."""
+    key = str(port or "").strip().upper()
+    with _APPLY_LOCK:
+        state = read_state()
+        simulators = dict(state.get("simulators", {}))
+        entry = simulators.get(key)
+        if entry is None:
+            return {"success": False, "error": f"No simulator recorded on {key or '(no port)'}",
+                    "ports": sorted(simulators)}
+        stopped = stop_worker(entry)
+        simulators[key] = dict(entry, stoppedAt=time.strftime("%Y-%m-%dT%H:%M:%S"))
+        write_state({"simulators": simulators})
+        return {"success": True, "port": key, "stopped": stopped, "simulator": describe_entry(key, simulators[key])}
+
+
 def _apply_simulator(buses: list[dict[str, Any]]) -> dict[str, Any]:
     state = read_state()
     simulators = dict(state.get("simulators", {}))

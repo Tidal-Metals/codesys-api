@@ -58,12 +58,37 @@ TRUE before judging them.
   is the RJ12 jack (parameter `8000`), unused here. The terminal block is 2-wire. On the COM12 adapter the
   PLC's + line is TX+; on an Ebyte device + is A. Reversed polarity shows as bytes at the right times but
   wrong values (`fd f7 fd df` for `01 04 01 90 00 06 71 d9`).
-- **Status 2026-10-20: transmit works, receive does not yet.** The PLC's requests arrive intact at COM12,
-  and the simulator answers them, but the PLC never accepts a reply: ModbusFB (every RTS mode) and a native
-  Modbus_COM master both time out, and a real Ebyte ME31 never answered either. Nothing earlier in the repo
-  shows the PLC's own serial port working on this bench; earlier RTU tests all went through a gateway.
-  Open candidates: the PLC's receive path or wiring, a ground reference, the replies arriving faster
-  (2.5 ms) than the port turns around. Record the answer in the inventory seed when found.
+- **Status at the end of 2026-10-20: the bench PLC's COM2 transmits but never receives.** Unresolved.
+  The same configuration works in the field (BCNF, `PLC_DEH_10_19_2026`) on other P2CDS-622 units, with
+  native Modbus_COM masters. Nothing in the repo shows this bench unit's serial port ever receiving.
+  - **Proven working:** the PLC's requests reach the bus intact (adapter sniff); a simulator and a real Ebyte
+    ME31 both put correct replies on the bus within 3–50 ms (captured by the adapter).
+  - **Proven failing, identically, in every receive path:** native Modbus_COM master (auto-restart on, fresh
+    power cycle, no SysCom code in the application): RESPONSE_TIMEOUT every request; ModbusFB ClientSerial
+    (every RTS mode); a raw SysCom listener opened both with `SysComOpen2` and with AutomationDirect's own
+    `SysComOpen` + `SysComSetSettings` sequence: 0 bytes from 800 sent. The port's **RXD LED never lights**
+    while TXD does, so the receiver sees nothing at the hardware level.
+  - **Ruled out:** IDE configuration (8001 = `16#0003` RS485 and `SYS_COMPORT2`, identical to
+    AutomationDirect's Modbus RTU guide, their `Demo_SerialPassthrough` example, BCNF and PLC_DEH; device
+    description 1.1.11.0 and 1.1.13.0 are identical); A/B polarity (both ways); ground (connected); RTS
+    mode; baud and parity; COM numbering (vendor docs: COM1 = RJ12, COM2 = 4-pin terminal block); port
+    state left over from SysCom use (power-cycled with a native-only application); reply timing (the
+    ME31 answers after 30–50 ms).
+  - **Not yet tested:** pin 3 to pin 4 voltage at idle (about -5 V would mean the port is physically still
+    RS232); the RJ12 port in RS485 mode (pins 3 +, 4 -, 1/6 GND); this project on another P2CDS-622; the
+    bench unit's firmware against the field units'. Record the answer here and in the inventory seed.
+- **Check order for a serial problem (would have found this in 20 minutes, not a day):**
+  1. Sniff the bus (`sniff_serial.py`, below): are the PLC's requests intact?
+  2. Is a known-good device answering on the wire? Put one on the bus and sniff its reply.
+  3. Watch the port's RXD LED while the device answers. If the reply is on the wire and RXD stays dark,
+     stop debugging software: it is the port, its wiring or its mode.
+  4. Only then compare configuration, starting from AutomationDirect's procedure:
+     https://docs.codesys-p2cds622.com/en/latest/Example%20Projects/modbus_rtu.html
+- **Terminal block pinout (P2CDS-622 insert):** 1 TERMINATE (120 ohm to pin 3; jumper 1-2 to terminate),
+  2 TXRX+, 3 TXRX-, 4 GND. 2-wire, automatic direction, echo cancelled while transmitting.
+- **Receive-only test without Modbus:** the bench app has `PRG_SerialProbe` (bus task): turn the bus line off
+  (`PRG_Bus.Lines[2].IsEnabled := FALSE`), set `PRG_SerialProbe.IsEnabled`, and send a pattern from the PC with
+  `bench/serial_pattern.py COM12`; `PRG_SerialProbe.BytesReceived` counts what the port got.
 - **Look at the wire first:** `examples/plc_architecture/bench/sniff_serial.py COM12` listens read-only.
   Only when no simulator owns COM12 (`GET /api/v1/bench` → adapters → owner); stop or move the
   simulator first. `bench/scan_serial.py` cycles port, baud, parity and RTS mode on the running bench app.
@@ -99,6 +124,7 @@ schema is at `/openapi.json` and `/docs`.
 | Read PLC values | `POST /api/v1/plc/online/read` `{names:[...]}` |
 | Write PLC values | `POST /api/v1/plc/online/write` `{values:{"Modbus_TCP_Client.xStop":"TRUE"}, restoreAfterSeconds?}` (returns previous values) |
 | Watch counters | `POST /api/v1/plc/online/watch` `{names, intervalMs, durationSeconds}` → job with samples and per-name `delta` |
+| Stop one simulator bus (frees its COM port; others keep running) | `POST /api/v1/modbus/simulator/stop` `{"port": "COM12"}` |
 | Modbus health | `GET /api/v1/plc/online/diagnostics` (every Modbus master/slave's `xError`, `uiConnectedSlaves`) |
 | Start/stop the app | `POST /api/v1/plc/app/start` or `/stop` |
 

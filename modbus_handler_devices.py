@@ -175,6 +175,9 @@ class ModbusDeviceStatusMixin:
             return {"success": False, "error": "Payload must contain a non-empty buses array"}
         return modbus_simulator_control.apply_simulator(buses)
 
+    def stop_simulator(self, params, groups):
+        return modbus_simulator_control.stop_simulator(params.get("port") or params.get("pcPort"))
+
     def get_bus_status(self, params, groups):
         application_path = params.get("applicationPath", "Device/Plc Logic/Application")
         master_name = params.get("master", params.get("masterName"))

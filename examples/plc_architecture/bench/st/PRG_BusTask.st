@@ -35,6 +35,7 @@ END_IF
 PreviousStartUs := StartUs;
 
 PRG_Bus();
+PRG_SerialProbe();       // idle unless IsEnabled
 
 IF StartUs - SecondStartUs >= 1000000 THEN
 	SecondStartUs := StartUs;

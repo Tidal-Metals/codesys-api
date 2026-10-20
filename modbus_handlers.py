@@ -31,6 +31,7 @@ ROUTES = [
     ("POST",   r"api/v1/modbus/acknowledge-stalled$",                            "acknowledge_stalled"),
     ("GET",    r"api/v1/modbus/simulator/status$",                               "get_simulator_status"),
     ("POST",   r"api/v1/modbus/simulator/apply$",                                "apply_simulator"),
+    ("POST",   r"api/v1/modbus/simulator/stop$",                                 "stop_simulator"),
 
     # Channels
     ("GET",    r"api/v1/modbus/devices/(?P<device>[^/]+)/channels$",             "list_channels"),

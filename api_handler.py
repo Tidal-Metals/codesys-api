@@ -60,6 +60,8 @@ class CodesysApiHandler(
             return False
         if handler_name == "apply_simulator" and not self.guard(simulator_scopes(params.get("buses"))):
             return True
+        if handler_name == "stop_simulator" and not self.guard(simulator_scopes([{"pcPort": params.get("port") or params.get("pcPort")}])):
+            return True
         result = self.modbus.dispatch(handler_name, params, groups)
         self.send_json_response(result)
         return True

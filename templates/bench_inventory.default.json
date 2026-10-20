@@ -1,17 +1,30 @@
 {
   "plc": {
     "model": "P2CDS-622 (CODESYS V3.5 SP22 Patch 1)",
-    "ETH1": {"ip": "192.168.50.123", "wired": true, "notes": "Carries all PLC traffic: IDE, Modbus TCP, MQTT"},
-    "ETH2": {"ip": "192.168.50.125", "wired": false, "notes": "Unplugged; no answer to ping is expected"},
-    "COM1": {"connector": "RJ12 jack", "deviceParameter": 8000, "wired": false, "notes": "Nothing connected; don't test it"},
+    "ETH1": {
+      "ip": "192.168.50.123",
+      "wired": true,
+      "notes": "Carries all PLC traffic: IDE, Modbus TCP, MQTT"
+    },
+    "ETH2": {
+      "ip": "192.168.50.125",
+      "wired": false,
+      "notes": "Unplugged; no answer to ping is expected"
+    },
+    "COM1": {
+      "connector": "RJ12 jack",
+      "deviceParameter": 8000,
+      "wired": false,
+      "notes": "Nothing connected; don't test it"
+    },
     "COM2": {
       "connector": "terminal block (2-wire RS485)",
       "deviceParameter": 8001,
       "option": "16#0003 = RS485 (0 disabled, 1 RS232)",
       "wired": true,
-      "wiredTo": "USB-RS485 adapter BG041BD0 (PC COM12); was the Ebyte ME31 thermocouple module, 9600 8N1 unit 1",
+      "wiredTo": "USB-RS485 adapter BG041BD0 (PC COM12) and the Ebyte ME31 thermocouple module (9600 8N1, unit 1), in parallel",
       "polarity": "The PLC terminal on the adapter's TX+ is the + line; on an Ebyte device that is A",
-      "verified": "2026-10-20: the PLC's requests reach the adapter intact (sniffed). The PLC has never accepted a reply on this port: ModbusFB and native both time out, and the ME31 never answered either. Nothing earlier in the repo shows this port working."
+      "verified": "2026-10-20: transmits (requests intact on the bus) but never receives: RXD LED stays dark while a real ME31 and a simulator answer on the wire. Fails identically with a native Modbus_COM master after a clean power cycle, ModbusFB, and raw SysCom (vendor sequence). Configuration matches AutomationDirect docs, BCNF and PLC_DEH. Next: pin 3-4 idle voltage, RJ12 in RS485, another unit. See docs/modbus-bench.md, The PLC's own serial port."
     }
   },
   "adapters": {
@@ -33,14 +46,19 @@
       "label": "Bench NE2-D11P (PLC ten-module path)",
       "model": "NE2-D11P",
       "expectedIp": "192.168.50.153",
-      "ports": [502, 1502],
+      "ports": [
+        502,
+        1502
+      ],
       "profileUrl": "https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-ne2-d11p/README.md"
     },
     "0C-3D-5E-88-FD-2A": {
       "label": "Bench NA111-E",
       "model": "NA111-E",
       "expectedIp": "192.168.50.67",
-      "ports": [502],
+      "ports": [
+        502
+      ],
       "profileUrl": "https://github.com/Tidal-Metals/devices/blob/master/gateways/ebyte-na111-e/README.md"
     }
   }
