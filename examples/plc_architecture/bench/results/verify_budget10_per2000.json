@@ -1,0 +1,12 @@
+{
+ "topic": "raw_data_demo/arch",
+ "seconds": 70.0,
+ "messages": 62,
+ "complete": 62,
+ "problems": [],
+ "bytesMin": 24933,
+ "bytesMax": 25028,
+ "gapMinS": 0.8,
+ "gapMaxS": 1.192,
+ "gapMeanS": 1.144
+}

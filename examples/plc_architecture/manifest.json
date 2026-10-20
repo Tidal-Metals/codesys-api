@@ -50,6 +50,11 @@
   },
   {
    "kind": "function",
+   "name": "F_NowUs",
+   "returns": "ULINT"
+  },
+  {
+   "kind": "function",
    "name": "F_WallClockMs",
    "returns": "ULINT"
   },

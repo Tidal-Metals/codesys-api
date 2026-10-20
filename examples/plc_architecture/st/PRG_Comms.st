@@ -18,6 +18,11 @@ VAR
 	Publisher : MQTT.MQTTPublish;
 	AckPublisher : MQTT.MQTTPublish;
 	IsInitialized : BOOL;
+	ClientCallsMax : INT := 16;         // most client calls per scan while a message is in flight
+	ClientBudgetUs : ULINT := 5000;     // ... and no more calls once this much time went into the client
+	ClientCall : INT;
+	ClientStartUs : ULINT;
+	IsSendInFlight : BOOL;
 	ConnectedEdge : R_TRIG;
 
 	// Data publishing (PublishData, AppendTag, CommitSent, ForgetMessage)
@@ -56,7 +61,17 @@ VAR
 END_VAR
 // ---- implementation ----
 MqttLink.ClientID := 'CONC-BCNF-PLC';
-MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
+// The client moves one 4 KB send buffer per two calls. While a message is in flight, call it again until
+// ClientCallsMax calls or ClientBudgetUs; otherwise once, for keep-alive and receiving. This task's priority
+// is below PRG_Control's, so the extra calls only use time control doesn't need.
+IsSendInFlight := Publisher.sendActive OR AckPublisher.sendActive;
+ClientStartUs := F_NowUs();
+ClientCall := 0;
+REPEAT
+	MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
+	ClientCall := ClientCall + 1;
+UNTIL ClientCall >= ClientCallsMax OR_ELSE NOT IsSendInFlight OR_ELSE F_NowUs() - ClientStartUs >= ClientBudgetUs
+END_REPEAT
 IF NOT IsInitialized THEN
 	IsInitialized := TRUE;
 	Subscriber.SetMqttInOut(MQTT_IN_OUT := MqttLink);

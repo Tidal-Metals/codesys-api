@@ -602,6 +602,7 @@ svg.dg .bar-o2 { fill: var(--s2); opacity: 0.45; }
   <li><strong>Bad values go out as NaN.</strong> A tag that isn't GOOD, or holds NaN or infinity, is published as <code>NaN</code> instead of being pushed through an integer conversion, which can fault. The bridge needs to treat NaN as bad quality until quality has its own place on the wire.</li>
   <li><strong>The buffer fits the worst case.</strong> The generator computes the largest possible message for the table (every tag, longest values) and sizes the buffer from it, or refuses the table. 2,000 tags with 15-character names already need about 36 KB.</li>
   <li><strong>The publisher re-arms.</strong> The MQTT library starts a message on a rising edge of <code>send</code>, so the code makes sure it sees FALSE between two messages.</li>
+  <li><strong>The client is called until the message is out.</strong> The library moves one 4 KB send buffer per two client calls, so one call per scan sends a 26 KB message in 14 scans. While a message is in flight, <code>PRG_Comms</code> calls the client again, up to <code>ClientCallsMax</code> calls or <code>ClientBudgetUs</code> of time per scan; otherwise once. Because the comms task runs below the control task's priority, those calls only use time control doesn't need. The MQTT throughput report has the measurements.</li>
 </ul>
 </section>
 
