@@ -201,8 +201,9 @@ class InventoryTests(unittest.TestCase):
     def test_shipped_seed_records_which_plc_ports_are_wired(self):
         plc = bench_inventory.load_registry()["plc"]
         self.assertFalse(plc["ETH2"]["wired"])
-        self.assertFalse(plc["COM1"]["wired"])
-        self.assertTrue(plc["COM2"]["wired"])
+        self.assertTrue(plc["COM1"]["wired"])           # RJ12: the working serial port since 2026-10-20
+        self.assertFalse(plc["COM2"]["wired"])          # terminal block: faulty receive on this unit
+        self.assertIn("FAULTY", plc["COM2"]["verified"])
 
 
 class RoutingTests(unittest.TestCase):

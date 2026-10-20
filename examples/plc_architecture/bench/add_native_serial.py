@@ -36,7 +36,8 @@ def set_params(device, values):
                 parameter.value = values[key]
                 steps.append('%s [%s] %s: %s -> %s' % (device.get_name(), key, parameter.visible_name, before, str(parameter.value)))
 
-set_params(plc, {'8001': '16#0003'})
+# RS485 on the port in use: COM1 is the RJ12 jack (parameter 8000), COM2 the terminal block (8001).
+set_params(plc, {'8000': '16#0003'} if '@@COM@@' == '1' else {'8001': '16#0003'})
 com = child(plc, 'Modbus_COM')
 if com is None:
     plc.add('Modbus_COM', repo.create_device_identification(92, '0000 0001', '4.4.0.0'))

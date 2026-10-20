@@ -6,7 +6,7 @@ skeleton's four example tags stay first so its hand-written logic compiles. Bus 
   line 1  TCP to the NA111-E (192.168.50.67:502) -> RS485 115200 -> simulated units 11-40 (bus_sim.py)
           each unit: FC03 registers 0-9; 0-3 -> INT tags, 4-7 -> REAL tags (x0.1); unit 11 also register 9 ->
           the read-back of a setpoint written from a TIC-..._SP tag, and coils 0-9 -> BOOL tags
-  line 2  the PLC's terminal block (COM2) -> USB adapter COM12 -> simulated units 1-10 shaped like the Ebyte
+  line 2  the PLC's RJ12 jack (COM1) -> USB adapter COM12 -> simulated units 1-10 shaped like the Ebyte
           ME31 thermocouple module, 9600 8N1: FC04 registers 400-405 -> six temperatures (x0.1, -999 = open)
 Every other tag is local (source 0) and moved by PRG_SimInputs. PRG_Comms gets bench topics and its own
 client id, and its tuning constants become variables. Also writes expected_bus_values.json for verify_arch.py.
@@ -25,7 +25,7 @@ import bus_sim  # noqa: E402
 count = int(sys.argv[1])
 out = Path(sys.argv[2])
 GATEWAY = (192, 168, 50, 67)
-SERIAL_COM = 2                      # the PLC's terminal block (COM1 is the RJ12 jack, unused)
+SERIAL_COM = 1                      # the RJ12 jack: the bench unit's terminal block (COM2) does not receive
 COIL_PATTERN = bus_sim.COILS
 
 

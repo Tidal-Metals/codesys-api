@@ -52,13 +52,17 @@ differs from `expectedIp`. Always find a gateway by MAC before using an address.
 `PLC_PRG.TenMonitorEnable` to FALSE, which makes the error counters read 0 regardless; set it
 TRUE before judging them.
 
-## The PLC's own serial port (terminal block, COM2)
+## The PLC's own serial ports (RJ12 = COM1, terminal block = COM2)
 
 - **Port facts:** COM2 in CODESYS is the terminal block, device parameter `8001`, `16#0003` = RS485; COM1
   is the RJ12 jack (parameter `8000`), unused here. The terminal block is 2-wire. On the COM12 adapter the
   PLC's + line is TX+; on an Ebyte device + is A. Reversed polarity shows as bytes at the right times but
   wrong values (`fd f7 fd df` for `01 04 01 90 00 06 71 d9`).
-- **Status at the end of 2026-10-20: the bench PLC's COM2 transmits but never receives.** Unresolved.
+- **Answer (2026-10-20): this bench unit's terminal-block port (COM2) has a faulty receive path. Use the RJ12
+  port (COM1) instead.** With the same native configuration, devices and cable moved to the RJ12 jack (RS485:
+  pin 3 TXRX+, pin 4 TXRX-, pins 1/6 GND; device parameter 8000 = 16#0003; Modbus_COM ComPort 1), the master polls
+  the ME31 every ~140 ms with RESPONSE_SUCCESS. The investigation below is kept for the evidence.
+- **COM2 investigation (2026-10-20):**
   The same configuration works in the field (BCNF, `PLC_DEH_10_19_2026`) on other P2CDS-622 units, with
   native Modbus_COM masters. Nothing in the repo shows this bench unit's serial port ever receiving.
   - **Proven working:** the PLC's requests reach the bus intact (adapter sniff); a simulator and a real Ebyte

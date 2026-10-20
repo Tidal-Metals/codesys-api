@@ -12,19 +12,22 @@
       "notes": "Unplugged; no answer to ping is expected"
     },
     "COM1": {
-      "connector": "RJ12 jack",
+      "connector": "RJ12 jack (RS485: pin 3 TXRX+, pin 4 TXRX-, pins 1/6 GND)",
       "deviceParameter": 8000,
-      "wired": false,
-      "notes": "Nothing connected; don't test it"
+      "option": "16#0003 = RS485",
+      "wired": true,
+      "wiredTo": "USB-RS485 adapter BG041BD0 (PC COM12) and the Ebyte ME31 (9600 8N1, unit 1), in parallel",
+      "polarity": "RJ12 pin 3 (TXRX+) to the adapter TX+ and the ME31 A; pin 4 to TX- and B",
+      "verified": "2026-10-20: transmits and receives. Native Modbus_COM master on ComPort 1 polls the ME31 every ~140 ms, RESPONSE_SUCCESS. Use this port for serial work on the bench."
     },
     "COM2": {
       "connector": "terminal block (2-wire RS485)",
       "deviceParameter": 8001,
       "option": "16#0003 = RS485 (0 disabled, 1 RS232)",
-      "wired": true,
-      "wiredTo": "USB-RS485 adapter BG041BD0 (PC COM12) and the Ebyte ME31 thermocouple module (9600 8N1, unit 1), in parallel",
+      "wired": false,
+      "wiredTo": "Nothing since 2026-10-20 (moved to the RJ12 port)",
       "polarity": "The PLC terminal on the adapter's TX+ is the + line; on an Ebyte device that is A",
-      "verified": "2026-10-20: transmits (requests intact on the bus) but never receives: RXD LED stays dark while a real ME31 and a simulator answer on the wire. Fails identically with a native Modbus_COM master after a clean power cycle, ModbusFB, and raw SysCom (vendor sequence). Configuration matches AutomationDirect docs, BCNF and PLC_DEH. Pin 3 to GND idle = +1.08 V: RS485 mode is applied. Next: RJ12 in RS485, another unit. See docs/modbus-bench.md, The PLC's own serial port."
+      "verified": "FAULTY RECEIVE on this unit (2026-10-20): transmits, never receives (RXD LED dark) with a native master, ModbusFB and raw SysCom, while the identical configuration and devices work on COM1/RJ12. RS485 mode is applied (idle pin 3 +1.08 V, pin 2 +1.18 V). Do not use it for testing."
     }
   },
   "adapters": {
