@@ -1,0 +1,39 @@
+{
+ "line": 2,
+ "baud": 57600,
+ "blocks": 10,
+ "sweptBlocks": 9,
+ "skipUnits": [],
+ "parkedUnits": [
+  1
+ ],
+ "rows": [
+  {
+   "errors": 0,
+   "seconds": 30.46,
+   "requests": 1215,
+   "lastRequestUs": 25289,
+   "count": 6,
+   "perSecond": 39.89,
+   "msPerRequest": 25.1
+  },
+  {
+   "errors": 0,
+   "seconds": 30.45,
+   "requests": 857,
+   "lastRequestUs": 36400,
+   "count": 30,
+   "perSecond": 28.14,
+   "msPerRequest": 35.5
+  },
+  {
+   "errors": 0,
+   "seconds": 30.44,
+   "requests": 460,
+   "lastRequestUs": 64618,
+   "count": 120,
+   "perSecond": 15.11,
+   "msPerRequest": 66.2
+  }
+ ]
+}

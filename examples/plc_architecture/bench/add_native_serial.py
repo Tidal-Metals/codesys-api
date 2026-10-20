@@ -1,11 +1,11 @@
 """Add a native Modbus serial master (Modbus_COM + Modbus_Client_COM_Port) to the project open in the session.
 
-Usage: python examples/plc_architecture/bench/add_native_serial.py [--com 2] [--baud 9600] [--remove]
+Usage: python examples/plc_architecture/bench/add_native_serial.py [--com 2] [--baud 9600] [--frame-gap-ms 10] [--remove]
 Same device types and versions as BCNF's serial masters. Also sets the PLC's terminal-block port (parameter 8001)
 to RS485, the parity (default NONE) and the master's auto-restart. Servers and channels go under it with
 modbus_device_driver_runner.py (masterPath "Modbus_COM.Modbus_Client_COM_Port"), which checks the channels
 exist. A server whose channel nobody reads also needs alwaysUpdateVariables (PATCH /api/v1/modbus/devices/<name>).
-The project must not be logged in.
+Logs the session out first.
 """
 import argparse
 import json
@@ -16,6 +16,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from run_ide_script import execute  # noqa: E402
 
 CODE = """
+on = scriptengine.online.create_online_application(scriptengine.projects.primary.active_application)
+if on.is_logged_in:
+    on.logout()
 proj = scriptengine.projects.primary
 repo = scriptengine.device_repository
 plc = [c for c in proj.get_children() if getattr(c, 'is_device', False)][0]
@@ -52,8 +55,9 @@ for connector in com.connectors:
 if child(com, 'Modbus_Client_COM_Port') is None:
     com.add('Modbus_Client_COM_Port', repo.create_device_identification(90, '0000 0002', '4.5.0.0'))
     steps.append('added Modbus_Client_COM_Port')
-# With auto-restart off (the default) one reply timeout stops the master for good.
-set_params(child(com, 'Modbus_Client_COM_Port'), {'9005': 'TRUE'})
+# With auto-restart off (the default) one reply timeout stops the master for good. TimeBetweenFrames (9002, default
+# 10 ms) is a pause after every request: at 115200 baud it is most of a 6-register exchange (bench, 2026-10-20).
+set_params(child(com, 'Modbus_Client_COM_Port'), {'9005': 'TRUE', '9002': '@@FRAME_GAP@@'})
 proj.save()
 result = {'success': True, 'steps': steps}
 """
@@ -79,12 +83,15 @@ def main():
     parser.add_argument("--com", default="2")
     parser.add_argument("--baud", default="9600")
     parser.add_argument("--parity", default="NONE", choices=["NONE", "EVEN", "ODD"])
+    parser.add_argument("--frame-gap-ms", type=int, default=10, help="TimeBetweenFrames: pause after each request (CODESYS default 10)")
     parser.add_argument("--remove", action="store_true", help="delete the Modbus_COM subtree (to hand the port back to ModbusFB)")
     args = parser.parse_args()
     if args.remove:
         print(json.dumps(execute(REMOVE, 120), indent=1))
         return 0
-    print(json.dumps(execute(CODE.replace("@@COM@@", args.com).replace("@@BAUD@@", args.baud).replace("@@PARITY@@", args.parity), 120), indent=1))
+    code = (CODE.replace("@@COM@@", args.com).replace("@@BAUD@@", args.baud).replace("@@PARITY@@", args.parity)
+            .replace("@@FRAME_GAP@@", str(args.frame_gap_ms)))
+    print(json.dumps(execute(code, 120), indent=1))
     return 0
 
 

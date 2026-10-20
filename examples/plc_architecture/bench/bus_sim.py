@@ -70,12 +70,14 @@ def main():
     parser.add_argument("action", choices=["apply", "show", "stop"])
     parser.add_argument("--token")
     parser.add_argument("--silent", default="", help="units that ignore requests, e.g. 25,5")
+    parser.add_argument("--serial-baud", type=int, default=SERIAL_BAUD,
+                        help="serial bus baud rate (baud-rate tests; the real ME31 only answers at 9600)")
     args = parser.parse_args()
     SILENT.update(int(u) for u in args.silent.split(",") if u.strip())
     if args.action == "apply":
         gateway = {"backend": "go", "pcPort": "COM11", "usbSerial": "BG00XX03", "baudrate": 115200, "multidrop": True,
                    "devices": [device(unit) for unit in UNITS]}
-        serial_bus = {"backend": "go", "pcPort": "COM12", "usbSerial": "BG041BD0", "baudrate": SERIAL_BAUD, "multidrop": True,
+        serial_bus = {"backend": "go", "pcPort": "COM12", "usbSerial": "BG041BD0", "baudrate": args.serial_baud, "multidrop": True,
                       "devices": [serial_device(unit) for unit in SERIAL_UNITS]}
         reply = request("POST", "/modbus/simulator/apply", {"buses": [gateway, serial_bus]}, args.token)
         print(json.dumps({"success": reply.get("success"), "error": reply.get("error"),

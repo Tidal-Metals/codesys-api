@@ -1,0 +1,25 @@
+{
+ "rows": [
+  {
+   "scans": 3791,
+   "maxExecUs": 6235,
+   "meanExecUs": 1048,
+   "line2": true,
+   "line1": true
+  },
+  {
+   "scans": 3805,
+   "maxExecUs": 6273,
+   "meanExecUs": 880,
+   "line2": false,
+   "line1": true
+  },
+  {
+   "scans": 3823,
+   "maxExecUs": 4510,
+   "meanExecUs": 55,
+   "line2": false,
+   "line1": false
+  }
+ ]
+}

@@ -41,7 +41,6 @@ run = dict((p.stem, json.loads(p.read_text(encoding="utf-8"))) for p in BUS.glob
            if not p.stem.startswith(("verify_", "block_", "bus_task", "tcp_native_dead13")))
 block_tcp = load("block_size_tcp.json")["rows"]
 block_pc = load("block_size_pc.json")["rows"]
-bus_load = load("bus_task_load.json")["runs"]
 timeline = load("tcp_native_dead13_timeline.json")
 
 # ---------------------------------------------------------------- derived numbers
@@ -94,8 +93,6 @@ silent_windows = [w for w in timeline["windows"] if w["state"] != "restored"]
 restored_windows = [w for w in timeline["windows"] if w["state"] == "restored"]
 dead_native_tcp_rate = median(r for w in silent_windows[1:] for u, r in w["rates"].items() if u != "13")
 dead_native_tcp = dead_native_tcp_rate / median(native_tcp_conn[u] for u in tcp_units if u != 13)
-bus_5 = [r for r in bus_load if r["busTaskMs"] == 5][0]
-bus_2 = [r for r in bus_load if r["busTaskMs"] == 2][0]
 
 
 def f(value, digits=1):
@@ -149,8 +146,12 @@ def stacked(title, rows, scale_max, width=980, label_width=250):
     return "\n".join(out)
 
 
-def lines(title, series, x_max, y_max, y_unit, width=480, height=260, y_step=None):
-    """series: (name, css, [(x, y, tip)]). Linear axes, points joined."""
+REGISTER_TICKS = [(n, "%d" % n) for n in (1, 25, 50, 75, 100, 125)]
+
+
+def lines(title, series, x_max, y_max, y_unit, width=480, height=260, y_step=None, x_ticks=REGISTER_TICKS,
+          x_label="registers per request"):
+    """series: (name, css, [(x, y, tip)][, dasharray]). Linear axes, points joined."""
     left, right, top, bottom = 52, 16, 28, 34
     pw, ph = width - left - right, height - top - bottom
     out = ['<svg class="chart" viewBox="0 0 %d %d" style="max-width:%dpx" role="img" aria-label="%s">' % (width, height, width, html.escape(title)),
@@ -162,17 +163,18 @@ def lines(title, series, x_max, y_max, y_unit, width=480, height=260, y_step=Non
         out.append('<line class="grid" x1="%d" x2="%d" y1="%.1f" y2="%.1f"/>' % (left, left + pw, y, y))
         out.append('<text class="tick" x="%d" y="%.1f" text-anchor="end">%s</text>' % (left - 6, y + 4, f(tick, 0)))
         tick += step
-    for x_tick in (1, 25, 50, 75, 100, 125):
+    for x_tick, label in x_ticks:
         x = left + pw * x_tick / x_max
-        out.append('<text class="tick" x="%.1f" y="%d" text-anchor="middle">%d</text>' % (x, height - 16, x_tick))
-    out.append('<text class="tick" x="%d" y="%d" text-anchor="middle">registers per request</text>' % (left + pw / 2, height - 2))
-    for name, css, points in series:
-        coords = [(left + pw * x / x_max, top + ph - ph * y / y_max, tip) for x, y, tip in points]
-        out.append('<polyline fill="none" stroke="var(--%s)" stroke-width="2" points="%s"/>' % (css, " ".join("%.1f,%.1f" % (x, y) for x, y, _ in coords)))
+        out.append('<text class="tick" x="%.1f" y="%d" text-anchor="middle">%s</text>' % (x, height - 16, html.escape(label)))
+    out.append('<text class="tick" x="%d" y="%d" text-anchor="middle">%s</text>' % (left + pw / 2, height - 2, html.escape(x_label)))
+    for name, css, points, *rest in series:
+        dash = ' stroke-dasharray="%s"' % rest[0] if rest and rest[0] else ""
+        coords = [(left + pw * x / x_max, top + ph - ph * min(y, y_max) / y_max, tip) for x, y, tip in points]
+        out.append('<polyline fill="none" stroke="var(--%s)" stroke-width="2"%s points="%s"/>' % (css, dash, " ".join("%.1f,%.1f" % (x, y) for x, y, _ in coords)))
         for x, y, tip in coords:
-            out.append('<circle class="%s mark" cx="%.1f" cy="%.1f" r="4.5" data-tip="%s"/>' % (css, x, y, html.escape(tip)))
+            out.append('<circle class="%s mark" cx="%.1f" cy="%.1f" r="%s" data-tip="%s"/>' % (css, x, y, "3" if dash else "4.5", html.escape(tip)))
     out.append("</svg>")
-    legend = '<div class="legend">%s</div>' % "".join('<span style="--c: var(--%s)">%s</span>' % (css, html.escape(name)) for name, css, _ in series)
+    legend = '<div class="legend">%s</div>' % "".join('<span style="--c: var(--%s)">%s</span>' % (s[1], html.escape(s[0])) for s in series)
     return "\n".join(out) + legend
 
 
@@ -206,6 +208,107 @@ block_time_chart = lines("Time per request vs block size", [
     ("ModbusFB RTU 9600", "s3", [(n, t, "%d registers: %s ms" % (n, f(t))) for n, t in fb_rtu_points]),
     ("Native RTU 9600", "s2", [(n, t, "%d registers: %s ms" % (n, f(t))) for n, t in rtu_points]),
 ], 125, 300, "ms", y_step=50)
+
+# ---------------------------------------------------------------- baud rate (ME31 parked: nine simulated units)
+BAUDS = [9600, 19200, 38400, 57600, 115200]
+BAUD_TICKS = [(i, "%g k" % (b / 1000.0)) for i, b in enumerate(BAUDS)]
+
+
+def wire_ms(registers, baud):
+    """FC03/FC04 request (8 bytes) and reply (5 + 2n) in 10-bit characters, plus two inter-frame silences
+    (3.5 characters; Modbus fixes them at 1.75 ms above 19200 baud)."""
+    char_ms = 10000.0 / baud
+    return (13 + 2 * registers) * char_ms + 2 * (3.5 * char_ms if baud <= 19200 else 1.75)
+
+
+BUS_TASK_TAGS = {5: "", 2: "_bus2ms"}                 # bus task interval -> result file suffix
+
+
+def fb_baud_table(tag):
+    """(baud, registers) -> ms per request, ModbusFB serial line."""
+    table = {}
+    for baud in BAUDS:
+        name = "baud_fb_%d%s.json" % (baud, tag)
+        if (BUS / name).exists():
+            for row in load(name)["rows"]:
+                table[(baud, row["count"])] = 1000.0 * row["seconds"] / row["requests"]
+    return table
+
+
+def native_baud_table(tag):
+    """(baud, registers) -> ms per request, native master (nine simulated servers, replies counted by the simulator)."""
+    table = {}
+    for baud in BAUDS:
+        for registers in (6, 120):
+            name = "native_baud_%d_%d%s.json" % (baud, registers, tag)
+            if (BUS / name).exists():
+                total = load(name)["simulator"]["serial"]["total"]
+                table[(baud, registers)] = 1000.0 / total if total else None
+    return table
+
+
+fb_baud, native_baud = fb_baud_table(""), native_baud_table("")
+fb_baud_2, native_baud_2 = fb_baud_table("_bus2ms"), native_baud_table("_bus2ms")
+native_baud_gap = native_baud_table("_bus2ms_gap2")        # TimeBetweenFrames 2 ms instead of the default 10
+line_cost = dict((ms, load("line_cost_bus%dms.json" % ms)["rows"]) for ms in (5, 2))
+
+
+def line_cost_us(ms):
+    """Mean bus-task time per cycle: (no lines, TCP line alone, TCP + serial)."""
+    rows = line_cost[ms]
+    pick = lambda l1, l2: next(r["meanExecUs"] for r in rows if r["line1"] == l1 and r["line2"] == l2)
+    return pick(False, False), pick(True, False), pick(True, True)
+
+
+def baud_series(name, css, table, registers):
+    points = [(i, table[(b, registers)], "%s, %d registers at %d baud: %s ms" % (name, registers, b, f(table[(b, registers)])))
+              for i, b in enumerate(BAUDS) if table.get((b, registers))]
+    return (name, css, points)
+
+
+def baud_chart(registers, y_max, y_step):
+    wire = dict(((b, registers), wire_ms(registers, b)) for b in BAUDS)
+    series = [baud_series("ModbusFB, 5 ms bus task", "s3", fb_baud, registers),
+              baud_series("ModbusFB, 2 ms bus task (dashed)", "s3", fb_baud_2, registers) + ("7 4",),
+              baud_series("Native, 5 ms bus cycle", "s2", native_baud, registers),
+              baud_series("Native, 2 ms bus cycle (dashed)", "s2", native_baud_2, registers) + ("7 4",),
+              baud_series("Native, 2 ms cycle, 2 ms frame gap", "s1", native_baud_gap, registers),
+              baud_series("Wire time (model, dotted)", "s0", wire, registers) + ("2 3",)]
+    return lines("Time per %d-register request vs baud rate" % registers, [s for s in series if s[2]],
+                 len(BAUDS) - 1, y_max, "ms", y_step=y_step, x_ticks=BAUD_TICKS, x_label="baud rate")
+
+
+baud_charts = '<div class="multiples"><div>%s</div><div>%s</div></div>' % (baud_chart(6, 60, 10), baud_chart(120, 300, 50))
+BAUD_HEAD = ["Baud", "Registers", "Wire (model)", "ModbusFB, 5 ms task", "ModbusFB, 2 ms task", "Native, 5 ms cycle",
+             "Native, 2 ms cycle", "Native, 2 ms cycle, 2 ms gap"]
+
+
+def cell(value, digits=1):
+    return f(value, digits) if value else "-"
+
+
+baud_rows = [["%d" % b, "%d" % n, cell(wire_ms(n, b)), cell(fb_baud.get((b, n))), cell(fb_baud_2.get((b, n))),
+              cell(native_baud.get((b, n))), cell(native_baud_2.get((b, n))), cell(native_baud_gap.get((b, n)))]
+             for n in (6, 30, 120) for b in BAUDS]
+baud_rows = [r for r in baud_rows if any(c != "-" for c in r[3:])]
+def gap_sentence():
+    gap = native_baud_gap.get((115200, 6))
+    if not gap:
+        return "The run with a shorter pause is still to come."
+    return ("With the pause cut to 2 ms (and the 2 ms bus cycle), native reached %s ms at 115200, within %s ms of the wire, "
+            "and %s ms at 38400: the fastest serial results here. The pause gives slow devices time between requests; 2 ms "
+            "suited the simulators, so check real devices before shortening it (Modbus itself only requires the 3.5-character "
+            "silence)." % (f(gap), f(gap - wire_ms(6, 115200), 0), f(native_baud_gap[(38400, 6)])))
+
+
+LINE_COST_HEAD = ["Bus task", "Task with no lines", "ModbusFB TCP line (NA111-E)", "ModbusFB serial line (COM1)",
+                  "Both lines", "Share of the CPU, both lines"]
+line_cost_rows = []
+for ms in (5, 2):
+    none_us, tcp_us, both_us = line_cost_us(ms)
+    line_cost_rows.append(["%d ms" % ms, "%s ms" % f(none_us / 1000.0, 2), "%s ms" % f((tcp_us - none_us) / 1000.0, 2),
+                           "%s ms" % f((both_us - tcp_us) / 1000.0, 2), "%s ms" % f(both_us / 1000.0, 2), pct(both_us / 1000.0 / ms)])
+BAUD_CSV = ",".join(BAUD_HEAD) + "\n" + "".join(",".join(r).replace(",-", ",") + "\n" for r in baud_rows)
 
 dead_chart = hbar("Healthy devices' poll rate while one device on the same bus is dead", [
     ("ModbusFB RTU (1 s periods)", "s1", dead_fb_rtu * 100, "Units 2-10 except 5: %s of their normal rate" % pct(dead_fb_rtu)),
@@ -331,7 +434,7 @@ page = """<!DOCTYPE html>
 </header>
 <nav class="toc"><ul>
   <li><a href="#summary">Summary</a></li><li><a href="#four">The four interfaces</a></li><li><a href="#speed">Line speed</a></li>
-  <li><a href="#blocks">Block reads</a></li><li><a href="#cycle">Cycle-time impact</a></li><li><a href="#dead">Dead devices</a></li>
+  <li><a href="#blocks">Block reads</a></li><li><a href="#baud">Baud rate</a></li><li><a href="#cycle">Cycle-time impact</a></li><li><a href="#dead">Dead devices</a></li>
   <li><a href="#limits">Device limits</a></li><li><a href="#proscons">Pros and cons</a></li><li><a href="#choose">Which to use</a></li>
   <li><a href="#data">All runs</a></li><li><a href="#method">Method</a></li>
 </ul></nav>
@@ -339,7 +442,7 @@ page = """<!DOCTYPE html>
 
 <section id="summary">
 <div class="tldr"><strong>Summary</strong><ul>
-  <li><strong>RTU at 9600 baud is wire-bound either way.</strong> A 6-register read takes about @@T6@@ ms, so one serial line carries about 20 small requests a second (ModbusFB @@FB_RTU@@/s, native @@NATIVE_RTU@@/s). Interface choice matters less than baud rate and block size.</li>
+  <li><strong>On RTU, baud rate helps until the PLC's task becomes the limit.</strong> At 9600 a 6-register read takes @@T6@@-@@FB5_9600@@ ms, about @@WIRE_9600@@ ms of it on the wire, so a line carries about 20 small requests a second. Above 38400 both interfaces hit a floor set by the PLC: @@FB5_115200@@ ms (ModbusFB) and @@NAT5_115200@@ ms (native) at 115200 with a 5 ms bus task, where the wire needs @@WIRE_115200@@ ms. A 2 ms bus task brings ModbusFB down to @@FB2_115200@@ ms; native, with its 10 ms pause between requests (<code>TimeBetweenFrames</code>) cut to 2 ms as well, reached @@NATG_115200@@ ms.</li>
   <li><strong>ModbusFB over TCP is bound by the PLC's task, not the device.</strong> The gateway answers a 10-register read in @@PC10@@ ms from a PC; through ModbusFB it takes @@FB_REQ@@ ms, because each request spans about five bus-task cycles. One connection peaks at @@FB_TCP@@ req/s with a 5 ms bus task, and @@FB_TCP2@@ with a 2 ms task.</li>
   <li><strong>Native TCP is much faster per connection</strong> (@@NATIVE_CONN@@ req/s each, @@NATIVE_TCP@@/s for five), but needs one TCP connection per device. The NA111-E accepts six, so it can't reach 30 units behind one gateway.</li>
   <li><strong>Read big blocks.</strong> On TCP, a 125-register read takes less than twice as long as a 1-register read (@@BLK1@@ → @@BLK125@@ ms) and moves @@BLK_GAIN@@ times as many registers per second. On 9600 RTU, each register adds @@RTU_SLOPE@@ ms, so merge reads across gaps shorter than about @@GAP@@ registers.</li>
@@ -361,7 +464,7 @@ page = """<!DOCTYPE html>
 <figure>@@LINE_RATE@@<figcaption>Native TCP read 2 registers per request and ModbusFB TCP read 10; at 1 register, ModbusFB TCP reaches @@BLK1_RATE@@ req/s, so the difference is the transport, not the block size.</figcaption></figure>
 <figure>@@REQUEST@@<figcaption>Where one request's time goes. The grey part is outside the PLC: measured from a PC for TCP, computed from the wire format for RTU (10-bit characters at 9600 baud, two 3.5-character silences).</figcaption></figure>
 <p><strong>ModbusFB's per-request cost is a number of task cycles.</strong> Its client and request blocks move through several states (send, wait, receive, done, and the falling edge before the next request), and each transition waits for the next call. That was about five bus-task cycles here: about @@FB_OVH5@@ ms at a 5 ms task and @@FB_OVH2@@ ms at 2 ms. The September test of one ModbusFB connection to ten units showed the same: 0.70 s per round with a 5 ms task, 4.04 s with a 50 ms task. To make a ModbusFB TCP line faster, shorten the bus task (and pay for it in CPU, see below) or split the devices over more connections.</p>
-<p><strong>The native client does not wait for the application's task.</strong> Its TCP connections run in the Ethernet node's own asynchronous task. Five of them kept the gateway's RS485 side busy: @@NATIVE_TCP@@ replies a second is one every @@NATIVE_SPACING@@ ms, about the wire time of a 2-register exchange at 115200. On RTU, native was @@NATIVE_GAIN@@ faster than ModbusFB at saturation, and its rate did not change when the bus task went from 5 ms to 2 ms.</p>
+<p><strong>The native client does not wait for the application's task.</strong> Its TCP connections run in the Ethernet node's own asynchronous task. Five of them kept the gateway's RS485 side busy: @@NATIVE_TCP@@ replies a second is one every @@NATIVE_SPACING@@ ms, about the wire time of a 2-register exchange at 115200. On RTU at 9600, native was @@NATIVE_GAIN@@ faster than ModbusFB at saturation; how both behave at higher baud rates and with a faster bus task is under <a href="#baud">Baud rate</a>.</p>
 <div class="callout"><strong>The bench's own adapters had to be fixed first.</strong> Both USB-RS485 adapters had the FTDI default latency timer of 16 ms, which held every short frame in the adapter, so the simulated devices answered about 16 ms late. At 1 ms (set 2026-10-20, <code>bench/set_ftdi_latency.ps1</code>) the RTU line's request time fell from 64 to 49 ms. Any PC-side Modbus simulator or tool on an FTDI adapter needs the same setting, or it measures the adapter.</div>
 </section>
 
@@ -376,7 +479,7 @@ page = """<!DOCTYPE html>
 </tbody></table></div>
 <div class="multiples"><div>@@BLOCK_REGS@@</div><div>@@BLOCK_TIME@@</div></div>
 <p>On TCP the per-request overhead dominates, so a block of 125 registers moves @@BLK125_REGS@@ registers a second where single-register reads move @@BLK1_RATE@@. On RTU the wire time per register is real (2 bytes, about 2.1 ms at 9600), so reading unused registers is only worth it across small gaps: a gap costs its wire time, a separate request costs about @@RTU_A@@ ms.</p>
-<p>On RTU, ModbusFB and native land on top of each other: ModbusFB is about @@FBRTU_EXTRA@@ ms slower per request at every block size, against about @@FB_OVH5@@ ms on TCP. Its task-cycle state changes still happen, but on a 9600 line most of them fall inside the time it waits for the reply anyway; on TCP the reply is back in a few milliseconds and the cycles are all that's left.</p>
+<p>On RTU, ModbusFB and native land close together: ModbusFB is about @@FBRTU_EXTRA@@ ms slower per request at every block size. That isn't because its task overhead disappears on a slow line; it still spends about @@FB_OVH_RTU5@@ ms per request above wire time, as the <a href="#baud">baud-rate runs</a> show. Native pays a cost of its own: its master pauses 10 ms (<code>TimeBetweenFrames</code>) after every request.</p>
 <ul>
   <li>Group a device's points into as few contiguous blocks as its register map allows. The generator should merge across gaps below the threshold for that line's baud rate.</li>
   <li>Check each device's limits before merging: many devices cap a read below 125 registers, and some refuse a read that touches an undefined register. The bench simulator ignored such a read entirely (no reply, a timeout), which is the worst case.</li>
@@ -385,20 +488,38 @@ page = """<!DOCTYPE html>
 </ul>
 </section>
 
+<section id="baud">
+<h2>Baud rate</h2>
+<p>The serial line ran at 9600 to 115200 baud against the nine simulated units, every block polled back to back. The ME31, fixed at 9600, was parked (not polled) for these runs. ModbusFB changes rate online; native needs a download per rate. Each interface was measured with the bus task at 5 ms and at 2 ms.</p>
+<figure>@@BAUD_CHARTS@@<figcaption>Time per request; lower is faster. The dotted line is the wire alone: request and reply at 10 bits per character plus the two inter-frame silences Modbus requires (3.5 characters, fixed at 1.75 ms above 19200 baud).</figcaption></figure>
+<ul>
+  <li><strong>Raising the baud rate pays off until the PLC becomes the limit.</strong> With a 5 ms bus task, a 6-register read falls from @@FB5_9600@@ ms at 9600 to @@FB5_57600@@ ms at 57600 and then stops: at 115200 the wire needs @@WIRE_115200@@ ms, and the request still takes @@FB5_115200@@ ms with ModbusFB and @@NAT5_115200@@ ms native.</li>
+  <li><strong>Big blocks keep gaining,</strong> because their wire time is what shrinks: 120 registers take @@FB5_120_9600@@ ms at 9600 and @@FB5_120_115200@@ ms at 115200.</li>
+  <li><strong>A 2 ms bus task moves ModbusFB's floor,</strong> to @@FB2_115200@@ ms at 115200, and helps at 9600 too (@@FB2_9600@@ instead of @@FB5_9600@@ ms). ModbusFB spends about @@FB_OVH_RTU5@@ ms above wire time per request with a 5 ms task and @@FB_OVH_RTU2@@ ms with 2 ms, at every baud rate: its state changes wait for task calls even while the line is slow.</li>
+  <li><strong>Native has a floor of its own.</strong> The serial master pauses <code>TimeBetweenFrames</code> after every request, 10 ms by default, on top of the Modbus silence. A 2 ms bus cycle only took native from @@NAT5_115200@@ to @@NAT2_115200@@ ms at 115200. @@GAP_SENTENCE@@</li>
+  <li><strong>Before raising a line's rate,</strong> every device on it has to support that rate (the ME31 here is set to 9600), and cabling and termination matter more at 115200. Past about 38400, a shorter bus task or frame pause buys more than more baud.</li>
+</ul>
+@@BAUD_TABLE@@
+</section>
+
 <section id="cycle">
 <h2>Cycle-time impact</h2>
 <p>Three tasks: control 50 ms at priority 1 (2,000 tags, the skeleton's seven steps), bus 5 ms at priority 5 (ModbusFB lines and the native decode), MQTT 50 ms at priority 10.</p>
 <div class="stats">
   <div class="stat"><div class="n">&lt; 2 ms</div><div class="l">control task's worst start deviation, every run</div></div>
-  <div class="stat"><div class="n">@@BUS5@@ ms</div><div class="l">bus task per cycle at 5 ms (@@BUS5_PCT@@ of the CPU)</div></div>
-  <div class="stat warn-stat"><div class="n">@@BUS2@@ ms</div><div class="l">bus task per cycle at 2 ms (@@BUS2_PCT@@ of the CPU)</div></div>
+  <div class="stat"><div class="n">@@BUS5@@ ms</div><div class="l">bus task per cycle at 5 ms, two ModbusFB lines (@@BUS5_PCT@@ of the CPU)</div></div>
+  <div class="stat warn-stat"><div class="n">@@BUS2@@ ms</div><div class="l">bus task per cycle at 2 ms, two ModbusFB lines (@@BUS2_PCT@@ of the CPU)</div></div>
   <div class="stat warn-stat"><div class="n">+15%</div><div class="l">control execution time with native TCP at full speed (4.1 → 4.8 ms)</div></div>
 </div>
 <ul>
   <li><strong>The control task is protected by priority,</strong> not by how the bus is polled: worst-case deviation stayed between 1.0 and 2.0 ms in all runs, against a 50 ms period.</li>
-  <li><strong>The bus task costs about the same per cycle whatever its interval,</strong> so halving the interval doubles its CPU share. Its cost here includes decoding the ten native images every cycle; they change at most once a second, so decoding only on change would cut that part.</li>
+  <li><strong>The ModbusFB TCP client is the expensive part.</strong> Switching the lines off one at a time online:</li>
+</ul>
+@@LINE_COST_TABLE@@
+<ul>
+  <li><strong>A shorter bus task costs CPU almost in proportion.</strong> Each call gets a little cheaper, but there are more of them, so 2 ms takes about @@BUS2_PCT@@ of the CPU against @@BUS5_PCT@@ at 5 ms. Decoding ten native images every cycle cost about 0.1 ms; they change at most once a second, so decoding only on change would save most of that.</li>
   <li><strong>Native polling runs outside the application tasks.</strong> The TCP client runs in the Ethernet node's async task; the serial master's I/O is updated in the bus cycle task (the PLC's "bus cycle task" setting, which defaults to the shortest cyclic task). At full speed the native TCP client took visible time from the control task. Keep native cycle times as long as the process allows.</li>
-  <li><strong>ModbusFB's speed is tied to the bus task interval</strong> (about five cycles per request); native's is not.</li>
+  <li><strong>ModbusFB's speed is tied to the bus task interval</strong> (about five cycles per request). The native serial master's is partly: it exchanges data in the bus cycle task, and pauses <code>TimeBetweenFrames</code> after every request (see <a href="#baud">Baud rate</a>).</li>
 </ul>
 </section>
 
@@ -422,7 +543,7 @@ page = """<!DOCTYPE html>
 <tr><td>Native Modbus TCP server</td><td>One TCP connection and one unit id per server</td><td>30 units behind one gateway can't each be a native server; use ModbusFB, or several gateways.</td></tr>
 <tr><td>Gateway RS485 side</td><td>One request at a time</td><td>More TCP connections fill the serial bus faster but share its time; one dead unit slows all of them.</td></tr>
 <tr><td>PLC serial port</td><td>One master per port</td><td>A port is either a ModbusFB ClientSerial or a native Modbus_COM, never both. On the bench unit the terminal-block port (COM2) can't receive; the RJ12 port (COM1) works.</td></tr>
-<tr><td>RS485 at 9600 baud</td><td>about 20 small requests/s; @@RTU_MAX@@ registers/s with full blocks</td><td>10 devices at a 1 s poll use half a line. Raise the baud rate where devices allow it.</td></tr>
+<tr><td>RS485 at 9600 baud</td><td>about 20 small requests/s; @@RTU_MAX@@ registers/s with full blocks (at 115200: @@RTU115_RATE@@ small requests/s, bound by the bus task)</td><td>10 devices at a 1 s poll use half a line. Raise the baud rate where devices allow it.</td></tr>
 <tr><td>Modbus read size</td><td>125 registers (FC03/FC04)</td><td>Devices often allow less; test each one.</td></tr>
 <tr><td>Native channel</td><td>Length and cycle fixed at download; one mapping per word</td><td>No online tuning. The API's mapping call covers one word (<code>leafIndex</code>); mapping a 6-word channel takes six calls.</td></tr>
 <tr><td>ModbusFB request blocks</td><td>One request in flight per client; a falling edge of <code>xExecute</code> between requests</td><td>Throughput set by task cycles per request, about five here.</td></tr>
@@ -452,10 +573,12 @@ page = """<!DOCTYPE html>
   <li>Same table-driven code and health as the TCP lines.</li>
   <li>A dead device cost its neighbours @@DEAD_FB_RTU_LOSS@@.</li>
   <li>Periods change online.</li>
-  <li><strong>Con:</strong> @@NATIVE_GAIN@@ slower than native at saturation (@@FB_RTU@@ vs @@NATIVE_RTU@@ req/s); periods run from the end of the last reply, so a 1 s block polls every ~1.06 s.</li>
+  <li>With a 2 ms bus task it beats native's default settings at every baud rate measured (@@FB2_115200@@ vs @@NAT2_115200@@ ms at 115200).</li>
+  <li><strong>Con:</strong> with a 5 ms bus task, @@NATIVE_GAIN@@ slower than native at 9600 (@@FB_RTU@@ vs @@NATIVE_RTU@@ req/s); periods run from the end of the last reply, so a 1 s block polls every ~1.06 s.</li>
 </ul></div>
 <div><h3>Native over RTU</h3><ul>
-  <li>Closest to the wire: @@NATIVE_RTU@@ req/s at 9600; rate independent of the bus task.</li>
+  <li>Faster than ModbusFB with a 5 ms bus task: @@NATIVE_RTU@@ req/s at 9600, @@NAT5_115200@@ vs @@FB5_115200@@ ms per request at 115200.</li>
+  <li><strong>Con:</strong> <code>TimeBetweenFrames</code> (10 ms by default) pauses after every request, which sets its floor at high baud rates. Cut to 2 ms with a 2 ms bus cycle, native was the fastest serial interface measured (@@NATG_115200@@ ms at 115200).</li>
   <li>Fixed-rate cycles (0.99 polls/s at 1 s).</li>
   <li>The shop's usual way; familiar in the field.</li>
   <li><strong>Con:</strong> a dead device cost its neighbours @@DEAD_NATIVE_RTU_LOSS@@ of their rate (500 ms timeout every cycle).</li>
@@ -472,6 +595,7 @@ page = """<!DOCTYPE html>
 <tr><td>A few Modbus TCP devices, each its own IP</td><td>Native</td><td>One connection each is natural; fastest polling; no code.</td></tr>
 <tr><td>The PLC's own RS485 port, healthy devices</td><td>Either; native is slightly faster</td><td>Wire-bound at 9600; pick by what the team maintains.</td></tr>
 <tr><td>Devices that may be absent or unpowered</td><td>ModbusFB, or native with long cycles</td><td>Back-off keeps a dead device from starving its neighbours.</td></tr>
+<tr><td>A serial line above 38400 baud</td><td>Shorten the bus task (ModbusFB) or <code>TimeBetweenFrames</code> (native)</td><td>Past that rate the PLC, not the wire, sets the request time.</td></tr>
 <tr><td>Polling faster than about 30 requests/s on one TCP connection</td><td>Native, or ModbusFB with a 2 ms bus task</td><td>ModbusFB's rate is set by task cycles.</td></tr>
 <tr><td>Any native server</td><td>Health hold-off ≥ cycle + timeout; Auto-restart / AutoReconnect on</td><td><code>xError</code> clears at each retry; the defaults stop polling after one timeout.</td></tr>
 <tr><td>Any device</td><td>Contiguous blocks, merged across short gaps</td><td>A request's fixed cost dwarfs its per-register cost, except on slow RTU.</td></tr>
@@ -485,6 +609,7 @@ page = """<!DOCTYPE html>
 <div class="exports">
   <button data-copy="csv">Copy runs as CSV</button>
   <button data-copy="blocks">Copy block-size data as CSV</button>
+  <button data-copy="baud">Copy baud-rate data as CSV</button>
   <button data-copy="prompt">Copy as prompt: plan a program's Modbus lines</button>
   <span class="ok-msg" id="copied" aria-live="polite"></span>
 </div>
@@ -499,14 +624,14 @@ page = """<!DOCTYPE html>
   <li>Serial line: the PLC's RJ12 port (COM1) at 9600 8N1, to the Ebyte ME31 (unit 1) and a Go simulator on COM12 (units 2-10, input registers 400-524). ModbusFB <code>ClientSerial</code> or native <code>Modbus_COM</code> (auto-restart on).</li>
   <li>FTDI latency timer 1 ms on both simulator adapters for every result here except the archived 16 ms set.</li>
   <li>Tools (<code>examples/plc_architecture/bench/</code>): <code>measure_bus.py</code> (PLC counters with per-read timestamps, simulator replies), <code>run_bus_series.ps1</code>, <code>verify_arch.py</code> (broker check), <code>sweep_block_size.py</code>, <code>time_gateway.py</code>, <code>set_native_cycle.py</code>, <code>add_native_serial.py</code>, <code>add_native_tcp.py</code>, <code>summarize_bus.py</code>; results in <code>bench/results/bus/</code>; this page from <code>bench/report/make_bus_doc.py</code>.</li>
-  <li>Not measured: native TCP to devices with their own IP addresses (no gateway), RTU above 9600 baud on the PLC port, and ModbusFB's bus-task cost separated from the native decode's.</li>
+  <li>Not measured: native TCP to devices with their own IP addresses (no gateway), native TCP's dependence on the bus task, and real devices above 9600 baud (the baud-rate runs used simulated units only).</li>
 </ul></details>
 </section>
 </main>
 <footer>Generated from codesys-api/examples/plc_architecture/bench/results/bus.</footer>
 <div id="tip" role="tooltip"></div>
 <script>
-const exportsData = { csv: @@CSV@@, blocks: @@BLOCK_CSV@@, prompt: @@PROMPT@@ };
+const exportsData = { csv: @@CSV@@, blocks: @@BLOCK_CSV@@, baud: @@BAUD_CSV@@, prompt: @@PROMPT@@ };
 const copied = document.getElementById("copied");
 document.querySelectorAll("button[data-copy]").forEach(button => {
   button.addEventListener("click", async () => {
@@ -554,8 +679,19 @@ fields = {
     "ERROR_SHARE": pct(run["native_dead"]["native.ErrorShare[5]"]),
     "FB_OVH5": f(fb_overhead_5, 0), "FB_OVH2": f(fb_overhead_2, 0), "NATIVE_SPACING": f(1000.0 / native_tcp_total),
     "NATIVE_GAIN": pct(native_rtu_sat / fb_rtu_sat - 1),
-    "BUS5": f(bus_5["meanExecUs"] / 1000.0, 2), "BUS5_PCT": pct(bus_5["meanExecUs"] / 5000.0),
-    "BUS2": f(bus_2["meanExecUs"] / 1000.0, 2), "BUS2_PCT": pct(bus_2["meanExecUs"] / 2000.0),
+    "BUS5": f(line_cost_us(5)[2] / 1000.0, 2), "BUS5_PCT": pct(line_cost_us(5)[2] / 5000.0),
+    "BUS2": f(line_cost_us(2)[2] / 1000.0, 2), "BUS2_PCT": pct(line_cost_us(2)[2] / 2000.0),
+    "BAUD_CHARTS": baud_charts, "BAUD_TABLE": table_html(BAUD_HEAD, baud_rows, set(range(2, 8)), "baud"),
+    "LINE_COST_TABLE": table_html(LINE_COST_HEAD, line_cost_rows, set(range(1, 6))),
+    "WIRE_9600": f(wire_ms(6, 9600), 0), "WIRE_115200": f(wire_ms(6, 115200)),
+    "FB5_9600": f(fb_baud[(9600, 6)], 0), "FB5_57600": f(fb_baud[(57600, 6)]), "FB5_115200": f(fb_baud[(115200, 6)]),
+    "FB2_9600": f(fb_baud_2[(9600, 6)]), "FB2_115200": f(fb_baud_2[(115200, 6)]),
+    "NAT5_115200": f(native_baud[(115200, 6)]), "NAT2_115200": f(native_baud_2[(115200, 6)]),
+    "FB5_120_9600": f(fb_baud[(9600, 120)], 0), "FB5_120_115200": f(fb_baud[(115200, 120)], 0),
+    "FB_OVH_RTU5": f(median(fb_baud[(b, 6)] - wire_ms(6, b) for b in BAUDS), 0),
+    "FB_OVH_RTU2": f(median(fb_baud_2[(b, 6)] - wire_ms(6, b) for b in BAUDS), 0),
+    "RTU115_RATE": "%s-%s" % (f(1000.0 / fb_baud[(115200, 6)], 0), f(1000.0 / fb_baud_2[(115200, 6)], 0)),
+    "GAP_SENTENCE": gap_sentence(), "BAUD_CSV": json.dumps(BAUD_CSV), "NATG_115200": f(native_baud_gap[(115200, 6)]),
     "FBRTU_A": f(fb_rtu_fit[0], 0), "FBRTU_B": f(fb_rtu_fit[1]), "FBRTU_GAP": "%d" % round(fb_rtu_fit[0] / fb_rtu_fit[1]),
     "FBRTU_EXTRA": f(median(fb - nt for (_, fb), (_, nt) in zip(sorted(p for p in fb_rtu_points if p[0] in (6, 30, 120)), rtu_points)), 0),
     "RTU_LOAD": pct(t6 / 1000.0), "BLK_GAIN": f(blk125[0] * blk125[1] / blk1[1], 0), "RTU_MAX": f(rtu_max, 0),

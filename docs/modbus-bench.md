@@ -154,6 +154,13 @@ Full results, charts and the decision table: Doc Shelf
 - RTU at 9600 is wire-bound either way (native about 34 ms + 2.1 ms per register, ModbusFB about 4 ms more
   per request; 20-22 small requests/s). Merge reads across gaps shorter than about 16 registers; on TCP
   always merge (26.7 ms + 0.18 ms per register).
+- Baud rate helps RTU until the PLC is the limit. With a 5 ms bus task a 6-register read bottoms out at about
+  25 ms (ModbusFB) and 20 ms (native) from 57600 up, where the wire needs 6 ms. ModbusFB spends about 18 ms
+  above wire time at every rate (7 ms with a 2 ms bus task: 13 ms at 115200). The native serial master pauses
+  `TimeBetweenFrames` (parameter 9002, default 10 ms) after every request: at 2 ms with a 2 ms bus cycle it read
+  in 9.7 ms at 115200 (`add_native_serial.py --frame-gap-ms`; check real devices tolerate it). Tools:
+  `run_baud_series.ps1`, `run_native_baud_series.ps1`, `measure_line_cost.py` (bus-task time per ModbusFB line:
+  TCP client about 0.8 ms per call, serial 0.17 ms).
 - A dead device: ModbusFB's back-off keeps its neighbours at 85-97% of their rate; native polls it every cycle
   and waits the full timeout: 71% on RTU at 1 s cycles, about 1% behind a gateway at 10 ms cycles.
 - Tools: `measure_bus.py`, `run_bus_series.ps1`, `sweep_block_size.py`, `time_gateway.py`, `summarize_bus.py`.
