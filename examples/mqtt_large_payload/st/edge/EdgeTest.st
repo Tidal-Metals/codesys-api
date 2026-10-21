@@ -7,6 +7,9 @@ VAR
 	IsEnabled : BOOL;                   // written online
 	SendSize : UDINT := 100;            // written online: payload bytes of the next message
 	IsQos1 : BOOL;                      // written online
+	IsQos2 : BOOL;                      // written online: publish at QoS 2 (wins over IsQos1)
+	SubscribeQoS : BYTE := 1;           // written online: 0, 1 or 2; takes effect at the next subscribe
+	                                    // (qos_test.py switches IsEnabled off and on to resubscribe)
 	SendSequence : UDINT;               // written online; a new value starts a send
 	DoneSequence : UDINT;               // the sequence of the last message the library reported done
 	TimeoutCount : UDINT;               // rising edges of Publisher.SendTimeout
@@ -29,6 +32,7 @@ VAR
 	StartedSequence : UDINT;
 	RequestSize : UDINT;                // SendSize when the current request started
 	PublishQoS : MQTT.QoS;
+	SubscribeQoSValue : MQTT.QoS;
 	TimeoutEdge : R_TRIG;
 	Payload : ARRAY[0..MAX_PAYLOAD - 1] OF BYTE;
 	Index : UDINT;
@@ -44,7 +48,13 @@ IF NOT IsReady THEN
 	EchoPublisher.SetMqttInOut(MQTT_IN_OUT := PLC_PRG.MqttLink);
 END_IF
 
-Subscriber(Subscribe := IsEnabled, Topic := ADR(TopicIn), QoSSubscribe := MQTT.QoS.AtLeastOnce,
+CASE SubscribeQoS OF
+	0: SubscribeQoSValue := MQTT.QoS.AtMostOnce;
+	2: SubscribeQoSValue := MQTT.QoS.ExactlyOnce;
+ELSE
+	SubscribeQoSValue := MQTT.QoS.AtLeastOnce;
+END_CASE
+Subscriber(Subscribe := IsEnabled, Topic := ADR(TopicIn), QoSSubscribe := SubscribeQoSValue,
 	ExpectingString := FALSE, Callback := Receiver);
 
 // MQTTPublish starts on a rising edge of send: a new request only once the publisher has been called with
@@ -58,7 +68,9 @@ IF IsEnabled AND NOT IsRequested AND IsArmed AND SendSequence <> StartedSequence
 	IsRequested := TRUE;
 	IsArmed := FALSE;
 END_IF
-IF IsQos1 THEN
+IF IsQos2 THEN
+	PublishQoS := MQTT.QoS.ExactlyOnce;
+ELSIF IsQos1 THEN
 	PublishQoS := MQTT.QoS.AtLeastOnce;
 ELSE
 	PublishQoS := MQTT.QoS.AtMostOnce;

@@ -1,0 +1,3686 @@
+{
+ "scenarios": {
+  "dup_publish": {
+   "firstPubrec": 7,
+   "afterDuplicate": [
+    101
+   ],
+   "pubcompAfterRelease": [
+    7
+   ],
+   "nextPubrec": 8,
+   "laterPubrec": [
+    101,
+    101,
+    101
+   ],
+   "laterPubcomp": [
+    8
+   ],
+   "plcReconnects": 0,
+   "plcReceived": 2,
+   "plcPublishesParsed": 2,
+   "plcInOrder": 2,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcOk": true,
+   "brokerOk": false,
+   "ok": false,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "dup_publish",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 3.53
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.829
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.829
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 4.33
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 4.33
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 5.23
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 5.231
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 7.432
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 7.432
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 9.635
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 9.635
+    },
+    {
+     "event": "go",
+     "conn": 1,
+     "t": 11.318
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 11.837
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 11.837
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 7,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303031",
+     "note": "first",
+     "t": 12.819
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 7,
+     "t": 12.938
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PUBLISH",
+     "flags": 12,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": true,
+     "id": 7,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303031",
+     "note": "duplicate before PUBREL",
+     "t": 12.938
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 13.138
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 14.039
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 14.039
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 7,
+     "note": "release",
+     "t": 14.438
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBCOMP",
+     "flags": 0,
+     "length": 4,
+     "id": 7,
+     "t": 14.539
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 15.34
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 8,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303032",
+     "note": "next message",
+     "t": 15.939
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 8,
+     "t": 16.041
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 8,
+     "t": 16.041
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 16.241
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 16.241
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBCOMP",
+     "flags": 0,
+     "length": 4,
+     "id": 8,
+     "t": 16.241
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 17.543
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 18.443
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 18.443
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 19.744
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 20.645
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 20.645
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 21.946
+    }
+   ]
+  },
+  "pubrel_unknown": {
+   "pubcompForNeverUsed": [],
+   "pubcompForRepeat": [],
+   "plcReconnects": 0,
+   "plcReceived": 2,
+   "plcPublishesParsed": 2,
+   "plcInOrder": 2,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcOk": true,
+   "brokerOk": false,
+   "ok": false,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "pubrel_unknown",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 0.408
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 0.708
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 0.708
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 1.208
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 1.208
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 2.209
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 2.209
+    },
+    {
+     "event": "closed",
+     "conn": 1,
+     "reason": "closed",
+     "t": 2.709
+    },
+    {
+     "event": "accepted",
+     "conn": 2,
+     "peer": "192.168.50.123",
+     "t": 3.21
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.51
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.51
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 4.011
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 4.011
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 4.912
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 4.912
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 7.114
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 7.114
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 9.316
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 9.316
+    },
+    {
+     "event": "go",
+     "conn": 2,
+     "t": 11.32
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 11.517
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 11.517
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 300,
+     "note": "never used",
+     "t": 12.82
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 13.719
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 13.719
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 9,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303031",
+     "t": 14.32
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 9,
+     "t": 14.519
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 9,
+     "t": 14.52
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBCOMP",
+     "flags": 0,
+     "length": 4,
+     "id": 9,
+     "t": 14.719
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 10,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303032",
+     "t": 14.72
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 10,
+     "t": 14.92
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 10,
+     "t": 14.92
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBCOMP",
+     "flags": 0,
+     "length": 4,
+     "id": 10,
+     "t": 15.12
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 9,
+     "note": "repeat after completion and slot reuse",
+     "t": 15.12
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 15.92
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 15.921
+    }
+   ]
+  },
+  "burst_qos1": {
+   "sent": 40,
+   "acknowledged": 8,
+   "completed": 0,
+   "closed": true,
+   "plcReconnects": 1,
+   "plcReceived": 8,
+   "plcPublishesParsed": 8,
+   "plcInOrder": 8,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcOk": false,
+   "brokerOk": false,
+   "ok": false,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "burst_qos1",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 0.464
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 0.764
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 0.764
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 1.264
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 1.265
+    },
+    {
+     "event": "closed",
+     "conn": 1,
+     "reason": "closed",
+     "t": 2.565
+    },
+    {
+     "event": "accepted",
+     "conn": 2,
+     "peer": "192.168.50.123",
+     "t": 3.066
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.366
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.366
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 3.766
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 3.766
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 2,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 3.966
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 3.967
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 5.968
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 5.968
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 8.17
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 8.17
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 10.372
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 10.372
+    },
+    {
+     "event": "go",
+     "conn": 2,
+     "t": 11.22
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 12.573
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 12.573
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 100,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303031",
+     "note": "burst",
+     "t": 12.72
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 101,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303032",
+     "note": "burst",
+     "t": 12.72
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 102,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303033",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 103,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303034",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 104,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303035",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 105,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303036",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 106,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303037",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 107,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303038",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 108,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303039",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 109,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303130",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 110,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303131",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 111,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303132",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 112,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303133",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 113,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303134",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 114,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303135",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 115,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303136",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 116,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303137",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 117,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303138",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 118,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303139",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 119,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303230",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 120,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303231",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 121,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303232",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 122,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303233",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 123,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303234",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 124,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303235",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 125,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303236",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 126,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303237",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 127,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303238",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 128,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303239",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 129,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303330",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 130,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303331",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 131,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303332",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 132,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303333",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 133,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303334",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 134,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303335",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 135,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303336",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 136,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303337",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 137,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303338",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 138,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303339",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 1,
+     "dup": false,
+     "id": 139,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303430",
+     "note": "burst",
+     "t": 12.721
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 100,
+     "t": 12.873
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 12.874
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 102,
+     "t": 12.874
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 103,
+     "t": 12.874
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 104,
+     "t": 12.874
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 105,
+     "t": 12.874
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 106,
+     "t": 12.874
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 107,
+     "t": 12.874
+    },
+    {
+     "event": "closed",
+     "conn": 2,
+     "reason": "closed",
+     "t": 13.174
+    },
+    {
+     "event": "accepted",
+     "conn": 3,
+     "peer": "192.168.50.123",
+     "t": 13.674
+    }
+   ]
+  },
+  "burst_qos2": {
+   "sent": 40,
+   "acknowledged": 8,
+   "completed": 0,
+   "closed": true,
+   "plcReconnects": 1,
+   "plcReceived": 8,
+   "plcPublishesParsed": 8,
+   "plcInOrder": 8,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcOk": false,
+   "brokerOk": false,
+   "ok": false,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "burst_qos2",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 0.47
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 0.77
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 0.77
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 1.271
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 1.271
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 2.272
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 2.272
+    },
+    {
+     "event": "closed",
+     "conn": 1,
+     "reason": "closed",
+     "t": 2.572
+    },
+    {
+     "event": "accepted",
+     "conn": 2,
+     "peer": "192.168.50.123",
+     "t": 3.072
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.373
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.373
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 3.873
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 3.873
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 4.774
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 4.774
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 6.976
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 6.976
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 9.178
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 9.178
+    },
+    {
+     "event": "go",
+     "conn": 2,
+     "t": 11.12
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 11.38
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 11.38
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 100,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303031",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 101,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303032",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 102,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303033",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 103,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303034",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 104,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303035",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 105,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303036",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 106,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303037",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 107,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303038",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 108,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303039",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 109,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303130",
+     "note": "burst",
+     "t": 12.62
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 110,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303131",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 111,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303132",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 112,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303133",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 113,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303134",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 114,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303135",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 115,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303136",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 116,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303137",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 117,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303138",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 118,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303139",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 119,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303230",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 120,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303231",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 121,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303232",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 122,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303233",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 123,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303234",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 124,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303235",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 125,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303236",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 126,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303237",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 127,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303238",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 128,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303239",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 129,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303330",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 130,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303331",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 131,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303332",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 132,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303333",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 133,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303334",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 134,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303335",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 135,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303336",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 136,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303337",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 137,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303338",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 138,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303339",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 35,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "dup": false,
+     "id": 139,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303430",
+     "note": "burst",
+     "t": 12.621
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 100,
+     "t": 12.78
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 101,
+     "t": 12.78
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 102,
+     "t": 12.781
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 103,
+     "t": 12.781
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 104,
+     "t": 12.781
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 105,
+     "t": 12.781
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 106,
+     "t": 12.781
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 107,
+     "t": 12.781
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 100,
+     "t": 12.821
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 101,
+     "t": 12.821
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 102,
+     "t": 12.821
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 103,
+     "t": 12.822
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 104,
+     "t": 12.822
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 105,
+     "t": 12.822
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 106,
+     "t": 12.822
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 107,
+     "t": 12.822
+    },
+    {
+     "event": "closed",
+     "conn": 2,
+     "reason": "closed",
+     "t": 13.18
+    },
+    {
+     "event": "accepted",
+     "conn": 3,
+     "peer": "192.168.50.123",
+     "t": 13.681
+    }
+   ]
+  },
+  "suback_reject": {
+   "note": "the PLC side decides: Receiver.ReceivedCount must not change",
+   "plcReconnects": 0,
+   "plcReceived": 1,
+   "plcPublishesParsed": 1,
+   "plcInOrder": 1,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcSubscribeFail": true,
+   "plcOk": false,
+   "brokerOk": null,
+   "ok": false,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "suback_reject",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 0.46
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 0.759
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 0.76
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 1.261
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 1.262
+    },
+    {
+     "event": "closed",
+     "conn": 1,
+     "reason": "closed",
+     "t": 2.561
+    },
+    {
+     "event": "accepted",
+     "conn": 2,
+     "peer": "192.168.50.123",
+     "t": 3.062
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.362
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.362
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 3.762
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 3.762
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 2,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 3.962
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 3.962
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 5.963
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 5.963
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 8.166
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 8.166
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 10.368
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 10.368
+    },
+    {
+     "event": "go",
+     "conn": 2,
+     "t": 11.119
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 0,
+     "length": 33,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 0,
+     "dup": false,
+     "payloadLength": 8,
+     "payloadHead": "3030303030303031",
+     "note": "publish on the rejected subscription",
+     "t": 12.119
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 12.57
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 12.57
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 14.772
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 14.772
+    }
+   ]
+  },
+  "no_pubcomp": {
+   "publishId": 1,
+   "pubrelsWhileHeld": 14,
+   "publishesWhileHeld": 1,
+   "plcReconnects": 0,
+   "plcReceived": 0,
+   "plcPublishesParsed": 0,
+   "plcInOrder": 1,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcPublishDone": true,
+   "plcOk": true,
+   "brokerOk": false,
+   "ok": false,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "no_pubcomp",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 0.393
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 0.693
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 0.693
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 1.193
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 1.193
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 2.194
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 2.194
+    },
+    {
+     "event": "closed",
+     "conn": 1,
+     "reason": "closed",
+     "t": 2.495
+    },
+    {
+     "event": "accepted",
+     "conn": 2,
+     "peer": "192.168.50.123",
+     "t": 2.996
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.295
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.296
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 3.796
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 3.796
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 4.697
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 4.697
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 6.899
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 6.899
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 9.101
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 9.101
+    },
+    {
+     "event": "go",
+     "conn": 2,
+     "t": 10.818
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 11.304
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 11.304
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 4,
+     "length": 40,
+     "topic": "raw_data_demo/edge",
+     "qos": 2,
+     "dup": false,
+     "id": 1,
+     "payloadLength": 16,
+     "payloadHead": "b1d0ef133251708faecdec10",
+     "t": 12.404
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 1,
+     "t": 12.404
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 12.604
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 13.505
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 13.506
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 14.807
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 15.708
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 15.708
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 17.009
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 17.91
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 17.91
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 19.211
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 20.111
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 20.111
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 21.412
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 22.313
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 22.313
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 23.615
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 24.515
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 24.515
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 25.816
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 26.717
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 26.717
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 28.018
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 28.919
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 28.919
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 30.22
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 31.121
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 31.121
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 32.422
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 33.322
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 33.323
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBLISH",
+     "flags": 12,
+     "length": 40,
+     "topic": "raw_data_demo/edge",
+     "qos": 2,
+     "dup": true,
+     "id": 1,
+     "payloadLength": 16,
+     "payloadHead": "b1d0ef133251708faecdec10",
+     "t": 34.623
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBREC",
+     "flags": 0,
+     "length": 4,
+     "id": 1,
+     "t": 34.624
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 34.823
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 35.524
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 35.524
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 37.026
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 37.727
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 37.727
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 39.228
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 39.928
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 39.929
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 41.43
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 42.13
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 42.131
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PUBREL",
+     "flags": 2,
+     "length": 4,
+     "id": 1,
+     "t": 43.632
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBCOMP",
+     "flags": 0,
+     "length": 4,
+     "id": 1,
+     "t": 43.632
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PUBCOMP",
+     "flags": 0,
+     "length": 4,
+     "id": 1,
+     "t": 43.633
+    }
+   ]
+  },
+  "cut_publish": {
+   "firstPacketAfterReconnect": "CONNECT",
+   "publishesAfterReconnect": 1,
+   "lengths": [
+    30000
+   ],
+   "plcReconnects": 1,
+   "plcReceived": 0,
+   "plcPublishesParsed": 0,
+   "plcInOrder": 1,
+   "plcDuplicates": 0,
+   "plcLost": 0,
+   "plcPublishDone": true,
+   "plcOk": true,
+   "brokerOk": true,
+   "ok": true,
+   "packets": [
+    {
+     "event": "listening",
+     "scenario": "cut_publish",
+     "port": 1885,
+     "t": 0.0
+    },
+    {
+     "event": "accepted",
+     "conn": 1,
+     "peer": "192.168.50.123",
+     "t": 0.4
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 0.7
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 0.7
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 1.2
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 1.2
+    },
+    {
+     "dir": "in",
+     "conn": 1,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 2.201
+    },
+    {
+     "dir": "out",
+     "conn": 1,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 2.201
+    },
+    {
+     "event": "closed",
+     "conn": 1,
+     "reason": "closed",
+     "t": 2.701
+    },
+    {
+     "event": "accepted",
+     "conn": 2,
+     "peer": "192.168.50.123",
+     "t": 3.202
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 3.502
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 3.502
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 1,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 4.003
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 4.003
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 4.903
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 4.903
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 7.105
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 7.106
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 9.307
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 9.307
+    },
+    {
+     "event": "go",
+     "conn": 2,
+     "t": 11.119
+    },
+    {
+     "dir": "in",
+     "conn": 2,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 11.509
+    },
+    {
+     "dir": "out",
+     "conn": 2,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 11.509
+    },
+    {
+     "event": "cut",
+     "conn": 2,
+     "remainingLength": 30022,
+     "bytesRead": 4000,
+     "firstBytes": "32c6ea0100127261775f646174615f64656d6f2f656467650001b2d1f01433527190afceed11304f6e8daccb",
+     "t": 13.211
+    },
+    {
+     "event": "closed",
+     "conn": 2,
+     "reason": "cut by scenario",
+     "t": 13.211
+    },
+    {
+     "event": "accepted",
+     "conn": 3,
+     "peer": "192.168.50.123",
+     "t": 14.011
+    },
+    {
+     "dir": "in",
+     "conn": 3,
+     "type": "CONNECT",
+     "flags": 0,
+     "length": 82,
+     "t": 14.311
+    },
+    {
+     "dir": "out",
+     "conn": 3,
+     "type": "CONNACK",
+     "flags": 0,
+     "length": 4,
+     "t": 14.311
+    },
+    {
+     "dir": "in",
+     "conn": 3,
+     "type": "PUBLISH",
+     "flags": 2,
+     "length": 30026,
+     "topic": "raw_data_demo/edge",
+     "qos": 1,
+     "dup": false,
+     "id": 1,
+     "payloadLength": 30000,
+     "payloadHead": "b2d1f01433527190afceed11",
+     "t": 14.815
+    },
+    {
+     "dir": "out",
+     "conn": 3,
+     "type": "PUBACK",
+     "flags": 0,
+     "length": 4,
+     "id": 1,
+     "t": 14.815
+    },
+    {
+     "dir": "in",
+     "conn": 3,
+     "type": "SUBSCRIBE",
+     "flags": 2,
+     "length": 28,
+     "id": 2,
+     "topic": "raw_data_demo/edge_in",
+     "qos": 2,
+     "t": 14.911
+    },
+    {
+     "dir": "out",
+     "conn": 3,
+     "type": "SUBACK",
+     "flags": 0,
+     "length": 5,
+     "t": 14.911
+    },
+    {
+     "dir": "in",
+     "conn": 3,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 15.812
+    },
+    {
+     "dir": "out",
+     "conn": 3,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 15.812
+    },
+    {
+     "dir": "in",
+     "conn": 3,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 18.014
+    },
+    {
+     "dir": "out",
+     "conn": 3,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 18.014
+    },
+    {
+     "dir": "in",
+     "conn": 3,
+     "type": "PINGREQ",
+     "flags": 0,
+     "length": 2,
+     "t": 20.216
+    },
+    {
+     "dir": "out",
+     "conn": 3,
+     "type": "PINGRESP",
+     "flags": 0,
+     "length": 2,
+     "t": 20.216
+    }
+   ]
+  }
+ },
+ "success": false
+}

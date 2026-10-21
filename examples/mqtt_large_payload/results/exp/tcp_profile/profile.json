@@ -1,0 +1,151 @@
+{
+ "executed_by": "CODESYS PersistentSession",
+ "scenarios": {
+  "idle_calls1": {
+   "maxUs": {
+    "STATE_IN": 142,
+    "TOTAL": 1071,
+    "CONTROL": 999,
+    "PARSE_IN": 158,
+    "CASE_REST": 143,
+    "TAIL": 260,
+    "PREPARE": 165,
+    "STATE_OUT": 244,
+    "SEND_IN": 163,
+    "SEND_OUT": 262
+   },
+   "meanUs": {
+    "STATE_IN": 16.8,
+    "TOTAL": 378.7,
+    "CONTROL": 246.5,
+    "PARSE_IN": 9.2,
+    "CASE_REST": 6.1,
+    "TAIL": 16.0,
+    "PREPARE": 23.7,
+    "STATE_OUT": 17.4,
+    "SEND_IN": 8.0,
+    "SEND_OUT": 8.2
+   },
+   "tcp": {
+    "ProfIpc": {
+     "perClientCall": 1.2,
+     "maxUs": 985,
+     "meanUs": 197.7,
+     "calls": 486
+    },
+    "ProfRecv": {
+     "perClientCall": 1.2,
+     "maxUs": 444,
+     "meanUs": 157.1,
+     "calls": 486
+    },
+    "ProfSend": {
+     "perClientCall": 0.03,
+     "maxUs": 858,
+     "meanUs": 480.3,
+     "calls": 12
+    }
+   },
+   "calls": 404
+  },
+  "fullrefresh_calls16": {
+   "maxUs": {
+    "STATE_IN": 374,
+    "TOTAL": 3235,
+    "CONTROL": 2901,
+    "PARSE_IN": 140,
+    "CASE_REST": 236,
+    "TAIL": 293,
+    "PREPARE": 286,
+    "STATE_OUT": 193,
+    "SEND_IN": 237,
+    "SEND_OUT": 398
+   },
+   "meanUs": {
+    "STATE_IN": 17.5,
+    "TOTAL": 488.3,
+    "CONTROL": 355.4,
+    "PARSE_IN": 7.6,
+    "CASE_REST": 5.2,
+    "TAIL": 16.8,
+    "PREPARE": 22.2,
+    "STATE_OUT": 15.5,
+    "SEND_IN": 6.8,
+    "SEND_OUT": 17.8
+   },
+   "tcp": {
+    "ProfIpc": {
+     "perClientCall": 0.0,
+     "maxUs": 0,
+     "meanUs": null,
+     "calls": 0
+    },
+    "ProfRecv": {
+     "perClientCall": 0.0,
+     "maxUs": 0,
+     "meanUs": null,
+     "calls": 0
+    },
+    "ProfSend": {
+     "perClientCall": 0.0,
+     "maxUs": 0,
+     "meanUs": null,
+     "calls": 0
+    }
+   },
+   "calls": 642,
+   "lastPublishUs": 89370
+  },
+  "fullrefresh_calls1": {
+   "maxUs": {
+    "STATE_IN": 194,
+    "TOTAL": 3306,
+    "CONTROL": 2988,
+    "PARSE_IN": 241,
+    "CASE_REST": 170,
+    "TAIL": 677,
+    "PREPARE": 274,
+    "STATE_OUT": 179,
+    "SEND_IN": 241,
+    "SEND_OUT": 398
+   },
+   "meanUs": {
+    "STATE_IN": 18.4,
+    "TOTAL": 622.0,
+    "CONTROL": 464.3,
+    "PARSE_IN": 8.7,
+    "CASE_REST": 6.1,
+    "TAIL": 18.0,
+    "PREPARE": 25.6,
+    "STATE_OUT": 15.9,
+    "SEND_IN": 7.5,
+    "SEND_OUT": 24.9
+   },
+   "tcp": {
+    "ProfIpc": {
+     "perClientCall": 0.0,
+     "maxUs": 0,
+     "meanUs": null,
+     "calls": 0
+    },
+    "ProfRecv": {
+     "perClientCall": 0.0,
+     "maxUs": 0,
+     "meanUs": null,
+     "calls": 0
+    },
+    "ProfSend": {
+     "perClientCall": 0.0,
+     "maxUs": 0,
+     "meanUs": null,
+     "calls": 0
+    }
+   },
+   "calls": 388,
+   "lastPublishUs": 86489
+  }
+ },
+ "request_id": "76545b38-18c5-48e5-a8a6-bd1f4f0216df",
+ "execution_time": 1792619316.2096863,
+ "success": true
+}

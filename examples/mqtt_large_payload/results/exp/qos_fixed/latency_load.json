@@ -1,0 +1,13 @@
+{
+ "count": 40,
+ "lost": 0,
+ "load": true,
+ "clientCalls": 1,
+ "secondCall": false,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 16.5,
+ "medianMs": 84.7,
+ "p90Ms": 160.4,
+ "maxMs": 329.1
+}

@@ -24,7 +24,10 @@ VAR
 	ClientCallsPerScan : INT := 1;       // most client calls per scan while a message is in flight (one 4 KB buffer per two calls)
 	ClientBudgetUs : ULINT := 5000;      // ... and stop calling once this much time went into the client this scan
 	IsClientLoopGated : BOOL := TRUE;    // FALSE: always make ClientCallsPerScan calls (to measure idle calls)
-	ClientSlots : UINT := 8;             // in and out slots of the MQTT client (library default 50)
+	ClientSlots : UINT := 8;             // out slots of the MQTT client (library default 16)
+	ClientSlotsIn : UINT := 20;          // in slots: at least the broker's inflight window (mosquitto max_inflight_messages,
+	                                     // default 20), or a QoS 1/2 burst can wait on PUBRELs it cannot read
+
 	IsClientCalledLast : BOOL;           // run the client loop at the end of the scan, after the publishers
 	IsSecondClientCallEnabled : BOOL;    // call the client once more at the end of the scan, after the publishers,
 	                                     // so a reply requested in this scan goes out in this scan (latency test)
@@ -157,7 +160,7 @@ MqttLink.ClientID := 'BENCH_MQTT_DEMO';
 MqttLink.COM_CONFIG.MaxPayloadSize := 40000;
 // Slots for messages in flight; the library walks every slot on every call. The demo has six publishers and
 // one subscriber; the library default is 50 each way. Read once, at the client's first call.
-MqttLink.COM_CONFIG.CountSlotsIn := ClientSlots;
+MqttLink.COM_CONFIG.CountSlotsIn := ClientSlotsIn;
 MqttLink.COM_CONFIG.CountSlotsOut := ClientSlots;
 // The client moves one 4 KB send buffer per two calls. While any message is in flight, call it again until
 // ClientCallsPerScan calls or ClientBudgetUs; otherwise once, for keep-alive and receiving.

@@ -32,7 +32,22 @@ def write(values):
         on.set_prepared_value(path, value)
     on.write_prepared_values()
 
+MC = 'PLC_PRG.MqttLink.clientFB.MQTT_CONTROL'
+TCP = [(MC, 'ProfIpc'), (MC + '.IPC', 'ProfRecv'), (MC + '.IPC', 'ProfSend')]
+
+def tcp_counters(enable):
+    # TCP-layer counters (1.3.0.0 Tidal Metals after 2026-10-21); older builds don't have them
+    try:
+        values = [(MC + '.IsProfiled', enable), (MC + '.IPC.IsProfiled', enable)]
+        for fb, prefix in TCP:
+            values += [(fb + '.' + prefix + 'Calls', '0'), (fb + '.' + prefix + 'TotalUs', '0'), (fb + '.' + prefix + 'MaxUs', '0')]
+        write(values)
+        return True
+    except Exception:
+        return False
+
 def profile(seconds):
+    has_tcp = tcp_counters('TRUE')
     write([(P + '.IsEnabled', 'TRUE'), (P + '.Reset', 'TRUE')])
     time.sleep(seconds)
     calls = number(P + '.Calls')
@@ -42,6 +57,13 @@ def profile(seconds):
         out['meanUs'][name] = round(float(total) / calls, 1) if calls else None
         out['maxUs'][name] = number('%s.MaxUs[%d]' % (P, i))
     write([(P + '.IsEnabled', 'FALSE')])
+    if has_tcp:
+        out['tcp'] = {}
+        for fb, prefix in TCP:
+            n = number(fb + '.' + prefix + 'Calls')
+            out['tcp'][prefix] = {'calls': n, 'meanUs': round(float(number(fb + '.' + prefix + 'TotalUs')) / n, 1) if n else None,
+                                  'maxUs': number(fb + '.' + prefix + 'MaxUs'), 'perClientCall': round(float(n) / calls, 2) if calls else None}
+        tcp_counters('FALSE')
     return out
 
 previous_period = str(on.read_value('PLC_PRG.PublishPeriod'))
