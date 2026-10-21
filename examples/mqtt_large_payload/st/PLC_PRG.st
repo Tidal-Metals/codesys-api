@@ -142,10 +142,13 @@ END_IF
 PreviousCycleStartUs := CycleStartUs;
 
 MqttLink.ClientID := 'BENCH_MQTT_DEMO';
+// Incoming publishes up to 40 KB of payload (EdgeTest); the library's default limit is 2,000 bytes of payload
+// plus the largest topic. Read once, at the client's first call.
+MqttLink.COM_CONFIG.MaxPayloadSize := 40000;
 // The client moves one 4 KB send buffer per two calls. While any message is in flight, call it again until
 // ClientCallsPerScan calls or ClientBudgetUs; otherwise once, for keep-alive and receiving.
 IsSendInFlight := LargePublisher.sendActive OR ConcatPublisher.sendActive OR TagValuePublisher.sendActive
-	OR ScaleTest.Publisher.sendActive;
+	OR ScaleTest.Publisher.sendActive OR EdgeTest.Publisher.sendActive OR EdgeTest.EchoPublisher.sendActive;
 StepStartUs := NowUs();
 ClientCall := 0;
 REPEAT
@@ -302,6 +305,8 @@ ClockSync();
 
 // 2,000-tag scale test (idle unless ScaleTest.IsEnabled); inside the timed scan on purpose.
 ScaleTest();
+// MQTT library edge-case test (idle unless EdgeTest.IsEnabled; edge_test.py drives it).
+EdgeTest();
 
 // What BCNF pays today: its payload strings are rebuilt in every scan, not only when publishing.
 IF IsBcnfEveryScanEnabled THEN

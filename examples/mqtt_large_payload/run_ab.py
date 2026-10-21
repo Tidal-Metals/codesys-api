@@ -28,14 +28,21 @@ RUNS += [("adaptive_budget%d_qos0" % b, ["--qos", "0", "--client-calls", "32", "
 RUNS += [("calls1_qos1", ["--qos", "1", "--client-calls", "1", "--budget-us", NO_BUDGET_US, "--seconds", "45"], False)]
 
 
+QUICK = {"calls1_qos0", "calls4_qos0", "calls16_qos0", "adaptive_budget5000_qos0", "adaptive_budget10000_qos0"}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--label", required=True)
+    parser.add_argument("--out-dir", type=Path, help="default results/ab/<label>")
+    parser.add_argument("--quick", action="store_true", help="1, 4, 16 calls and 5/10 ms budgets only")
     args = parser.parse_args()
-    out = HERE / "results" / "ab" / args.label
+    out = args.out_dir or HERE / "results" / "ab" / args.label
     out.mkdir(parents=True, exist_ok=True)
     failures = []
     for name, extra, verify in RUNS:
+        if args.quick and name not in QUICK:
+            continue
         print("== %s" % name, flush=True)
         verifier = None
         if verify:

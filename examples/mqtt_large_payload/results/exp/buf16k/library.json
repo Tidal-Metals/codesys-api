@@ -1,0 +1,5 @@
+{
+ "label": "buf16k",
+ "commit": "40a984f",
+ "diff": "diff --git a/src/MQTT/Support/SupportConstants.st b/src/MQTT/Support/SupportConstants.st\nindex 1e72433..3982e87 100644\n--- a/src/MQTT/Support/SupportConstants.st\n+++ b/src/MQTT/Support/SupportConstants.st\n@@ -2,6 +2,6 @@\n // only the constants this library uses. See FORK.md.\n VAR_GLOBAL CONSTANT\n \tSTRING_LENGTH : INT := 250;\t// OSCAT_BASIC; the 250-character limit of URL and topic strings\n-\tNETWORK_BUFFER_LONG_SIZE : UINT := 4095;\t// OSCAT_NETWORK_TYPES; send and receive buffer size - 1\n+\tNETWORK_BUFFER_LONG_SIZE : UINT := 16383;\t// OSCAT_NETWORK_TYPES; send and receive buffer size - 1\n \tEXTENDED_ASCII : BOOL := TRUE;\t// OSCAT_BASIC SETUP; TO_LOWER also converts the Latin-1 letters\n END_VAR\n"
+}

@@ -29,7 +29,10 @@ FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
              ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine"), ("AppendZ", "BOOL", "scale/AppendZ")]
 # BCNF's StringPublication (verbatim) and the 2,000-tag scale test, both called by PLC_PRG
 PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"),
-            ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync")]
+            ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync"), ("EdgeTest", "edge/EdgeTest")]
+# MQTT library edge-case test (edge_test.py): its subscription callback
+FUNCTION_BLOCKS = [("FB_EdgeReceiver", "edge/FB_EdgeReceiver")]
+METHODS = [("FB_EdgeReceiver", "PublishReceived", "BOOL", "edge/FB_EdgeReceiver.PublishReceived")]
 ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"),
            ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),
            ("ScaleTest", "UpdateValues", "scale/ScaleTest.UpdateValues"),
@@ -94,6 +97,17 @@ def write_sources(application, source_dir, steps):
         declaration, implementation = read_source(source_dir, source_name)
         pou.textual_declaration.replace(declaration)
         pou.textual_implementation.replace(implementation)
+    for name, source_name in FUNCTION_BLOCKS:
+        pou = direct_child(application, name) or application.create_pou(name=name, type=PouType.FunctionBlock)
+        declaration, implementation = read_source(source_dir, source_name)
+        pou.textual_declaration.replace(declaration)
+        pou.textual_implementation.replace(implementation or u"")
+    for parent_name, method_name, return_type, source_name in METHODS:
+        parent = direct_child(application, parent_name)
+        method = direct_child(parent, method_name) or parent.create_method(method_name, return_type)
+        declaration, implementation = read_source(source_dir, source_name)
+        method.textual_declaration.replace(declaration)
+        method.textual_implementation.replace(implementation)
     for name, source_name in PROGRAMS:
         pou = direct_child(application, name) or application.create_pou(name=name, type=PouType.Program)
         declaration, implementation = read_source(source_dir, source_name)

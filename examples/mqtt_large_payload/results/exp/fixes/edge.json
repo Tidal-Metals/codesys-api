@@ -1,0 +1,39 @@
+{
+ "send": {
+  "cases": 296,
+  "sent": 157,
+  "delivered": 156,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [
+   "sent 157, broker delivered 156"
+  ],
+  "slowest": [
+   {
+    "qos1": false,
+    "seq": 157,
+    "seconds": 10.153,
+    "size": 32744,
+    "done": false
+   },
+   {
+    "qos1": false,
+    "seq": 144,
+    "seconds": 0.221,
+    "size": 32731,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 123,
+    "seconds": 0.218,
+    "size": 32710,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 151,
+  "problems": []
+ }
+}

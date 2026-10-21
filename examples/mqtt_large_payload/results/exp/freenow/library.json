@@ -1,0 +1,5 @@
+{
+ "label": "freenow",
+ "commit": "dba77d3",
+ "diff": "diff --git a/src/MQTT/Support/Common Helper/IP_CONTROL.st b/src/MQTT/Support/Common Helper/IP_CONTROL.st\nindex 44b43ae..2e1a938 100644\n--- a/src/MQTT/Support/Common Helper/IP_CONTROL.st\t\n+++ b/src/MQTT/Support/Common Helper/IP_CONTROL.st\t\n@@ -606,6 +606,16 @@ IF s_req THEN\n \tELSE\n \t\ts_done := TRUE;\n \t\ts_cur_size := DINT_TO_INT(bytes_sent); (* Anzahl der wirklich versendeten Bytes \u00c3\u00bcbernehmen *)\n+\t\t// Tidal Metals fork: the socket took the rest of the buffer, so finish now rather than in the next\n+\t\t// call. The client sees a free buffer at its next call and fills it: one call per buffer, not two.\n+\t\tIF s_cur_pos + s_cur_size >= s_total THEN\n+\t\t\ts_req := FALSE;\n+\t\t\ts_done := FALSE;\n+\t\t\ts_active := FALSE;\n+\t\t\ts_cur_pos := 0;\n+\t\t\ts_cur_size := 0;\n+\t\t\tS_BUF.SIZE := 0;\n+\t\tEND_IF;\n \t\t(* ---------------------- Debug-Message ----------------------------*)\n \t\t(*IF _debug_enable THEN\n \t\t\tLOG_CL.NEW_MSG := 'IP_SEN SEND_COUNT ~1 -IP_ID ~6';\n"
+}

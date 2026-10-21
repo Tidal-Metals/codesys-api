@@ -32,3 +32,4 @@ if __name__ == "__main__":
     messages = report.pop("messages", None) or []
     report["memory"] = [m["text"] for m in messages if "emory" in m["text"] or "address" in m["text"]]
     print(json.dumps(report, indent=1))
+    raise SystemExit(0 if report.get("success") else 1)

@@ -1,0 +1,25 @@
+{
+ "topic": "raw_data_demo/scale",
+ "seconds": 40.0,
+ "byFormat": {
+  "tagvalue": {
+   "messages": 34,
+   "allCorrect": true,
+   "valuesChecked": 68000,
+   "bytesMin": 25868,
+   "bytesMax": 25871,
+   "sequenceGaps": [],
+   "failures": []
+  },
+  "positional": {
+   "messages": 0,
+   "allCorrect": false,
+   "valuesChecked": 0,
+   "bytesMin": 0,
+   "bytesMax": 0,
+   "sequenceGaps": [],
+   "failures": []
+  }
+ },
+ "unparsed": []
+}

@@ -11,6 +11,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 RESULTS = HERE / "results"
+AB = "ab"  # results/<AB>/<label>; --exp switches to the bench_cycle.py results
 RUNS = (["calls%d_qos0" % n for n in (1, 2, 4, 8, 16, 32)]
         + ["adaptive_budget%d_qos0" % b for b in (5000, 10000, 20000)] + ["calls1_qos1"])
 FIELDS = [("LastPublishUs", "publish ms", 1000.0), ("LastPublishCycles", "scans", 1), ("MaxClientUs", "max client ms", 1000.0),
@@ -39,11 +40,15 @@ def main() -> int:
     parser.add_argument("labels", nargs="+")
     parser.add_argument("--baseline", action="store_true", help="add the 2026-10-19/20 runs in results/throughput/")
     parser.add_argument("--json")
+    parser.add_argument("--exp", action="store_true", help="labels are results/exp/<label> (bench_cycle.py) instead of results/ab/")
     args = parser.parse_args()
+    if args.exp:
+        global AB
+        AB = "exp"
     columns = (["2026-10 baseline"] if args.baseline else []) + args.labels
     table = {}
     for run in RUNS:
-        sources = ([baseline(run)] if args.baseline else []) + [load(RESULTS / "ab" / l / (run + ".json")) for l in args.labels]
+        sources = ([baseline(run)] if args.baseline else []) + [load(RESULTS / AB / l / (run + ".json")) for l in args.labels]
         table[run] = dict(zip(columns, sources))
         print("\n%s" % run)
         print("  %-16s" % "" + "".join("%18s" % c for c in columns))
@@ -51,13 +56,13 @@ def main() -> int:
             print("  %-16s" % label + "".join("%18s" % fmt((s or {}).get(key), scale) for s in sources))
     print("\nidle client, us per call (1, 4, 16, 32 calls)")
     idles = ([load(RESULTS / "throughput" / "idle_client.json")] if args.baseline else []) + \
-        [load(RESULTS / "ab" / l / "idle_client.json") for l in args.labels]
+        [load(RESULTS / AB / l / "idle_client.json") for l in args.labels]
     for column, idle in zip(columns, idles):
         runs = (idle or {}).get("runs", [])
         print("  %-18s %s" % (column, ", ".join("%.0f" % r["meanPerCallUs"] for r in runs) or "-"))
     print("\nbroker verification during calls16_qos0")
     verifies = ([load(RESULTS / "throughput" / "verify_calls16.json")] if args.baseline else []) + \
-        [load(RESULTS / "ab" / l / "verify_calls16_qos0.json") for l in args.labels]
+        [load(RESULTS / AB / l / "verify_calls16_qos0.json") for l in args.labels]
     for column, verify in zip(columns, verifies):
         tv = ((verify or {}).get("byFormat") or {}).get("tagvalue") or {}
         print("  %-18s messages=%s allCorrect=%s" % (column, tv.get("messages", "-"), tv.get("allCorrect", "-")))
