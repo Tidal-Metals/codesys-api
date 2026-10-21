@@ -1,0 +1,103 @@
+{
+ "send": {
+  "cases": 85,
+  "sent": 85,
+  "delivered": 83,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [
+   "sent 85, broker delivered 83",
+   "seq 23 size 16361 qos1=False: got 16361 bytes, first difference at 16360",
+   "seq 24 size 16362 qos1=False: got 16363 bytes, first difference at 0",
+   "seq 25 size 16363 qos1=False: got 16364 bytes, first difference at 0",
+   "seq 26 size 16364 qos1=False: got 16365 bytes, first difference at 0",
+   "seq 27 size 16365 qos1=False: got 16366 bytes, first difference at 0",
+   "seq 28 size 16366 qos1=False: got 16367 bytes, first difference at 0",
+   "seq 29 size 16367 qos1=False: got 16368 bytes, first difference at 0",
+   "seq 30 size 16368 qos1=False: got 16369 bytes, first difference at 0",
+   "seq 31 size 16369 qos1=False: got 16370 bytes, first difference at 0",
+   "seq 32 size 16370 qos1=False: got 32730 bytes, first difference at 0",
+   "seq 33 size 32730 qos1=False: got 32731 bytes, first difference at 0",
+   "seq 34 size 32731 qos1=False: got 32732 bytes, first difference at 0",
+   "seq 35 size 32732 qos1=False: got 32733 bytes, first difference at 0",
+   "seq 36 size 32733 qos1=False: got 32734 bytes, first difference at 0",
+   "seq 37 size 32734 qos1=False: got 32735 bytes, first difference at 0",
+   "seq 38 size 32735 qos1=False: got 32736 bytes, first difference at 0",
+   "seq 39 size 32736 qos1=False: got 32737 bytes, first difference at 0",
+   "seq 40 size 32737 qos1=False: got 32738 bytes, first difference at 0",
+   "seq 41 size 32738 qos1=False: got 32739 bytes, first difference at 0",
+   "seq 42 size 32739 qos1=False: got 32740 bytes, first difference at 0",
+   "seq 43 size 32740 qos1=False: got 32741 bytes, first difference at 0",
+   "seq 44 size 32741 qos1=False: got 32742 bytes, first difference at 0",
+   "seq 45 size 32742 qos1=False: got 32743 bytes, first difference at 0",
+   "seq 46 size 32743 qos1=False: got 32745 bytes, first difference at 0",
+   "seq 47 size 32744 qos1=False: got 32746 bytes, first difference at 0",
+   "seq 48 size 32745 qos1=False: got 32747 bytes, first difference at 0",
+   "seq 49 size 32746 qos1=False: got 32748 bytes, first difference at 0",
+   "seq 50 size 32747 qos1=False: got 32749 bytes, first difference at 0",
+   "seq 51 size 32748 qos1=False: got 32750 bytes, first difference at 0",
+   "seq 52 size 32749 qos1=False: got 32751 bytes, first difference at 0",
+   "seq 53 size 32750 qos1=False: got 32752 bytes, first difference at 0",
+   "seq 54 size 32751 qos1=False: got 32753 bytes, first difference at 0",
+   "seq 55 size 32752 qos1=False: got 32754 bytes, first difference at 0",
+   "seq 56 size 32753 qos1=False: got 32755 bytes, first difference at 0",
+   "seq 57 size 32754 qos1=False: got 32756 bytes, first difference at 0",
+   "seq 58 size 32755 qos1=False: got 32757 bytes, first difference at 0",
+   "seq 59 size 32756 qos1=False: got 32758 bytes, first difference at 0",
+   "seq 60 size 32757 qos1=False: got 32759 bytes, first difference at 0",
+   "seq 61 size 32758 qos1=False: got 39990 bytes, first difference at 0",
+   "seq 62 size 32759 qos1=False: got 40000 bytes, first difference at 0",
+   "seq 63 size 39990 qos1=False: got 16350 bytes, first difference at 0",
+   "seq 64 size 40000 qos1=False: got 16351 bytes, first difference at 0",
+   "seq 65 size 16350 qos1=True: got 16352 bytes, first difference at 0",
+   "seq 66 size 16351 qos1=True: got 16353 bytes, first difference at 0",
+   "seq 67 size 16352 qos1=True: got 16354 bytes, first difference at 0",
+   "seq 68 size 16353 qos1=True: got 16355 bytes, first difference at 0",
+   "seq 69 size 16354 qos1=True: got 16356 bytes, first difference at 0",
+   "seq 70 size 16355 qos1=True: got 16357 bytes, first difference at 0",
+   "seq 71 size 16356 qos1=True: got 16358 bytes, first difference at 0",
+   "seq 72 size 16357 qos1=True: got 16359 bytes, first difference at 0",
+   "seq 73 size 16358 qos1=True: got 16360 bytes, first difference at 0",
+   "seq 74 size 16359 qos1=True: got 16361 bytes, first difference at 0",
+   "seq 75 size 16360 qos1=True: got 16362 bytes, first difference at 0",
+   "seq 76 size 16361 qos1=True: got 16363 bytes, first difference at 0",
+   "seq 77 size 16362 qos1=True: got 16364 bytes, first difference at 0",
+   "seq 78 size 16363 qos1=True: got 16365 bytes, first difference at 0",
+   "seq 79 size 16364 qos1=True: got 16366 bytes, first difference at 0",
+   "seq 80 size 16365 qos1=True: got 16367 bytes, first difference at 0",
+   "seq 81 size 16366 qos1=True: got 16368 bytes, first difference at 0",
+   "seq 82 size 16367 qos1=True: got 16369 bytes, first difference at 0",
+   "seq 83 size 16368 qos1=True: got 16370 bytes, first difference at 0"
+  ],
+  "slowest": [
+   {
+    "qos1": true,
+    "seq": 75,
+    "seconds": 1.049,
+    "size": 16360,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 25,
+    "seconds": 0.817,
+    "size": 16363,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 48,
+    "seconds": 0.603,
+    "size": 32745,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 60,
+  "problems": [
+   "size 16357: PLC count 26 -> 26",
+   "size 16358: PLC saw 16358 bytes, adler32 3806192987 (expected 3795774986)"
+  ]
+ }
+}

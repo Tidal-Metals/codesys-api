@@ -1,0 +1,28 @@
+{
+ "runs": [
+  {
+   "MaxClientUs": 1161,
+   "calls": 1,
+   "meanUs": 357,
+   "meanPerCallUs": 357.0
+  },
+  {
+   "MaxClientUs": 2210,
+   "calls": 4,
+   "meanUs": 1179,
+   "meanPerCallUs": 294.8
+  },
+  {
+   "MaxClientUs": 4981,
+   "calls": 16,
+   "meanUs": 4142,
+   "meanPerCallUs": 258.9
+  },
+  {
+   "MaxClientUs": 9354,
+   "calls": 32,
+   "meanUs": 8146,
+   "meanPerCallUs": 254.6
+  }
+ ]
+}

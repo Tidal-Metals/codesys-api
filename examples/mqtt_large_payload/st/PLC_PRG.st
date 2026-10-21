@@ -24,6 +24,9 @@ VAR
 	ClientCallsPerScan : INT := 1;       // most client calls per scan while a message is in flight (one 4 KB buffer per two calls)
 	ClientBudgetUs : ULINT := 5000;      // ... and stop calling once this much time went into the client this scan
 	IsClientLoopGated : BOOL := TRUE;    // FALSE: always make ClientCallsPerScan calls (to measure idle calls)
+	ClientSlots : UINT := 8;             // in and out slots of the MQTT client (library default 50)
+	IsSecondClientCallEnabled : BOOL;    // call the client once more at the end of the scan, after the publishers,
+	                                     // so a reply requested in this scan goes out in this scan (latency test)
 	IsSendInFlight : BOOL;
 	ClientCall : INT;
 	MaxClientCalls : INT;
@@ -145,6 +148,10 @@ MqttLink.ClientID := 'BENCH_MQTT_DEMO';
 // Incoming publishes up to 40 KB of payload (EdgeTest); the library's default limit is 2,000 bytes of payload
 // plus the largest topic. Read once, at the client's first call.
 MqttLink.COM_CONFIG.MaxPayloadSize := 40000;
+// Slots for messages in flight; the library walks every slot on every call. The demo has six publishers and
+// one subscriber; the library default is 50 each way. Read once, at the client's first call.
+MqttLink.COM_CONFIG.CountSlotsIn := ClientSlots;
+MqttLink.COM_CONFIG.CountSlotsOut := ClientSlots;
 // The client moves one 4 KB send buffer per two calls. While any message is in flight, call it again until
 // ClientCallsPerScan calls or ClientBudgetUs; otherwise once, for keep-alive and receiving.
 IsSendInFlight := LargePublisher.sendActive OR ConcatPublisher.sendActive OR TagValuePublisher.sendActive
@@ -307,6 +314,9 @@ ClockSync();
 ScaleTest();
 // MQTT library edge-case test (idle unless EdgeTest.IsEnabled; edge_test.py drives it).
 EdgeTest();
+IF IsSecondClientCallEnabled THEN
+	MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
+END_IF
 
 // What BCNF pays today: its payload strings are rebuilt in every scan, not only when publishing.
 IF IsBcnfEveryScanEnabled THEN

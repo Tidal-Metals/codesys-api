@@ -27,6 +27,7 @@ VAR
 	IsRequested : BOOL;
 	IsArmed : BOOL := TRUE;
 	StartedSequence : UDINT;
+	RequestSize : UDINT;                // SendSize when the current request started
 	PublishQoS : MQTT.QoS;
 	TimeoutEdge : R_TRIG;
 	Payload : ARRAY[0..MAX_PAYLOAD - 1] OF BYTE;
@@ -49,7 +50,8 @@ Subscriber(Subscribe := IsEnabled, Topic := ADR(TopicIn), QoSSubscribe := MQTT.Q
 // MQTTPublish starts on a rising edge of send: a new request only once the publisher has been called with
 // send FALSE after the previous done (IsArmed). Without it a request written in the scan after done is lost.
 IF IsEnabled AND NOT IsRequested AND IsArmed AND SendSequence <> StartedSequence AND SendSize > 0 AND SendSize <= MAX_PAYLOAD THEN
-	FOR Index := 0 TO SendSize - 1 DO
+	RequestSize := SendSize;	// latched: the publish uses the size this request started with
+	FOR Index := 0 TO RequestSize - 1 DO
 		Payload[Index] := UDINT_TO_BYTE((Index * 31 + SendSequence) MOD 251);
 	END_FOR
 	StartedSequence := SendSequence;
@@ -61,7 +63,7 @@ IF IsQos1 THEN
 ELSE
 	PublishQoS := MQTT.QoS.AtMostOnce;
 END_IF
-Publisher(Topic := ADR(TopicOut), PublishAsString := FALSE, Payload := ADR(Payload), PayloadLength := SendSize,
+Publisher(Topic := ADR(TopicOut), PublishAsString := FALSE, Payload := ADR(Payload), PayloadLength := RequestSize,
 	QoSIn := PublishQoS, MRetain := FALSE, send := IsRequested);
 IF NOT IsRequested THEN
 	IsArmed := TRUE;	// the publisher has seen send FALSE

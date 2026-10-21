@@ -1,0 +1,39 @@
+{
+ "send": {
+  "cases": 85,
+  "sent": 85,
+  "delivered": 85,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [
+   "seq 17 size 16355 qos1=False: got 16354 bytes, first difference at None"
+  ],
+  "slowest": [
+   {
+    "qos1": false,
+    "seq": 47,
+    "seconds": 0.424,
+    "size": 32744,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 56,
+    "seconds": 0.416,
+    "size": 32753,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 54,
+    "seconds": 0.415,
+    "size": 32751,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 60,
+  "problems": []
+ }
+}

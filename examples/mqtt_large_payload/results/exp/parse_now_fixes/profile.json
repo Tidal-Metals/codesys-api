@@ -1,0 +1,91 @@
+{
+ "executed_by": "CODESYS PersistentSession",
+ "scenarios": {
+  "idle_calls1": {
+   "maxUs": {
+    "STATE_IN": 304,
+    "TOTAL": 1094,
+    "CONTROL": 945,
+    "PARSE_IN": 141,
+    "CASE_REST": 240,
+    "TAIL": 291,
+    "PREPARE": 267,
+    "STATE_OUT": 274,
+    "SEND_IN": 147,
+    "SEND_OUT": 237
+   },
+   "meanUs": {
+    "STATE_IN": 46.9,
+    "TOTAL": 461.4,
+    "CONTROL": 238.6,
+    "PARSE_IN": 9.4,
+    "CASE_REST": 7.4,
+    "TAIL": 21.5,
+    "PREPARE": 29.0,
+    "STATE_OUT": 57.6,
+    "SEND_IN": 6.5,
+    "SEND_OUT": 10.2
+   },
+   "calls": 404
+  },
+  "fullrefresh_calls16": {
+   "maxUs": {
+    "STATE_IN": 285,
+    "TOTAL": 3233,
+    "CONTROL": 2829,
+    "PARSE_IN": 161,
+    "CASE_REST": 162,
+    "TAIL": 554,
+    "PREPARE": 438,
+    "STATE_OUT": 305,
+    "SEND_IN": 253,
+    "SEND_OUT": 345
+   },
+   "meanUs": {
+    "STATE_IN": 46.0,
+    "TOTAL": 546.0,
+    "CONTROL": 332.0,
+    "PARSE_IN": 7.4,
+    "CASE_REST": 6.0,
+    "TAIL": 18.4,
+    "PREPARE": 24.8,
+    "STATE_OUT": 47.9,
+    "SEND_IN": 7.4,
+    "SEND_OUT": 17.9
+   },
+   "calls": 689,
+   "lastPublishUs": 42931
+  },
+  "fullrefresh_calls1": {
+   "maxUs": {
+    "STATE_IN": 304,
+    "TOTAL": 3194,
+    "CONTROL": 2836,
+    "PARSE_IN": 238,
+    "CASE_REST": 255,
+    "TAIL": 269,
+    "PREPARE": 237,
+    "STATE_OUT": 302,
+    "SEND_IN": 167,
+    "SEND_OUT": 350
+   },
+   "meanUs": {
+    "STATE_IN": 47.4,
+    "TOTAL": 703.4,
+    "CONTROL": 454.6,
+    "PARSE_IN": 10.0,
+    "CASE_REST": 7.6,
+    "TAIL": 19.2,
+    "PREPARE": 28.0,
+    "STATE_OUT": 57.6,
+    "SEND_IN": 9.2,
+    "SEND_OUT": 25.7
+   },
+   "calls": 404,
+   "lastPublishUs": 86537
+  }
+ },
+ "request_id": "76696551-47f7-4781-bb9b-c977b06698d8",
+ "execution_time": 1792610578.506958,
+ "success": true
+}

@@ -22,6 +22,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from run_ide_script import execute  # noqa: E402
 
 BROKER = "192.168.50.240"
+# Written only with --second-call, so older demo builds without the variable still work.
+SECOND_ON = "[('PLC_PRG.IsSecondClientCallEnabled', 'TRUE')]"
+SECOND_OFF = "[('PLC_PRG.IsSecondClientCallEnabled', 'FALSE')]"
 
 SETUP = """
 on = session.ensure_online_application('', True)
@@ -31,7 +34,8 @@ def write(values):
     on.write_prepared_values()
 write([('EdgeTest.IsEnabled', 'TRUE'), ('EdgeTest.IsEchoEnabled', @@ECHO@@),
        ('ScaleTest.IsTagValueFormat', 'TRUE'), ('ScaleTest.TagsPerScan', '2000'), ('ScaleTest.IsQos1', 'FALSE'),
-       ('ScaleTest.IsEnabled', @@LOAD@@), ('PLC_PRG.ClientCallsPerScan', '@@CALLS@@'), ('PLC_PRG.ClientBudgetUs', '@@BUDGET@@')])
+       ('ScaleTest.IsEnabled', @@LOAD@@), ('PLC_PRG.ClientCallsPerScan', '@@CALLS@@'), ('PLC_PRG.ClientBudgetUs', '@@BUDGET@@')]
+      + @@SECOND@@)
 result = {'success': True, 'calls': str(on.read_value('PLC_PRG.ClientCallsPerScan'))}
 """
 
@@ -42,6 +46,7 @@ def main() -> int:
     parser.add_argument("--load", action="store_true")
     parser.add_argument("--client-calls", type=int, default=1)
     parser.add_argument("--budget-us", type=int, default=1000000)
+    parser.add_argument("--second-call", action="store_true", help="PLC_PRG calls the client again after the publishers")
     parser.add_argument("--out")
     args = parser.parse_args()
     echoes, arrived = [], threading.Event()
@@ -58,7 +63,8 @@ def main() -> int:
     client.connect(BROKER, 1883, keepalive=30)
     client.loop_start()
     setup = SETUP.replace("@@ECHO@@", "'TRUE'").replace("@@LOAD@@", "'TRUE'" if args.load else "'FALSE'") \
-        .replace("@@CALLS@@", str(args.client_calls)).replace("@@BUDGET@@", str(args.budget_us))
+        .replace("@@CALLS@@", str(args.client_calls)).replace("@@BUDGET@@", str(args.budget_us)) \
+        .replace("@@SECOND@@", SECOND_ON if args.second_call else "[]")
     execute(setup, 60)
     time.sleep(3)
     rtts, lost = [], 0
@@ -72,12 +78,12 @@ def main() -> int:
             lost += 1
         time.sleep(0.2)
     stop = SETUP.replace("@@ECHO@@", "'FALSE'").replace("@@LOAD@@", "'FALSE'").replace("@@CALLS@@", "1") \
-        .replace("@@BUDGET@@", "5000")
+        .replace("@@BUDGET@@", "5000").replace("@@SECOND@@", SECOND_OFF if args.second_call else "[]")
     execute(stop, 60)
     client.loop_stop()
     client.disconnect()
     rtts.sort()
-    report = {"count": args.count, "lost": lost, "load": args.load, "clientCalls": args.client_calls,
+    report = {"count": args.count, "lost": lost, "load": args.load, "clientCalls": args.client_calls, "secondCall": args.second_call,
               "budgetUs": args.budget_us}
     if rtts:
         report.update({"minMs": round(rtts[0], 1), "medianMs": round(statistics.median(rtts), 1),

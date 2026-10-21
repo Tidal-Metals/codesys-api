@@ -25,6 +25,21 @@ DEMO = Path.home() / "projects" / "codesys_projects" / "mqtt_large_payload_demo"
 DEMO_TM = Path.home() / "projects" / "codesys_projects" / "mqtt_large_payload_demo_tm" / "mqtt_large_payload_demo.project"
 API = "http://127.0.0.1:8081/api/v1"
 PY = sys.executable
+TASK_INTERVAL_CODE = """
+p = scriptengine.projects.primary
+tasks = []
+for obj in p.get_children(True):
+    try:
+        is_task = obj.is_task
+    except Exception:
+        is_task = False
+    if is_task:
+        obj.interval = '@@MS@@'
+        obj.interval_unit = 'ms'
+        tasks.append('%s=%s %s' % (obj.get_name(), obj.interval, obj.interval_unit))
+p.save()
+result = {'success': bool(tasks), 'tasks': tasks}
+"""
 
 
 def api(path: str, body: dict | None = None, timeout: int = 240) -> dict:
@@ -54,17 +69,20 @@ def main() -> int:
     parser.add_argument("--full", action="store_true")
     parser.add_argument("--apply-sources", action="store_true", help="first apply st/ to the original demo (apply_session.py)")
     parser.add_argument("--edge-only", action="store_true", help="skip the profile and throughput runs")
+    parser.add_argument("--task-ms", type=int, help="set the demo's task interval (ms) before deploying")
+    parser.add_argument("--fork", type=Path, default=FORK, help="CODESYS-MQTT checkout to build (default ~/projects/CODESYS-MQTT)")
     args = parser.parse_args()
+    fork = args.fork.resolve()
     out = HERE / "results" / "exp" / args.label
     out.mkdir(parents=True, exist_ok=True)
     log = out / "cycle.log"
     meta = {"label": args.label,
-            "commit": subprocess.check_output(["git", "-C", str(FORK), "rev-parse", "--short", "HEAD"], text=True).strip(),
-            "diff": subprocess.check_output(["git", "-C", str(FORK), "diff", "--", "src", "build.json"], text=True)}
+            "commit": subprocess.check_output(["git", "-C", str(fork), "rev-parse", "--short", "HEAD"], text=True).strip(),
+            "diff": subprocess.check_output(["git", "-C", str(fork), "diff", "--", "src", "build.json"], text=True)}
     (out / "library.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     if not args.skip_build:
         step("build library")
-        if run([PY, "tools/build_library.py"], FORK, log) != 0:
+        if run([PY, "tools/build_library.py"], fork, log) != 0:
             sys.exit("build failed; see %s" % log)
     step("close session project")
     api("/plc/logout")
@@ -76,13 +94,23 @@ def main() -> int:
             sys.exit("apply_session failed; see %s" % log)
         api("/project/close")
     step("compile demo against the build")
-    if run([PY, "tools/app_check.py", "--host", DEMO, "--keep-as", DEMO_TM], FORK, log) != 0:
+    if run([PY, "tools/app_check.py", "--host", DEMO, "--keep-as", DEMO_TM], fork, log) != 0:
         sys.exit("application check failed; see %s" % log)
     step("open and deploy")
     api("/project/open", {"path": str(DEMO_TM).replace("\\", "/")})
     refs = subprocess.check_output([PY, "run_ide_script.py", "tmp/list_mqtt_refs.py", "--timeout", "60"], cwd=REPO, text=True)
     if "MQTT, 1.3" not in refs:
         sys.exit("the open demo does not reference the fork:\n" + refs)
+    if args.task_ms:
+        step("task interval %d ms" % args.task_ms)
+        sys.path.insert(0, str(REPO))
+        from run_ide_script import execute  # noqa: E402
+        result = execute(TASK_INTERVAL_CODE.replace("@@MS@@", str(args.task_ms)), 120)
+        if not result.get("success"):
+            sys.exit("setting the task interval failed: %s" % result)
+        meta["taskMs"] = args.task_ms
+        meta["tasks"] = result.get("tasks")
+        (out / "library.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     if run([PY, HERE / "deploy_demo.py"], REPO, log) != 0:
         sys.exit("deploy failed; see %s" % log)
     code = 0
@@ -97,6 +125,8 @@ def main() -> int:
     step("command round trip")
     latency = run([PY, HERE / "measure_latency.py", "--count", "40", "--out", out / "latency_idle.json"], REPO, log)
     latency |= run([PY, HERE / "measure_latency.py", "--count", "40", "--load", "--out", out / "latency_load.json"], REPO, log)
+    latency |= run([PY, HERE / "measure_latency.py", "--count", "40", "--second-call",
+                    "--out", out / "latency_second_call.json"], REPO, log)
     print("done: %s (throughput exit %d, edge exit %d, latency exit %d)" % (out, code, edge, latency))
     return code or edge or latency
 

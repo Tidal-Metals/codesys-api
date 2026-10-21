@@ -67,7 +67,10 @@ start_timeouts = int(text('EdgeTest.TimeoutCount'))
 sent = []
 for size, qos1 in @@CASES@@:
     seq += 1
-    write([('EdgeTest.SendSize', str(size)), ('EdgeTest.IsQos1', 'TRUE' if qos1 else 'FALSE'), ('EdgeTest.SendSequence', str(seq))])
+    # Size and QoS first, the sequence (which starts the send) in a second write: one write of all three can
+    # reach the PLC across a scan boundary, and EdgeTest would start with the previous size.
+    write([('EdgeTest.SendSize', str(size)), ('EdgeTest.IsQos1', 'TRUE' if qos1 else 'FALSE')])
+    write([('EdgeTest.SendSequence', str(seq))])
     started = time.time()
     done = False
     while time.time() - started < 10:
