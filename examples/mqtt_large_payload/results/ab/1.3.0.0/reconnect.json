@@ -1,0 +1,28 @@
+{
+ "connectedBefore": true,
+ "historyAfter": [
+  {
+   "unavailable": "Dereference of invalid pointer"
+  }
+ ],
+ "connectedAfter": true,
+ "request_id": "2fbf6103-c231-457c-a93b-1f69ae9c4cbb",
+ "disconnectSeconds": 0.21,
+ "sawDisconnect": true,
+ "success": true,
+ "pcUtc": "2026-10-21-17:27:40",
+ "reconnectSeconds": 0.41,
+ "executed_by": "CODESYS PersistentSession",
+ "execution_time": 1792603660.0817795,
+ "tdi": {
+  "UDT": "DATE_AND_TIME#2026-10-21-17:27:40",
+  "SYSTEM_TIME": "DATE_AND_TIME#2026-10-21-17:27:40",
+  "TIME_IO": "TRUE",
+  "IMP": "FALSE"
+ },
+ "historyBefore": [
+  {
+   "unavailable": "Dereference of invalid pointer"
+  }
+ ]
+}
