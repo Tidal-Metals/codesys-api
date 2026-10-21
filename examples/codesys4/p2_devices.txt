@@ -1,0 +1,267 @@
+62 AutomationDirect device descriptions under C:\ProgramData\CODESYS\Devices
+
+4094\1767 0001\1.0.0.0  P2CDS622_NetConfig
+  desc: A device that allows users to update the IP address, subnet mask, default gateway, and DNS
+  size: 7968  signed/encrypted marker: False
+  lib: FBInstance@fbname=IoDrvP2cds622NetConfig
+  lib: RequiredLib:IoDrvP2cds622NetConfig
+  lib: RequiredLib@libname=IoDrvP2cds622NetConfig
+  lib: RequiredLib@placeholderlib=IoDrvP2cds622NetConfig
+
+4095\1767 0001\1.0.0.0  P2CDS622_SystemTags
+  desc: A device that provides P2CDS-622 system tags
+  size: 6178  signed/encrypted marker: False
+  lib: FBInstance@fbname=IoDrvP2cds622SystemTags
+  lib: RequiredLib:IoDrvP2cds622SystemTags
+  lib: RequiredLib@libname=IoDrvP2cds622SystemTags
+  lib: RequiredLib@placeholderlib=IoDrvP2cds622SystemTags
+
+4096\1767 0001\1.1.11.0  P2CDS622
+  desc: P2CDS622 CODESYS Control from AutomationDirect Full Bases ver3
+  size: 101763  signed/encrypted marker: False
+  lib: RequiredLib:IoStandard
+  lib: RequiredLib@libname=IoStandard
+  lib: RequiredLib@placeholderlib=IoStandard
+  lib: RequiredLibEx@libname=3SLicense
+  lib: RequiredLibEx@placeholderlib=3SLicense
+
+4096\1767 0001\1.1.13.0  P2CDS622
+  desc: P2CDS622 CODESYS Control from AutomationDirect Full Bases ver3
+  size: 101763  signed/encrypted marker: False
+  lib: RequiredLib:IoStandard
+  lib: RequiredLib@libname=IoStandard
+  lib: RequiredLib@placeholderlib=IoStandard
+  lib: RequiredLibEx@libname=3SLicense
+  lib: RequiredLibEx@placeholderlib=3SLicense
+
+41000\1767 1001\0.0.2  P2-08NAS
+  desc: 8pt. Isolated Input, 110VAC-240VAC
+  size: 5631  signed/encrypted marker: False
+
+41000\1767 1002\0.0.2  P2-08NE3
+  desc: 8pt. Sink/Source Input, 24VAC/VDC
+  size: 5616  signed/encrypted marker: False
+
+41003\1767 1004\0.0.2  P2-08ND3-1
+  desc: 8pt. Sink/Source Input, 12-24VDC
+  size: 5647  signed/encrypted marker: False
+
+41100\1767 1005\0.0.2  P2-08SIM
+  desc: 8pt. Input Simulator
+  size: 5623  signed/encrypted marker: False
+
+41100\1767 1006\0.0.3  P2-16NA
+  desc: 16pt. Input, 100-200VAC
+  size: 7633  signed/encrypted marker: False
+
+41100\1767 1008\0.0.3  P2-16ND3-1
+  desc: 16pt. Sink/Source Input, 12-24VDC
+  size: 7699  signed/encrypted marker: False
+
+41100\1767 1013\0.0.1  P2-16ND-TTL
+  desc: 16pt. Sink/Source Input, 5VDC
+  size: 7715  signed/encrypted marker: False
+
+41103\1767 1009\0.0.6  P2-16NE3
+  desc: 16pt. Sink/Source Input, 24VAC/VDC
+  size: 7656  signed/encrypted marker: False
+
+41200\1767 1011\0.0.2  P2-32ND3-1
+  desc: 32pt. Sink/Source Input, 12-24VDC
+  size: 11235  signed/encrypted marker: False
+
+41203\1767 1012\0.0.2  P2-32NE3
+  desc: Undefined Byte 0
+  size: 12131  signed/encrypted marker: False
+
+42000\1767 2001\0.0.1  P2-08TAS
+  desc: 8pt. Isolated Output 100-240VAC Output
+  size: 7516  signed/encrypted marker: False
+
+42000\1767 2002\0.0.2  P2-08TD1S
+  desc: 8pt. Sink Output 12-24VDC Output
+  size: 5629  signed/encrypted marker: False
+
+42000\1767 2003\0.0.2  P2-08TD2S
+  desc: 8pt. Source Output 12-24VDC Output
+  size: 5631  signed/encrypted marker: False
+
+42000\1767 2004\0.0.1  P2-08TRS
+  desc: 8pt. Isolated Relay Output
+  size: 5609  signed/encrypted marker: False
+
+42000\1767 2015\0.0.1  P2-06TRS
+  desc: 6pt. Isolated Relay Output
+  size: 5244  signed/encrypted marker: False
+
+42000\1767 2017\0.0.1  P2-08TEPS
+  desc: 8pt. 24VDC/VAC Relay Output
+  size: 5949  signed/encrypted marker: False
+
+42001\1767 2005\0.0.2  P2-08TD1P
+  desc: 8pt. 12-24VDC Sink Output
+  size: 7410  signed/encrypted marker: False
+
+42001\1767 2006\0.0.2  P2-08TD2P
+  desc: 8pt. 12-24VDC Source Output
+  size: 7404  signed/encrypted marker: False
+
+42100\1767 2007\0.0.1  P2-15TD1
+  desc: 15pt 12-24VDC Source Output
+  size: 7537  signed/encrypted marker: False
+
+42100\1767 2008\0.0.2  P2-15TD2
+  desc: 15pt 12-24VDC Source Output
+  size: 7523  signed/encrypted marker: False
+
+42100\1767 2009\0.0.2  P2-16TA
+  desc: 16pt 100-240 VAC Output
+  size: 7676  signed/encrypted marker: False
+
+42100\1767 2010\0.0.2  P2-16TR
+  desc: 16pt. Relay Output
+  size: 7668  signed/encrypted marker: False
+
+42100\1767 2016\0.0.1  P2-16TD-TTL
+  desc: 16pt Sink/Source Output, 5VDC
+  size: 7758  signed/encrypted marker: False
+
+42103\1767 2011\0.0.2  P2-16TD1P
+  desc: 16 Discrete Output
+  size: 12485  signed/encrypted marker: False
+
+42103\1767 2012\0.0.7  P2-16TD2P
+  desc: 16pt. 12-24VDC Source Output
+  size: 12335  signed/encrypted marker: False
+
+42204\1767 2013\0.0.2  P2-32TD1P
+  desc: 32 Discrete Output
+  size: 19201  signed/encrypted marker: False
+
+42204\1767 2014\0.0.2  P2-32TD2P
+  desc: 32pt. 12-24VDC Source Output
+  size: 19420  signed/encrypted marker: False
+
+43019\1767 3001\0.0.6  P2-04AD-1
+  desc: Undefined Byte 0
+  size: 10966  signed/encrypted marker: False
+
+43019\1767 3002\0.0.4  P2-04AD-2
+  desc: Undefined Byte 0
+  size: 10966  signed/encrypted marker: False
+
+43079\1767 3003\0.0.5  P2-04AD
+  desc: Undefined Byte 0
+  size: 19573  signed/encrypted marker: False
+
+43439\1767 3004\0.0.4  P2-06RTD
+  desc: Undefined Bit 1
+  size: 18618  signed/encrypted marker: False
+
+43519\1767 3005\0.0.3  P2-08AD-1
+  desc: Undefined Byte 0
+  size: 13806  signed/encrypted marker: False
+
+43519\1767 3006\0.0.3  P2-08AD-2
+  desc: Undefined Byte 0
+  size: 13839  signed/encrypted marker: False
+
+43519\1767 3007\0.0.1  P2-08ADL-1
+  desc: Undefined Byte 0
+  size: 13870  signed/encrypted marker: False
+
+43519\1767 3008\0.0.1  P2-08ADL-2
+  desc: Undefined Byte 0
+  size: 13878  signed/encrypted marker: False
+
+43539\1767 3010\0.0.3  P2-08NTC
+  desc: Undefined Bit 1
+  size: 19024  signed/encrypted marker: False
+
+43569\1767 3009\0.0.4  P2-08THM
+  desc: Undefined Bit 1
+  size: 37272  signed/encrypted marker: False
+
+43569\1767 3015\0.0.1  P2-08THMS
+  desc: Undefined Bit 1
+  size: 37276  signed/encrypted marker: False
+
+43619\1767 3011\0.0.2  P2-16AD-1
+  desc: Undefined Byte 0
+  size: 19871  signed/encrypted marker: False
+
+43619\1767 3012\0.0.2  P2-16AD-2
+  desc: Undefined Byte 0
+  size: 19871  signed/encrypted marker: False
+
+43619\1767 3013\0.0.2  P2-16ADL-1
+  desc: Undefined Byte 0
+  size: 19963  signed/encrypted marker: False
+
+43619\1767 3014\0.0.2  P2-16ADL-2
+  desc: Undefined Byte 0
+  size: 20002  signed/encrypted marker: False
+
+44004\1767 4001\0.0.2  P2-04DAL-1
+  desc: Undefined Byte 0
+  size: 6604  signed/encrypted marker: False
+
+44004\1767 4002\0.0.2  P2-04DAL-2
+  desc: Undefined Byte 0
+  size: 6600  signed/encrypted marker: False
+
+44004\1767 4013\0.0.5  P2-04DA-1
+  desc: Undefined Byte 0
+  size: 6571  signed/encrypted marker: False
+
+44004\1767 4014\0.0.4  P2-04DA-2
+  desc: Undefined Byte 0
+  size: 6559  signed/encrypted marker: False
+
+44034\1767 4003\0.0.6  P2-04DA
+  desc: Undefined Byte 0
+  size: 9981  signed/encrypted marker: False
+
+44504\1767 4004\0.0.3  P2-08DA-1
+  desc: Undefined Byte 0
+  size: 7281  signed/encrypted marker: False
+
+44504\1767 4005\0.0.3  P2-08DA-2
+  desc: Undefined Byte 0
+  size: 7257  signed/encrypted marker: False
+
+44504\1767 4006\0.0.1  P2-08DAL-1
+  desc: Undefined Byte 0
+  size: 7302  signed/encrypted marker: False
+
+44504\1767 4007\0.0.1  P2-08DAL-2
+  desc: Undefined Byte 0
+  size: 7302  signed/encrypted marker: False
+
+44514\1767 4008\0.0.1  P2-04PWM
+  desc: Undefined Byte 0
+  size: 11199  signed/encrypted marker: False
+
+44604\1767 4009\0.0.1  P2-16DA-1
+  desc: Undefined Byte 0
+  size: 8766  signed/encrypted marker: False
+
+44604\1767 4010\0.0.1  P2-16DA-2
+  desc: Undefined Byte 0
+  size: 8717  signed/encrypted marker: False
+
+44604\1767 4011\0.0.1  P2-16DAL-1
+  desc: Undefined Byte 0
+  size: 8797  signed/encrypted marker: False
+
+44604\1767 4012\0.0.1  P2-16DAL-2
+  desc: Undefined Byte 0
+  size: 8798  signed/encrypted marker: False
+
+45059\1767 5001\0.0.5  P2-8AD4DA-1
+  desc: Undefined Byte 0
+  size: 22302  signed/encrypted marker: False
+
+45089\1767 5002\0.0.8  P2-8AD4DA-2
+  desc: Undefined Byte 0
+  size: 30785  signed/encrypted marker: False
