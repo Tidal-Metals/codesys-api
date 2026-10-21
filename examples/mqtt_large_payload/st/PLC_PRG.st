@@ -25,6 +25,7 @@ VAR
 	ClientBudgetUs : ULINT := 5000;      // ... and stop calling once this much time went into the client this scan
 	IsClientLoopGated : BOOL := TRUE;    // FALSE: always make ClientCallsPerScan calls (to measure idle calls)
 	ClientSlots : UINT := 8;             // in and out slots of the MQTT client (library default 50)
+	IsClientCalledLast : BOOL;           // run the client loop at the end of the scan, after the publishers
 	IsSecondClientCallEnabled : BOOL;    // call the client once more at the end of the scan, after the publishers,
 	                                     // so a reply requested in this scan goes out in this scan (latency test)
 	IsSendInFlight : BOOL;
@@ -71,6 +72,11 @@ VAR
 	MaxConcatBuildUs : UDINT;
 	ClientUs : UDINT;
 	MaxClientUs : UDINT;
+	SecondCallBudgetUs : UDINT := 2000;  // the second call runs only if the first took less than this
+	SecondStartUs : ULINT;
+	SecondClientUs : UDINT;
+	ScanClientUs : UDINT;                // both calls in this scan
+	MaxScanClientUs : UDINT;
 	CycleUs : UDINT;
 	MaxCycleUs : UDINT;
 	IntervalUs : UDINT;
@@ -121,6 +127,7 @@ IF ResetStats THEN
 	MaxLargeBuildUs := 0;
 	MaxConcatBuildUs := 0;
 	MaxClientUs := 0;
+	MaxScanClientUs := 0;
 	MaxClientCalls := 0;
 	MaxCycleUs := 0;
 	MaxIntervalUs := 0;
@@ -154,20 +161,9 @@ MqttLink.COM_CONFIG.CountSlotsIn := ClientSlots;
 MqttLink.COM_CONFIG.CountSlotsOut := ClientSlots;
 // The client moves one 4 KB send buffer per two calls. While any message is in flight, call it again until
 // ClientCallsPerScan calls or ClientBudgetUs; otherwise once, for keep-alive and receiving.
-IsSendInFlight := LargePublisher.sendActive OR ConcatPublisher.sendActive OR TagValuePublisher.sendActive
-	OR ScaleTest.Publisher.sendActive OR EdgeTest.Publisher.sendActive OR EdgeTest.EchoPublisher.sendActive;
-StepStartUs := NowUs();
-ClientCall := 0;
-REPEAT
-	MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
-	ClientCall := ClientCall + 1;
-UNTIL ClientCall >= ClientCallsPerScan
-	OR_ELSE (IsClientLoopGated AND NOT IsSendInFlight)
-	OR_ELSE NowUs() - StepStartUs >= ClientBudgetUs
-END_REPEAT
-MaxClientCalls := MAX(MaxClientCalls, ClientCall);
-ClientUs := ULINT_TO_UDINT(NowUs() - StepStartUs);
-MaxClientUs := MAX(MaxClientUs, ClientUs);
+IF NOT IsClientCalledLast THEN
+	CallClient();
+END_IF
 IsBrokerConnected := MqttLink.BROKER_CONNECTED;
 
 IF NOT IsInitialized THEN
@@ -314,8 +310,21 @@ ClockSync();
 ScaleTest();
 // MQTT library edge-case test (idle unless EdgeTest.IsEnabled; edge_test.py drives it).
 EdgeTest();
-IF IsSecondClientCallEnabled THEN
+// The second call sends what the publishers requested in this scan (a command's acknowledgement), but only
+// while the first call left room in the scan's client budget: during a full refresh the first call already
+// sent a 16 KB buffer, and a second one would double the scan's client time.
+SecondClientUs := 0;
+IF IsSecondClientCallEnabled AND ClientUs < SecondCallBudgetUs THEN
+	SecondStartUs := NowUs();
 	MqttLink.clientFB(MQTT_IN_OUT := MqttLink, ENABLE := TRUE, URL := BrokerUrl, TIMEOUT := T#10S, TLS := FALSE);
+	SecondClientUs := ULINT_TO_UDINT(NowUs() - SecondStartUs);
+END_IF
+ScanClientUs := ClientUs + SecondClientUs;
+MaxScanClientUs := MAX(MaxScanClientUs, ScanClientUs);
+// With IsClientCalledLast the client runs once per scan here, after every publisher and subscriber, so a
+// reply requested in this scan goes out in this scan's call.
+IF IsClientCalledLast THEN
+	CallClient();
 END_IF
 
 // What BCNF pays today: its payload strings are rebuilt in every scan, not only when publishing.

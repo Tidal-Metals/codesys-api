@@ -14,7 +14,7 @@ RESULTS = HERE / "results"
 AB = "ab"  # results/<AB>/<label>; --exp switches to the bench_cycle.py results
 RUNS = (["calls%d_qos0" % n for n in (1, 2, 4, 8, 16, 32)]
         + ["adaptive_budget%d_qos0" % b for b in (5000, 10000, 20000)] + ["calls1_qos1"])
-FIELDS = [("LastPublishUs", "publish ms", 1000.0), ("LastPublishCycles", "scans", 1), ("MaxClientUs", "max client ms", 1000.0),
+FIELDS = [("LastPublishUs", "publish ms", 1000.0), ("LastPublishCycles", "scans", 1), ("MaxClientUs", "max client ms", 1000.0), ("MaxScanClientUs", "max scan client ms", 1000.0),
           ("cycleSampleMeanUs", "mean scan ms", 1000.0), ("sentDuringWindow", "sent", 1), ("TimeoutCount", "timeouts", 1)]
 
 

@@ -1,0 +1,12 @@
+{
+ "label": "target100_last",
+ "commit": "7263c4a",
+ "diff": "",
+ "taskMs": 100,
+ "tasks": [
+  "MainTask=100 ms"
+ ],
+ "plcSet": [
+  "PLC_PRG.IsClientCalledLast=TRUE"
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "label": "recommended100",
+ "commit": "7263c4a",
+ "diff": "",
+ "taskMs": 100,
+ "tasks": [
+  "MainTask=100 ms"
+ ],
+ "plcSet": [
+  "PLC_PRG.IsSecondClientCallEnabled=TRUE"
+ ]
+}

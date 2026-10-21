@@ -26,6 +26,10 @@ from run_ide_script import execute  # noqa: E402
 VM = "ktritz@192.168.50.142"
 PROXY_URL = "192.168.50.142:1884"
 HQ_URL = "192.168.50.240:1883"
+# --broker-restart: a private mosquitto on this desktop (firewall rule for mosquitto), killed and restarted
+LOCAL_BROKER_URL = "192.168.50.108:1884"
+MOSQUITTO = r"C:\Program Files\mosquitto\mosquitto.exe"
+LOCAL_BROKER_CONF = Path(__file__).resolve().parent / "link_loss_broker.conf"
 PROXY_START = "nohup python3 /tmp/mqtt_link_proxy.py --listen 1884 > /tmp/mqtt_link_proxy.log 2>&1 &"
 # Anchored on the interpreter so the ssh shell (whose command line contains the pattern) is never matched.
 PROXY_PIDS = "pgrep -f '^python3 /tmp/mqtt_link_proxy.py'"
@@ -96,20 +100,47 @@ def recovered(before: dict, seconds: float = 12) -> dict:
             "echoesSince": after["echoes"] - before["echoes"], "connected": after["connected"]}
 
 
+class LocalBroker:
+    """The private mosquitto for --broker-restart: started, killed and restarted by the test."""
+
+    def __init__(self) -> None:
+        self.process = None
+
+    def start(self) -> None:
+        self.process = subprocess.Popen([MOSQUITTO, "-c", str(LOCAL_BROKER_CONF)], stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW)
+        time.sleep(1)
+
+    def kill(self) -> None:
+        if self.process is not None:
+            self.process.kill()
+            self.process.wait(10)
+            self.process = None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--kills", type=int, default=3)
     parser.add_argument("--freeze-seconds", type=float, default=40)
+    parser.add_argument("--broker-restart", action="store_true",
+                        help="instead of the proxy: kill and restart a private broker on this desktop")
     parser.add_argument("--out")
     args = parser.parse_args()
-    report = {"faults": []}
-    if not vm(PROXY_PIDS).strip():
-        proxy("start")
+    report = {"mode": "broker-restart" if args.broker_restart else "proxy", "faults": []}
+    broker = LocalBroker()
+    if args.broker_restart:
+        broker.start()
+        plc_url, pc_host, pc_port = LOCAL_BROKER_URL, "127.0.0.1", 1884
+    else:
+        if not vm(PROXY_PIDS).strip():
+            proxy("start")
+        plc_url, pc_host, pc_port = PROXY_URL, "192.168.50.240", 1883
     echoes, stop = [], threading.Event()
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="linkloss-%d" % os.getpid())
     client.on_connect = lambda c, u, f, r, p=None: c.subscribe("raw_data_demo/edge_echo", qos=1)
     client.on_message = lambda c, u, m: echoes.append((time.time(), m.payload.decode(errors="replace")))
-    client.connect("192.168.50.240", 1883, keepalive=30)
+    client.reconnect_delay_set(min_delay=1, max_delay=2)   # back quickly after a broker restart
+    client.connect(pc_host, pc_port, keepalive=30)
     client.loop_start()
 
     def commands() -> None:
@@ -120,7 +151,7 @@ def main() -> int:
             time.sleep(0.2)
 
     try:
-        report["connectViaProxySeconds"] = connect_to(PROXY_URL)
+        report["connectSeconds"] = connect_to(plc_url)
         write([("EdgeTest.IsEnabled", "TRUE"), ("EdgeTest.IsEchoEnabled", "TRUE"), ("ScaleTest.IsTagValueFormat", "TRUE"),
                ("ScaleTest.TagsPerScan", "2000"), ("ScaleTest.IsQos1", "FALSE"), ("PLC_PRG.ClientCallsPerScan", "1"),
                ("ScaleTest.IsEnabled", "TRUE")])
@@ -129,26 +160,28 @@ def main() -> int:
         for trial in range(args.kills):
             time.sleep(2.0 + 0.3 * trial)  # vary where in the 1 s publish cycle the link breaks
             before = state()
-            proxy("kill")
+            broker.kill() if args.broker_restart else proxy("kill")
             detect, _ = wait_for(lambda s: not s["connected"], 60)
             time.sleep(5)
-            proxy("start")
+            broker.start() if args.broker_restart else proxy("start")
             reconnect, _ = wait_for(lambda s: s["connected"], 60)
-            report["faults"].append({"kind": "kill", "detectSeconds": detect, "reconnectSeconds": reconnect,
-                                     **recovered(before)})
-        before = state()
-        proxy("freeze")
-        detect, _ = wait_for(lambda s: not s["connected"], args.freeze_seconds)
-        proxy("thaw")
-        reconnect, _ = wait_for(lambda s: s["connected"], 60)
-        report["faults"].append({"kind": "freeze", "frozenSeconds": args.freeze_seconds, "detectSeconds": detect,
-                                 "reconnectSeconds": reconnect, **recovered(before)})
+            report["faults"].append({"kind": "broker-kill" if args.broker_restart else "kill", "detectSeconds": detect,
+                                     "reconnectSeconds": reconnect, **recovered(before)})
+        if not args.broker_restart:
+            before = state()
+            proxy("freeze")
+            detect, _ = wait_for(lambda s: not s["connected"], args.freeze_seconds)
+            proxy("thaw")
+            reconnect, _ = wait_for(lambda s: s["connected"], 60)
+            report["faults"].append({"kind": "freeze", "frozenSeconds": args.freeze_seconds, "detectSeconds": detect,
+                                     "reconnectSeconds": reconnect, **recovered(before)})
     finally:
         stop.set()
         write([("ScaleTest.IsEnabled", "FALSE"), ("EdgeTest.IsEchoEnabled", "FALSE")])
         report["restoreSeconds"] = connect_to(HQ_URL)
         client.loop_stop()
         client.disconnect()
+        broker.kill()
     report["echoesTotal"] = len(echoes)
     report["duplicateEchoes"] = len(echoes) - len({payload for _, payload in echoes})
     ok = all(f["reconnectSeconds"] is not None and f["connected"] and f["scaleSentSince"] > 3

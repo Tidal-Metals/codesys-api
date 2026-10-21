@@ -33,7 +33,7 @@ PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"
 # MQTT library edge-case test (edge_test.py): its subscription callback
 FUNCTION_BLOCKS = [("FB_EdgeReceiver", "edge/FB_EdgeReceiver")]
 METHODS = [("FB_EdgeReceiver", "PublishReceived", "BOOL", "edge/FB_EdgeReceiver.PublishReceived")]
-ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"),
+ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"), ("PLC_PRG", "CallClient", "PLC_PRG.CallClient"),
            ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),
            ("ScaleTest", "UpdateValues", "scale/ScaleTest.UpdateValues"),
            ("ScaleTest", "BuildTag", "scale/ScaleTest.BuildTag"),

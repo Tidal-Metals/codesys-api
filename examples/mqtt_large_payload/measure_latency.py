@@ -10,6 +10,7 @@ being sent. Reports min, median, p90 and max milliseconds, and lost echoes.
 import argparse
 import json
 import os
+import random
 import statistics
 import sys
 import threading
@@ -47,8 +48,10 @@ def main() -> int:
     parser.add_argument("--client-calls", type=int, default=1)
     parser.add_argument("--budget-us", type=int, default=1000000)
     parser.add_argument("--second-call", action="store_true", help="PLC_PRG calls the client again after the publishers")
+    parser.add_argument("--client-last", choices=["on", "off"], help="set PLC_PRG.IsClientCalledLast for the run")
     parser.add_argument("--out")
     args = parser.parse_args()
+    client_last = "" if not args.client_last else " + [('PLC_PRG.IsClientCalledLast', '%s')]" % ("TRUE" if args.client_last == "on" else "FALSE")
     echoes, arrived = [], threading.Event()
 
     def on_connect(client, userdata, flags, reason_code, properties=None):
@@ -64,7 +67,7 @@ def main() -> int:
     client.loop_start()
     setup = SETUP.replace("@@ECHO@@", "'TRUE'").replace("@@LOAD@@", "'TRUE'" if args.load else "'FALSE'") \
         .replace("@@CALLS@@", str(args.client_calls)).replace("@@BUDGET@@", str(args.budget_us)) \
-        .replace("@@SECOND@@", SECOND_ON if args.second_call else "[]")
+        .replace("@@SECOND@@", (SECOND_ON if args.second_call else "[]") + client_last)
     execute(setup, 60)
     time.sleep(3)
     rtts, lost = [], 0
@@ -76,14 +79,15 @@ def main() -> int:
             rtts.append((time.perf_counter() - started) * 1000.0)
         else:
             lost += 1
-        time.sleep(0.2)
+        # a random gap: a fixed one locks the commands to the PLC scan phase and biases the result
+        time.sleep(random.uniform(0.15, 0.45))
     stop = SETUP.replace("@@ECHO@@", "'FALSE'").replace("@@LOAD@@", "'FALSE'").replace("@@CALLS@@", "1") \
         .replace("@@BUDGET@@", "5000").replace("@@SECOND@@", SECOND_OFF if args.second_call else "[]")
     execute(stop, 60)
     client.loop_stop()
     client.disconnect()
     rtts.sort()
-    report = {"count": args.count, "lost": lost, "load": args.load, "clientCalls": args.client_calls, "secondCall": args.second_call,
+    report = {"count": args.count, "lost": lost, "load": args.load, "clientCalls": args.client_calls, "secondCall": args.second_call, "clientLast": args.client_last,
               "budgetUs": args.budget_us}
     if rtts:
         report.update({"minMs": round(rtts[0], 1), "medianMs": round(statistics.median(rtts), 1),

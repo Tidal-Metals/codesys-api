@@ -1,0 +1,286 @@
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\apply_session.py
+{
+ "errors": [],
+ "request_id": "76ccae20-074a-4aba-9e9d-55596e0a8dd2",
+ "libraries": [
+  "Standard, * (System)",
+  "#IoStandard",
+  "#3SLicense",
+  "#BreakpointLogging",
+  "#IoDrvEthernet",
+  "#IoDrvP2cds622NetConfig",
+  "#CDS_MemMan",
+  "#MQTT",
+  "#PRO_JSON",
+  "SysTime, 3.5.17.0 (System)",
+  "SysTimeCore, 3.5.17.0 (System)",
+  "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)",
+  "SysTimeRtc, 3.5.17.0 (System)",
+  "SNTP Service SL, 1.9.0.0 (CODESYS)"
+ ],
+ "success": true,
+ "saved": true,
+ "executed_by": "CODESYS PersistentSession",
+ "execution_time": 1792613056.372696,
+ "warningCount": 6,
+ "steps": [
+  "dynamic memory 100000 bytes",
+  "sources written",
+  "rebuilding"
+ ],
+ "memory": []
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe tools/app_check.py --host C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo\mqtt_large_payload_demo.project --keep-as C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo_tm\mqtt_large_payload_demo.project
+{
+ "installed": "MQTT, 1.3.0.0 (Tidal Metals)",
+ "warnings": [],
+ "replaced": [
+  "#MQTT"
+ ],
+ "errors": [],
+ "info": [
+  "------ Build started: Application: P2CDS622.Application -------",
+  "Typify code...",
+  "implement parameter",
+  "make configurable",
+  "TODO implement!",
+  "here to implement certificate use",
+  "make size check due use of memmove...",
+  "make this to a parameter to chose disconnect or discharge",
+  "TODO:check to make disconnect as parameter",
+  "configure to disconnect?",
+  "make count var...",
+  "no more slots free, what shall we do???",
+  "check here if to disconnect",
+  "check if last to big topic is to saved, or just take memmove",
+  "semaphore",
+  "semaphore",
+  "TODO: hind that this is blocking!",
+  "TODO test of zeros in strings",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "reconnect or wait or or or or ....",
+  "TODO check this, messeg is repeated!",
+  "check if we want to diplay topic error",
+  "Compile complete -- 0 errors, 0 warnings",
+  "Additional code checks ...",
+  "Additional code checks complete -- 0 errors"
+ ],
+ "steps": [
+  "started",
+  "installed",
+  "opened host",
+  "references replaced",
+  "built"
+ ],
+ "success": true,
+ "seconds": 103.6,
+ "host": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo\\mqtt_large_payload_demo.project",
+ "kept_as": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo_tm\\mqtt_large_payload_demo.project"
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\deploy_demo.py
+{
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "d16496c1-2390-49de-acd7-c2522b7afee4",
+ "execution_time": 1792613181.0519028,
+ "steps": [
+  "logged in, state=stop",
+  "state=run",
+  "boot application created"
+ ],
+ "success": true
+}
+{
+ "diagnostics": {
+  "PLC_PRG.ConcatSentCount": "UDINT#0",
+  "PLC_PRG.LastConcatLength": "UDINT#0",
+  "PLC_PRG.Sequence": "UDINT#5",
+  "PLC_PRG.IsBrokerConnected": "TRUE",
+  "PLC_PRG.TimeoutCount": "UDINT#0",
+  "PLC_PRG.SkippedBusyCount": "UDINT#0",
+  "PLC_PRG.LastLargeLength": "UDINT#7896",
+  "PLC_PRG.LargeSentCount": "UDINT#5",
+  "PLC_PRG.OverflowCount": "UDINT#0"
+ },
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "ad77609b-41cb-4edc-b0b9-d3ec401b9493",
+ "execution_time": 1792613186.4957962,
+ "success": true
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_profile.py --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\target100_last\profile.json
+section                    idle_calls1       fullrefresh_calls16        fullrefresh_calls1
+                         mean / max us             mean / max us             mean / max us
+PREPARE                     28.7 / 576                22.4 / 266                30.7 / 286
+PARSE_IN                     8.9 / 159                 7.5 / 216                12.6 / 245
+STATE_IN                    19.6 / 170                15.2 / 325                25.0 / 573
+STATE_OUT                   20.2 / 176                17.1 / 234                18.6 / 167
+SEND_OUT                    10.0 / 246                19.7 / 385                38.8 / 363
+SEND_IN                      7.3 / 122                 7.1 / 161                10.0 / 167
+CASE_REST                    7.1 / 173                 6.6 / 225                 7.9 / 156
+CONTROL                    257.5 / 970              378.7 / 2855              654.4 / 2846
+TAIL                        24.6 / 276                18.7 / 269                24.1 / 459
+TOTAL                     414.2 / 1062              513.0 / 3101              862.4 / 3132
+calls                              203                       457                       202
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\run_ab.py --label target100_last --out-dir C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\target100_last --quick
+== calls1_qos0
+{"ValueUpdateUs": 585, "sentDuringWindow": 27, "MaxClientCalls": 1, "ChangedBools": 666, "OverflowCount": 0, "MaxIntervalUs": 100663, "ChangedReals": 498, "MinIntervalUs": 99508, "LastPayloadLength": 25873, "LastPublishUs": 185448, "LastBuildScans": 1, "BuildCount": 26, "MaxPublishCycles": 3, "MaxPublishUs": 185574, "NamesInitUs": 26434, "ChangeDetectUs": 212, "MaxBuildUs": 14817, "BuildTotalUs": 371333, "SentCount": 77, "LastPublishCycles": 3, "MaxBuildScanUs": 14547, "LastBuildUs": 14320, "skippedDuringWindow": 0, "TimeoutCount": 0, "MaxClientUs": 3069, "CycleUs": 586, "MaxCycleUs": 19311, "SkippedBusyCount": 0, "ChangedInts": 500, "MaxChangeDetectUs": 481, "cycleSampleMeanUs": 2356, "cycleSampleMaxUs": 19243, "buildMeanUs": 14282, "format": "tagvalue", "tagsPerScan": 2000, "qos": 0, "onlyKind": 0, "clientCalls": 1, "budgetUs": 1000000, "gated": true, "timestampMode": 0, "seconds": 30.0}
+== calls4_qos0
+{"ValueUpdateUs": 586, "sentDuringWindow": 27, "MaxClientCalls": 4, "ChangedBools": 667, "OverflowCount": 0, "MaxIntervalUs": 100551, "ChangedReals": 1, "MinIntervalUs": 99817, "LastPayloadLength": 25872, "LastPublishUs": 85321, "LastBuildScans": 1, "BuildCount": 26, "MaxPublishCycles": 2, "MaxPublishUs": 85425, "NamesInitUs": 26434, "ChangeDetectUs": 240, "MaxBuildUs": 14854, "BuildTotalUs": 371917, "SentCount": 111, "LastPublishCycles": 2, "MaxBuildScanUs": 14785, "LastBuildUs": 14084, "skippedDuringWindow": 0, "TimeoutCount": 0, "MaxClientUs": 5539, "CycleUs": 343, "MaxCycleUs": 21907, "SkippedBusyCount": 0, "ChangedInts": 500, "MaxChangeDetectUs": 467, "cycleSampleMeanUs": 1997, "cycleSampleMaxUs": 21907, "buildMeanUs": 14304, "format": "tagvalue", "tagsPerScan": 2000, "qos": 0, "onlyKind": 0, "clientCalls": 4, "budgetUs": 1000000, "gated": true, "timestampMode": 0, "seconds": 30.0}
+== calls16_qos0
+{
+ "topic": "raw_data_demo/scale",
+ "seconds": 40.0,
+ "byFormat": {
+  "tagvalue": {
+   "messages": 31,
+   "allCorrect": true,
+   "valuesChecked": 62000,
+   "bytesMin": 25870,
+   "bytesMax": 25873,
+   "sequenceGaps": [],
+   "failures": []
+  },
+  "positional": {
+   "messages": 0,
+   "allCorrect": false,
+   "valuesChecked": 0,
+   "bytesMin": 0,
+   "bytesMax": 0,
+   "sequenceGaps": [],
+   "failures": []
+  }
+ },
+ "unparsed": []
+}
+{"ValueUpdateUs": 347, "sentDuringWindow": 27, "MaxClientCalls": 16, "ChangedBools": 667, "OverflowCount": 0, "MaxIntervalUs": 100432, "ChangedReals": 2, "MinIntervalUs": 99740, "LastPayloadLength": 25871, "LastPublishUs": 84060, "LastBuildScans": 1, "BuildCount": 26, "MaxPublishCycles": 2, "MaxPublishUs": 85337, "NamesInitUs": 26434, "ChangeDetectUs": 205, "MaxBuildUs": 15255, "BuildTotalUs": 373354, "SentCount": 145, "LastPublishCycles": 2, "MaxBuildScanUs": 15187, "LastBuildUs": 15255, "skippedDuringWindow": 0, "TimeoutCount": 0, "MaxClientUs": 8211, "CycleUs": 346, "MaxCycleUs": 24215, "SkippedBusyCount": 0, "ChangedInts": 500, "MaxChangeDetectUs": 748, "cycleSampleMeanUs": 2735, "cycleSampleMaxUs": 24192, "buildMeanUs": 14360, "format": "tagvalue", "tagsPerScan": 2000, "qos": 0, "onlyKind": 0, "clientCalls": 16, "budgetUs": 1000000, "gated": true, "timestampMode": 0, "seconds": 30.0}
+== adaptive_budget5000_qos0
+{"ValueUpdateUs": 350, "sentDuringWindow": 27, "MaxClientCalls": 4, "ChangedBools": 666, "OverflowCount": 0, "MaxIntervalUs": 100875, "ChangedReals": 496, "MinIntervalUs": 99419, "LastPayloadLength": 25871, "LastPublishUs": 84567, "LastBuildScans": 1, "BuildCount": 26, "MaxPublishCycles": 2, "MaxPublishUs": 85590, "NamesInitUs": 26434, "ChangeDetectUs": 205, "MaxBuildUs": 15131, "BuildTotalUs": 372780, "SentCount": 179, "LastPublishCycles": 2, "MaxBuildScanUs": 15061, "LastBuildUs": 14428, "skippedDuringWindow": 0, "TimeoutCount": 0, "MaxClientUs": 5499, "CycleUs": 341, "MaxCycleUs": 22205, "SkippedBusyCount": 0, "ChangedInts": 500, "MaxChangeDetectUs": 793, "cycleSampleMeanUs": 3013, "cycleSampleMaxUs": 21390, "buildMeanUs": 14338, "format": "tagvalue", "tagsPerScan": 2000, "qos": 0, "onlyKind": 0, "clientCalls": 32, "budgetUs": 5000, "gated": true, "timestampMode": 0, "seconds": 30.0}
+== adaptive_budget10000_qos0
+{"ValueUpdateUs": 352, "sentDuringWindow": 27, "MaxClientCalls": 32, "ChangedBools": 667, "OverflowCount": 0, "MaxIntervalUs": 100698, "ChangedReals": 2, "MinIntervalUs": 99844, "LastPayloadLength": 25868, "LastPublishUs": 85253, "LastBuildScans": 1, "BuildCount": 26, "MaxPublishCycles": 2, "MaxPublishUs": 85332, "NamesInitUs": 26434, "ChangeDetectUs": 234, "MaxBuildUs": 14855, "BuildTotalUs": 371637, "SentCount": 213, "LastPublishCycles": 2, "MaxBuildScanUs": 14672, "LastBuildUs": 14572, "skippedDuringWindow": 0, "TimeoutCount": 0, "MaxClientUs": 10211, "CycleUs": 502, "MaxCycleUs": 27076, "SkippedBusyCount": 0, "ChangedInts": 500, "MaxChangeDetectUs": 490, "cycleSampleMeanUs": 2320, "cycleSampleMaxUs": 26335, "buildMeanUs": 14294, "format": "tagvalue", "tagsPerScan": 2000, "qos": 0, "onlyKind": 0, "clientCalls": 32, "budgetUs": 10000, "gated": true, "timestampMode": 0, "seconds": 30.0}
+== idle_client
+{
+ "runs": [
+  {
+   "MaxClientUs": 1092,
+   "calls": 1,
+   "meanUs": 419,
+   "meanPerCallUs": 419.0
+  },
+  {
+   "MaxClientUs": 1801,
+   "calls": 4,
+   "meanUs": 871,
+   "meanPerCallUs": 217.8
+  },
+  {
+   "MaxClientUs": 4243,
+   "calls": 16,
+   "meanUs": 3199,
+   "meanPerCallUs": 199.9
+  },
+  {
+   "MaxClientUs": 7148,
+   "calls": 32,
+   "meanUs": 6145,
+   "meanPerCallUs": 192.0
+  }
+ ]
+}
+failures: none
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\edge_test.py --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\target100_last\edge.json --quick
+{
+ "send": {
+  "cases": 85,
+  "sent": 85,
+  "delivered": 85,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [],
+  "slowest": [
+   {
+    "qos1": false,
+    "seq": 59,
+    "seconds": 0.619,
+    "size": 32756,
+    "done": true
+   },
+   {
+    "qos1": true,
+    "seq": 82,
+    "seconds": 0.619,
+    "size": 16367,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 50,
+    "seconds": 0.618,
+    "size": 32747,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 60,
+  "problems": []
+ }
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\target100_last\latency_idle.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": false,
+ "clientCalls": 1,
+ "secondCall": false,
+ "budgetUs": 1000000,
+ "minMs": 113.3,
+ "medianMs": 199.9,
+ "p90Ms": 200.5,
+ "maxMs": 202.9
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --load --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\target100_last\latency_load.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": true,
+ "clientCalls": 1,
+ "secondCall": false,
+ "budgetUs": 1000000,
+ "minMs": 194.1,
+ "medianMs": 199.9,
+ "p90Ms": 200.7,
+ "maxMs": 372.3
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --second-call --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\target100_last\latency_second_call.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": false,
+ "clientCalls": 1,
+ "secondCall": true,
+ "budgetUs": 1000000,
+ "minMs": 175.1,
+ "medianMs": 200.0,
+ "p90Ms": 200.4,
+ "maxMs": 200.6
+}

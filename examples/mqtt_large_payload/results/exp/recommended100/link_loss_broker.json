@@ -1,0 +1,37 @@
+{
+ "mode": "broker-restart",
+ "faults": [
+  {
+   "kind": "broker-kill",
+   "detectSeconds": 1.9,
+   "reconnectSeconds": 1.8,
+   "scaleSentSince": 12,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 35,
+   "connected": true
+  },
+  {
+   "kind": "broker-kill",
+   "detectSeconds": 1.9,
+   "reconnectSeconds": 1.7,
+   "scaleSentSince": 13,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 37,
+   "connected": true
+  },
+  {
+   "kind": "broker-kill",
+   "detectSeconds": 1.8,
+   "reconnectSeconds": 2.0,
+   "scaleSentSince": 13,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 37,
+   "connected": true
+  }
+ ],
+ "connectSeconds": 4.0,
+ "restoreSeconds": 4.3,
+ "echoesTotal": 157,
+ "duplicateEchoes": 0,
+ "success": true
+}

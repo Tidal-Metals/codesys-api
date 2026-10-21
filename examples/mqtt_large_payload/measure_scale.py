@@ -17,7 +17,7 @@ SCALE_STATS = ["LastPayloadLength", "LastBuildUs", "MaxBuildUs", "BuildTotalUs",
                "LastBuildScans", "LastPublishUs", "MaxPublishUs", "LastPublishCycles", "MaxPublishCycles",
                "SentCount", "TimeoutCount", "OverflowCount", "SkippedBusyCount", "ValueUpdateUs", "NamesInitUs",
                "ChangeDetectUs", "MaxChangeDetectUs", "ChangedBools", "ChangedInts", "ChangedReals"]
-PRG_STATS = ["CycleUs", "MaxCycleUs", "MaxIntervalUs", "MinIntervalUs", "MaxClientUs", "MaxClientCalls"]
+PRG_STATS = ["CycleUs", "MaxCycleUs", "MaxIntervalUs", "MinIntervalUs", "MaxClientUs", "MaxClientCalls", "MaxScanClientUs"]
 
 CODE = """
 import time

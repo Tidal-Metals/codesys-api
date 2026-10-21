@@ -1,0 +1,37 @@
+{
+ "send": {
+  "cases": 296,
+  "sent": 296,
+  "delivered": 296,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [],
+  "slowest": [
+   {
+    "qos1": true,
+    "seq": 240,
+    "seconds": 0.618,
+    "size": 16364,
+    "done": true
+   },
+   {
+    "qos1": true,
+    "seq": 253,
+    "seconds": 0.618,
+    "size": 16377,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 130,
+    "seconds": 0.617,
+    "size": 32717,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 151,
+  "problems": []
+ }
+}

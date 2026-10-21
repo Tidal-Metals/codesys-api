@@ -1,0 +1,20 @@
+{
+ "minutes": 20.0,
+ "fullRefreshes": 957,
+ "fullRefreshTimeouts": 0,
+ "brokerMessages": 953,
+ "brokerAllCorrect": true,
+ "commandsSent": 5983,
+ "echoesTimed": 2858,
+ "reconnects": 0,
+ "maxCycleUs": "19566",
+ "maxClientUs": "3790",
+ "maxPublishUs": "188831",
+ "dynMemUsageBefore": "54256",
+ "dynMemUsageAfter": "54256",
+ "connectedAtEnd": "TRUE",
+ "rttMedianMs": 290.7,
+ "rttP99Ms": 491.2,
+ "rttMaxMs": 507.2,
+ "success": true
+}

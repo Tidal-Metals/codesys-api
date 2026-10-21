@@ -70,6 +70,8 @@ def main() -> int:
     parser.add_argument("--apply-sources", action="store_true", help="first apply st/ to the original demo (apply_session.py)")
     parser.add_argument("--edge-only", action="store_true", help="skip the profile and throughput runs")
     parser.add_argument("--task-ms", type=int, help="set the demo's task interval (ms) before deploying")
+    parser.add_argument("--plc-set", action="append", default=[], metavar="NAME=VALUE",
+                        help="write an online value after deploying, e.g. PLC_PRG.IsClientCalledLast=TRUE")
     parser.add_argument("--fork", type=Path, default=FORK, help="CODESYS-MQTT checkout to build (default ~/projects/CODESYS-MQTT)")
     args = parser.parse_args()
     fork = args.fork.resolve()
@@ -113,6 +115,17 @@ def main() -> int:
         (out / "library.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     if run([PY, HERE / "deploy_demo.py"], REPO, log) != 0:
         sys.exit("deploy failed; see %s" % log)
+    if args.plc_set:
+        step("online values " + ", ".join(args.plc_set))
+        sys.path.insert(0, str(REPO))
+        from run_ide_script import execute  # noqa: E402
+        pairs = [tuple(item.split("=", 1)) for item in args.plc_set]
+        code = ("on = session.ensure_online_application('', True)\nfor path, value in %r:\n"
+                "    on.set_prepared_value(path, value)\non.write_prepared_values()\nresult = {'success': True}\n" % pairs)
+        if not execute(code, 60).get("success"):
+            sys.exit("writing online values failed")
+        meta["plcSet"] = args.plc_set
+        (out / "library.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     code = 0
     if not args.edge_only:
         step("profile")
