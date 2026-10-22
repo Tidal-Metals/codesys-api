@@ -198,8 +198,13 @@ only every other scan (<code>send</code> is edge-triggered).</li>
 and the receiver cannot de-duplicate, and then with a client budget so it costs no extra scans.</li>
 <li><strong>Client budget 4 ms, not 5.</strong> The budget is checked after each call, so the last call overshoots it:
 a 5 ms budget gave worst scans of 5.2-5.8 ms, and 6.6 ms at QoS 2 with 32 publishers.</li>
-<li><strong>In slots &ge; the broker's inflight window</strong> (<code>COM_CONFIG.CountSlotsIn := 20</code> for mosquitto's
-default <code>max_inflight_messages</code> 20) for a PLC that subscribes at QoS 1 or 2 (from the QoS work in the same fork).</li>
+<li><strong><code>COM_CONFIG.CountSlotsIn := 20</code></strong> for a PLC that subscribes at QoS 1 or 2. Our broker
+(mochi in the bridge) sends an MQTT 3.1.1 client QoS 1/2 messages without an inflight limit, so a command burst arrives
+whole; 200 back to back were delivered at every QoS (from the QoS work in the same fork).</li>
+<li><strong>Every topic a PLC publishes at QoS 1 or 2 must be in its broker ACL.</strong> mochi answers a refused QoS 1/2
+publish from an MQTT 3.1.1 client by closing the connection (a refused QoS 0 publish is dropped silently). The fork's
+<code>MQTTPublish</code> gives such a message up after three reconnects and reports <code>Rejected</code>; upstream resent
+it forever and the PLC lost every command.</li>
 </ol>
 <p>Earlier measurements of the full refresh itself (buffer sizes, calls per scan, budgets) are in the
 <a href="@@throughput@@">MQTT publish throughput report</a>.</p>
@@ -219,7 +224,7 @@ With fewer messages than publishers, each message had its own publisher, so thos
 <h2 id="method">Method</h2>
 <ul class="prose">
 <li>PLC: P2CDS-622 (32-bit, runtime 3.5.19), 100 ms comms task; MQTT library 1.3.0.0 with the QoS fixes; 20 in slots,
-40 out slots (so 32 messages can be in flight; the recommended setup uses 8). Broker: mosquitto on 192.168.50.240.</li>
+40 out slots (so 32 messages can be in flight; the recommended setup uses 8). Broker: the HQ sparkplug bridge's embedded mochi 2.7.9 on 192.168.50.240:1883.</li>
 <li><code>SplitTest</code> on the PLC sends 26,000 bytes as N messages through P <code>MQTTPublish</code> instances,
 re-armed in the same scan, and times each round from the first request to the last <code>done</code> (QoS 0: written to
 the socket; QoS 1: PUBACK; QoS 2: PUBCOMP). The data is prepared before the round; building payloads is not timed.</li>

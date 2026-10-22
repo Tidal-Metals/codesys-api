@@ -93,7 +93,7 @@ def main() -> int:
     if args.apply_sources:
         step("apply demo sources to the original demo")
         api("/project/open", {"path": str(DEMO).replace("\\", "/")})
-        if run([PY, HERE / "apply_session.py"], REPO, log) != 0:
+        if run([PY, HERE / "apply_session.py", "--fork-only"], REPO, log) != 0:
             sys.exit("apply_session failed; see %s" % log)
         api("/project/close")
     step("compile demo against the build")

@@ -26,8 +26,8 @@ VAR
 	IsClientLoopGated : BOOL := TRUE;    // FALSE: always make ClientCallsPerScan calls (to measure idle calls)
 	ClientSlots : UINT := 40;            // out slots of the MQTT client (library default 16; recommended 8, here 40
 	                                     // so SplitTest can keep 32 messages in flight)
-	ClientSlotsIn : UINT := 20;          // in slots: at least the broker's inflight window (mosquitto max_inflight_messages,
-	                                     // default 20), or a QoS 1/2 burst can wait on PUBRELs it cannot read
+	ClientSlotsIn : UINT := 20;          // in slots. mochi sends QoS 1/2 without an inflight limit; a QoS 2 burst with more
+	                                     // messages than this and over 16 KB waits on PUBRELs it cannot read (disconnect)
 
 	IsClientCalledLast : BOOL;           // run the client loop at the end of the scan, after the publishers
 	IsSecondClientCallEnabled : BOOL;    // call the client once more at the end of the scan, after the publishers,

@@ -33,7 +33,7 @@ VAR
 	SumRoundScans : UDINT;
 	MaxScanClientUs : UDINT;                // the most client time in one scan while a round was going
 	PartsDone : UDINT;                      // all rounds
-	TimeoutCount : UDINT;                   // parts given up after SendTimeout
+	TimeoutCount : UDINT;                   // parts given up (SendTimeout, or Rejected by the broker)
 	IsRoundActive : BOOL;
 
 	// State
@@ -130,8 +130,8 @@ FOR Index := 1 TO MAX_PUBLISHERS DO
 	END_IF
 	Pool[Index](Topic := ADR(Topic), PublishAsString := FALSE, Payload := ADR(Data[PartOffset[Index]]),
 		PayloadLength := PartLength[Index], QoSIn := PublishQoS, MRetain := FALSE, send := IsRequested[Index]);
-	IF IsRequested[Index] AND (Pool[Index].done OR Pool[Index].SendTimeout) THEN
-		IF Pool[Index].SendTimeout THEN
+	IF IsRequested[Index] AND (Pool[Index].done OR Pool[Index].SendTimeout OR Pool[Index].Rejected) THEN
+		IF Pool[Index].SendTimeout OR Pool[Index].Rejected THEN
 			TimeoutCount := TimeoutCount + 1;
 		ELSE
 			PartsDone := PartsDone + 1;

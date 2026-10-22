@@ -13,6 +13,7 @@ VAR
 	SendSequence : UDINT;               // written online; a new value starts a send
 	DoneSequence : UDINT;               // the sequence of the last message the library reported done
 	TimeoutCount : UDINT;               // rising edges of Publisher.SendTimeout
+	RejectedCount : UDINT;              // messages the library gave up because the broker refused them
 	IsEchoEnabled : BOOL;               // written online: answer every received message on TopicEcho (QoS 1)
 	EchoCount : UDINT;                  // echoes the library reported done
 	Receiver : FB_EdgeReceiver;
@@ -83,6 +84,11 @@ END_IF
 IF Publisher.done THEN
 	IsRequested := FALSE;
 	DoneSequence := StartedSequence;
+END_IF
+// the broker refused the message (it closed the connection after it, three times): given up, not done
+IF Publisher.Rejected AND IsRequested THEN
+	IsRequested := FALSE;
+	RejectedCount := RejectedCount + 1;
 END_IF
 TimeoutEdge(CLK := Publisher.SendTimeout);
 IF TimeoutEdge.Q THEN

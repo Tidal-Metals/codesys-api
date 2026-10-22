@@ -1,6 +1,9 @@
 """Apply the demo sources to the project open in the API session, rebuild and save it.
 
-Run from the repo root: python examples/mqtt_large_payload/apply_session.py
+Run from the repo root: python examples/mqtt_large_payload/apply_session.py [--fork-only]
+--fork-only saves the sources even when they do not compile against the original demo's upstream MQTT 1.2.0.7
+reference (they use the fork's MQTTPublish.Rejected); bench_cycle passes it and compiles the fork copy after.
+An A/B run on 1.2.0.7 needs the Rejected lines in st/edge/EdgeTest.st and st/split/SplitTest.st removed.
 Download afterwards with deploy_demo.py.
 """
 import json
@@ -21,11 +24,17 @@ assert p.path.replace('\\\\', '/').endswith('/mqtt_large_payload_demo.project'),
 steps = []
 report = apply_demo(p, @@SOURCE_DIR@@, steps)
 report['steps'] = steps
+if @@FORK_ONLY@@ and not report['success']:
+    # the original demo references upstream MQTT 1.2.0.7; sources using the fork's additions (MQTTPublish.Rejected)
+    # cannot compile there. Save anyway: bench_cycle's app_check compiles the copy that references the fork.
+    report['errorsAgainstOriginalReferences'] = len(report['errors'])
+    report['success'] = True
 if report['success']:
     p.save()
     report['saved'] = True
 result = report
-""".replace("@@BUILDER@@", repr(str(SOURCE_DIR / "build_demo_project.py"))).replace("@@SOURCE_DIR@@", repr(str(SOURCE_DIR)))
+""".replace("@@BUILDER@@", repr(str(SOURCE_DIR / "build_demo_project.py"))).replace("@@SOURCE_DIR@@", repr(str(SOURCE_DIR))).replace(
+    "@@FORK_ONLY@@", repr("--fork-only" in sys.argv))
 
 if __name__ == "__main__":
     report = execute(CODE, 240)
