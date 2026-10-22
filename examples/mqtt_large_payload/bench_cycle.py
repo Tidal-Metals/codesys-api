@@ -69,6 +69,7 @@ def main() -> int:
     parser.add_argument("--full", action="store_true")
     parser.add_argument("--apply-sources", action="store_true", help="first apply st/ to the original demo (apply_session.py)")
     parser.add_argument("--edge-only", action="store_true", help="skip the profile and throughput runs")
+    parser.add_argument("--deploy-only", action="store_true", help="stop after deploying (and --plc-set): no tests")
     parser.add_argument("--task-ms", type=int, help="set the demo's task interval (ms) before deploying")
     parser.add_argument("--plc-set", action="append", default=[], metavar="NAME=VALUE",
                         help="write an online value after deploying, e.g. PLC_PRG.IsClientCalledLast=TRUE")
@@ -126,6 +127,9 @@ def main() -> int:
             sys.exit("writing online values failed")
         meta["plcSet"] = args.plc_set
         (out / "library.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
+    if args.deploy_only:
+        print("done: deployed %s (no tests)" % args.label, flush=True)
+        return 0
     code = 0
     if not args.edge_only:
         step("profile")

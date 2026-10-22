@@ -26,10 +26,12 @@ REMOVED_DEVICES = ["Modbus_TCP_Client"]
 DYNAMIC_MEMORY_BYTES = 100000
 # Source paths are relative to st/ without ".st".
 FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
-             ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine"), ("AppendZ", "BOOL", "scale/AppendZ")]
+             ("AppendTagLine", "BOOL", "bcnf_style/AppendTagLine"), ("AppendZ", "BOOL", "scale/AppendZ"),
+             ("WriteDigits", "BOOL", "split/WriteDigits")]
 # BCNF's StringPublication (verbatim) and the 2,000-tag scale test, both called by PLC_PRG
 PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"),
-            ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync"), ("EdgeTest", "edge/EdgeTest")]
+            ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync"), ("EdgeTest", "edge/EdgeTest"),
+            ("SplitTest", "split/SplitTest")]
 # MQTT library edge-case test (edge_test.py): its subscription callback
 FUNCTION_BLOCKS = [("FB_EdgeReceiver", "edge/FB_EdgeReceiver")]
 METHODS = [("FB_EdgeReceiver", "PublishReceived", "BOOL", "edge/FB_EdgeReceiver.PublishReceived")]

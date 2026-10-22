@@ -24,7 +24,8 @@ VAR
 	ClientCallsPerScan : INT := 1;       // most client calls per scan while a message is in flight (one 4 KB buffer per two calls)
 	ClientBudgetUs : ULINT := 5000;      // ... and stop calling once this much time went into the client this scan
 	IsClientLoopGated : BOOL := TRUE;    // FALSE: always make ClientCallsPerScan calls (to measure idle calls)
-	ClientSlots : UINT := 8;             // out slots of the MQTT client (library default 16)
+	ClientSlots : UINT := 40;            // out slots of the MQTT client (library default 16; recommended 8, here 40
+	                                     // so SplitTest can keep 32 messages in flight)
 	ClientSlotsIn : UINT := 20;          // in slots: at least the broker's inflight window (mosquitto max_inflight_messages,
 	                                     // default 20), or a QoS 1/2 burst can wait on PUBRELs it cannot read
 
@@ -313,6 +314,8 @@ ClockSync();
 ScaleTest();
 // MQTT library edge-case test (idle unless EdgeTest.IsEnabled; edge_test.py drives it).
 EdgeTest();
+// The same data as one message or many (idle unless SplitTest.IsEnabled; split_test.py drives it).
+SplitTest();
 // The second call sends what the publishers requested in this scan (a command's acknowledgement), but only
 // while the first call left room in the scan's client budget: during a full refresh the first call already
 // sent a 16 KB buffer, and a second one would double the scan's client time.
