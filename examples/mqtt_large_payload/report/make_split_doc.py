@@ -86,6 +86,36 @@ def chart(rows, qos):
     return "".join(out)
 
 
+def regression_rows():
+    """Link loss and soak after the QoS and publish fixes (results/exp/guard_regression), when they exist."""
+    folder = HERE.parent / "results" / "exp" / "guard_regression"
+    rows = []
+    link = folder / "link_loss.json"
+    if link.exists():
+        data = json.loads(link.read_text(encoding="utf-8"))
+        for fault in data["faults"]:
+            what = ("proxy killed" if fault["kind"] == "kill" else "link frozen %d s, TCP open" % fault["frozenSeconds"])
+            ok = fault["connected"] and fault["scaleSentSince"] > 0 and fault["echoesSince"] > 0 and not fault["scaleTimeoutsSince"]
+            rows.append("<tr><td>%s</td><td class=\"num\">%.1f s</td><td class=\"num\">%.1f s</td><td>%d full refreshes, "
+                        "%d acknowledgements after it</td><td>%s</td></tr>"
+                        % (what, fault["detectSeconds"], fault["reconnectSeconds"], fault["scaleSentSince"],
+                           fault["echoesSince"], "recovered" if ok else "<strong>did not recover</strong>"))
+        rows.append("<tr><td>all faults</td><td colspan=\"3\">%d acknowledgements, %d duplicates</td><td>%s</td></tr>"
+                    % (data["echoesTotal"], data["duplicateEchoes"], "pass" if data["success"] else "<strong>fail</strong>"))
+    soak = folder / "soak.json"
+    if soak.exists():
+        data = json.loads(soak.read_text(encoding="utf-8"))
+        rows.append("<tr><td>%g-minute soak</td><td colspan=\"3\">%d full refreshes, %d timeouts, %d reconnects, every value "
+                    "correct at the broker: %s, dynamic memory %s &rarr; %s bytes, worst client time %.1f ms</td><td>%s</td></tr>"
+                    % (data["minutes"], data["fullRefreshes"], data["fullRefreshTimeouts"], data["reconnects"],
+                       "yes" if data["brokerAllCorrect"] else "<strong>no</strong>", data["dynMemUsageBefore"],
+                       data["dynMemUsageAfter"], int(data["maxClientUs"]) / 1000, "pass" if data["success"] else "<strong>fail</strong>"))
+    if not rows:
+        return "<p>Not run yet.</p>"
+    return ('<table class="split text"><thead><tr><th>Fault</th><th>Seen after</th><th>Reconnected in</th><th>Traffic after it</th>'
+            '<th>Result</th></tr></thead><tbody>%s</tbody></table>' % "".join(rows))
+
+
 def csv(rows):
     keys = ["parts", "partBytes", "publishers", "qos", "allowance", "rounds", "roundMs", "maxRoundMs", "roundScans",
             "maxScanClientMs", "messagesPerSecond", "timeouts", "brokerMissing", "brokerDuplicates", "brokerBad", "ok"]
@@ -109,6 +139,7 @@ def main():
     failed = sum(1 for r in rows if not r["ok"])
     text = TEMPLATE.replace("@@style@@", style).replace("@@charts@@", charts).replace("@@legend@@", legend)
     text = text.replace("@@tables@@", "".join(tables)).replace("@@cells@@", str(len(rows)))
+    text = text.replace("@@regression@@", regression_rows())
     text = text.replace("@@failed@@", str(failed)).replace("@@throughput@@", THROUGHPUT_URL)
     text = text.replace("@@csv@@", json.dumps(csv(rows))).replace("@@json@@", json.dumps(json.dumps(rows, indent=1)))
     leftover = re.findall(r"@@\w+@@", text)
@@ -124,6 +155,8 @@ table.split thead th { position: sticky; top: 38px; background: var(--page); fon
 table.split tbody tr:hover { background: var(--surface); }
 table.split .s, table.split .c { color: var(--ink-2); font-size: 0.85em; }
 table.split .t { font-weight: 600; }
+table.split.text th, table.split.text td { text-align: left; }
+table.split.text td.num { text-align: right; }
 table.split .none { color: var(--muted); font-size: 0.85em; }
 .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 8px 0; }
 .charts figure { margin: 0; background: var(--surface); border: 1px solid var(--grid); border-radius: 8px; padding: 8px; }
@@ -150,18 +183,19 @@ TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MQTT on the PLC: one large message or many small ones</title>
+<title>MQTT on the PLC: message size, QoS and our broker</title>
 @@style@@
 </head>
 <body>
 <header>
-<h1>MQTT on the PLC: one large message or many small ones</h1>
+<h1>MQTT on the PLC: message size, QoS and our broker</h1>
 <p class="meta">Bench P2CDS-622, MQTT library 1.3.0.0 (Tidal Metals fork), 2026-10-22. The same 26 KB sent as 1 to 1,625
-messages at QoS 0, 1 and 2: what it costs in time and scan load, and how to send our data.</p>
+messages at QoS 0, 1 and 2: what it costs in time and scan load, and how to send our data. Then what testing against
+our broker (mochi in the bridge) found in the QoS and publish paths, and the fixes.</p>
 </header>
 <nav class="toc"><ul>
 <li><a href="#summary">Summary</a></li><li><a href="#recommendations">Recommendations</a></li>
-<li><a href="#chart">Chart</a></li><li><a href="#tables">All results</a></li><li><a href="#method">Method</a></li>
+<li><a href="#chart">Chart</a></li><li><a href="#tables">All results</a></li><li><a href="#broker">Broker and QoS</a></li><li><a href="#method">Method</a></li>
 <li><a href="#data">Data</a></li></ul></nav>
 <main>
 
@@ -178,6 +212,10 @@ eight of 3.2 KB cost about 4 ms in each of two. Small messages lower the per-sca
 (two round trips). With a client budget the acknowledgements come back within the scan: QoS 1 and 2 then cost
 nothing extra for a few messages.</li>
 <li>All @@cells@@ cells delivered every message once and byte-exact at the broker, with no timeouts (@@failed@@ failed).</li>
+<li><strong>Our broker (mochi) exposed two upstream library bugs that would hit production</strong>
+(<a href="#broker">details</a>): a burst of more QoS 1/2 commands than the client's slots disconnected it and lost the
+rest, and a QoS 1/2 publish to a topic outside the PLC's ACL kept the PLC offline for good. Both are fixed in the fork;
+the second now ends in three reconnects and a <code>Rejected</code> output.</li>
 </ul>
 </section>
 
@@ -220,6 +258,44 @@ run up to 64 messages (1,625 would take minutes).</p>
 <p>Each cell: time from the first request to the last message done (scans), and the most client time in one scan.
 With fewer messages than publishers, each message had its own publisher, so those cells repeat.</p>
 @@tables@@
+
+<h2 id="broker">Our broker (mochi), QoS and topic ACLs</h2>
+<p>Our broker is mochi 2.7.9, embedded in the bridge: the legacy <code>mqtt_bridge</code> at HQ
+(192.168.50.240:1883, anonymous), the VM dev bridge (192.168.50.142:18883, per-PLC users with topic ACLs) and the
+new sparkplug-bridge that replaces it. Every measurement on this page went through HQ's mochi. Testing against it found
+bugs, all pre-existing in the upstream library (Stefan Dreyer 1.2.0.7), fixed in the fork 1.3.0.0. What mochi does
+that matters:</p>
+<ul class="prose">
+<li><strong>No inflight limit for our client.</strong> mochi limits unacknowledged QoS 1/2 messages to a client by
+the client's MQTT 5 Receive Maximum; an MQTT 3.1.1 client sends none, so mochi sends a command burst whole.</li>
+<li><strong>A refused publish ends the connection.</strong> A QoS 1/2 PUBLISH to a topic outside the client's ACL
+closes an MQTT 3.1.1 connection; a refused QoS 0 PUBLISH is dropped silently (the PLC cannot tell).</li>
+<li><strong>No resending within a connection</strong> (only on reconnect, and our clean sessions drop that state).</li>
+</ul>
+
+<h3>Incoming commands and QoS (HQ mochi and a scripted broker)</h3>
+<table class="split text"><thead><tr><th>Case</th><th>Upstream library</th><th>Fork 1.3.0.0</th></tr></thead><tbody>
+<tr><td>40 commands back to back, delivered at QoS 1 or 2</td><td>8 delivered, then a disconnect; the other 32 lost</td><td>40 of 40, in order</td></tr>
+<tr><td>200 commands back to back, every QoS combination</td><td></td><td>200 of 200, in order</td></tr>
+<tr><td>QoS 2 command repeated by the broker before it is released</td><td>acknowledged with a wrong packet id, repeated every 2 s</td><td>right id, delivered once</td></tr>
+<tr><td>Release (PUBREL) for a finished message</td><td>no answer</td><td>answered</td></tr>
+<tr><td>Subscription refused by the broker, then a matching message</td><td>delivered to the failed subscriber</td><td>not delivered; <code>SubscribeFail</code></td></tr>
+<tr><td>Outgoing QoS 2, broker stops answering the release</td><td>message sent again (the broker delivers it twice)</td><td>release repeated only</td></tr>
+</tbody></table>
+
+<h3>Publishing to a topic outside the PLC's ACL (VM dev bridge)</h3>
+<table class="split text"><thead><tr><th>Case</th><th>Upstream library</th><th>Fork 1.3.0.0</th></tr></thead><tbody>
+<tr><td>QoS 0</td><td>"done", dropped by the broker</td><td>same: nothing to detect</td></tr>
+<tr><td>QoS 1 or 2, a command every 2 s meanwhile</td><td>about 40 reconnects in 30 s, 0 of 15 commands delivered, offline even after the topic was corrected</td>
+<td>3 reconnects, then the new output <code>Rejected</code>; link stays up, 12 of 15 commands delivered, a corrected message goes through</td></tr>
+</tbody></table>
+<p>So: every topic a PLC publishes at QoS 1 or 2 must be in its broker ACL (a generator that writes the PLC's topics
+should write its ACL entry too), and PLC code ends a publish request on <code>Rejected</code> as on <code>done</code>.</p>
+
+<h3>Link loss and soak after the fixes (HQ mochi)</h3>
+<p>The give-up rule must not drop good messages when the link really fails. The full-refresh and acknowledgement
+publishers in this test do not handle <code>Rejected</code>, so a wrongly given-up message would stop their traffic.</p>
+@@regression@@
 
 <h2 id="method">Method</h2>
 <ul class="prose">
