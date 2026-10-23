@@ -1,0 +1,321 @@
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\apply_session.py
+{
+ "errors": [
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Publisher.Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: '((Pool[Index].done OR Pool[Index].SendTimeout) OR Pool[Index].Rejected)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  }
+ ],
+ "request_id": "7b364dca-828f-44bc-b51e-c5bf29b793cc",
+ "libraries": [
+  "Standard, * (System)",
+  "#IoStandard",
+  "#3SLicense",
+  "#BreakpointLogging",
+  "#IoDrvEthernet",
+  "#IoDrvP2cds622NetConfig",
+  "#CDS_MemMan",
+  "#MQTT",
+  "#PRO_JSON",
+  "SysTime, 3.5.17.0 (System)",
+  "SysTimeCore, 3.5.17.0 (System)",
+  "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)",
+  "SysTimeRtc, 3.5.17.0 (System)",
+  "SNTP Service SL, 1.9.0.0 (CODESYS)"
+ ],
+ "success": false,
+ "executed_by": "CODESYS PersistentSession",
+ "execution_time": 1792687272.2933884,
+ "warningCount": 3,
+ "steps": [
+  "dynamic memory 100000 bytes",
+  "sources written",
+  "rebuilding"
+ ],
+ "memory": []
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\apply_session.py --fork-only
+{
+ "errors": [
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Publisher.Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: '((Pool[Index].done OR Pool[Index].SendTimeout) OR Pool[Index].Rejected)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  }
+ ],
+ "request_id": "cae07402-3360-4037-8a62-0641209f3732",
+ "libraries": [
+  "Standard, * (System)",
+  "#IoStandard",
+  "#3SLicense",
+  "#BreakpointLogging",
+  "#IoDrvEthernet",
+  "#IoDrvP2cds622NetConfig",
+  "#CDS_MemMan",
+  "#MQTT",
+  "#PRO_JSON",
+  "SysTime, 3.5.17.0 (System)",
+  "SysTimeCore, 3.5.17.0 (System)",
+  "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)",
+  "SysTimeRtc, 3.5.17.0 (System)",
+  "SNTP Service SL, 1.9.0.0 (CODESYS)"
+ ],
+ "success": true,
+ "saved": true,
+ "executed_by": "CODESYS PersistentSession",
+ "execution_time": 1792687354.3746567,
+ "warningCount": 3,
+ "steps": [
+  "dynamic memory 100000 bytes",
+  "sources written",
+  "rebuilding"
+ ],
+ "errorsAgainstOriginalReferences": 10,
+ "memory": []
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe tools/app_check.py --host C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo\mqtt_large_payload_demo.project --keep-as C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo_tm\mqtt_large_payload_demo.project
+{
+ "installed": "MQTT, 1.3.0.0 (Tidal Metals)",
+ "warnings": [],
+ "replaced": [
+  "#MQTT"
+ ],
+ "errors": [],
+ "info": [
+  "------ Build started: Application: P2CDS622.Application -------",
+  "Typify code...",
+  "implement parameter",
+  "make configurable",
+  "TODO implement!",
+  "here to implement certificate use",
+  "make size check due use of memmove...",
+  "make this to a parameter to chose disconnect or discharge",
+  "TODO:check to make disconnect as parameter",
+  "configure to disconnect?",
+  "make count var...",
+  "check here if to disconnect",
+  "check if last to big topic is to saved, or just take memmove",
+  "semaphore",
+  "semaphore",
+  "TODO: hind that this is blocking!",
+  "TODO test of zeros in strings",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "reconnect or wait or or or or ....",
+  "TODO check this, messeg is repeated!",
+  "check if we want to diplay topic error",
+  "Compile complete -- 0 errors, 0 warnings",
+  "Additional code checks ...",
+  "Additional code checks complete -- 0 errors"
+ ],
+ "steps": [
+  "started",
+  "installed",
+  "opened host",
+  "references replaced",
+  "built"
+ ],
+ "success": true,
+ "seconds": 22.0,
+ "host": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo\\mqtt_large_payload_demo.project",
+ "kept_as": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo_tm\\mqtt_large_payload_demo.project"
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\deploy_demo.py
+{
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "82b8eae4-79c3-471b-a747-7ca92520a809",
+ "execution_time": 1792687398.754486,
+ "steps": [
+  "logged in, state=stop",
+  "state=run",
+  "boot application created"
+ ],
+ "success": true
+}
+{
+ "diagnostics": {
+  "PLC_PRG.ConcatSentCount": "UDINT#0",
+  "PLC_PRG.LastConcatLength": "UDINT#0",
+  "PLC_PRG.Sequence": "UDINT#4",
+  "PLC_PRG.IsBrokerConnected": "TRUE",
+  "PLC_PRG.TimeoutCount": "UDINT#0",
+  "PLC_PRG.SkippedBusyCount": "UDINT#0",
+  "PLC_PRG.LastLargeLength": "UDINT#7896",
+  "PLC_PRG.LargeSentCount": "UDINT#4",
+  "PLC_PRG.OverflowCount": "UDINT#0"
+ },
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "5a56da80-ecb1-475c-8a6b-8d6ecaf7c485",
+ "execution_time": 1792687403.7816544,
+ "success": true
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\edge_test.py --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\acl_fix\edge.json --quick
+{
+ "send": {
+  "cases": 85,
+  "sent": 85,
+  "delivered": 85,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [],
+  "slowest": [
+   {
+    "qos1": false,
+    "seq": 51,
+    "seconds": 0.415,
+    "size": 32748,
+    "done": true
+   },
+   {
+    "qos1": true,
+    "seq": 67,
+    "seconds": 0.402,
+    "size": 16352,
+    "done": true
+   },
+   {
+    "qos1": true,
+    "seq": 69,
+    "seconds": 0.402,
+    "size": 16354,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 60,
+  "problems": []
+ }
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\acl_fix\latency_idle.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": false,
+ "clientCalls": 1,
+ "secondCall": false,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 4.2,
+ "medianMs": 49.7,
+ "p90Ms": 102.6,
+ "maxMs": 126.7
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --load --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\acl_fix\latency_load.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": true,
+ "clientCalls": 1,
+ "secondCall": false,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 5.9,
+ "medianMs": 88.0,
+ "p90Ms": 196.3,
+ "maxMs": 268.3
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --second-call --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\acl_fix\latency_second_call.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": false,
+ "clientCalls": 1,
+ "secondCall": true,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 5.4,
+ "medianMs": 74.5,
+ "p90Ms": 107.7,
+ "maxMs": 142.1
+}

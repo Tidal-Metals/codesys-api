@@ -355,6 +355,10 @@ against NE2 unit 2.
   scripts do.
 - A modal IDE dialog ("no connection to device", a certificate prompt) blocks the API's script thread:
   `session/status` stays `busy` on one request. Ask someone at the desktop to close it.
+  On 2026-10-22, a `POST /plc/logout` hung on "Warning: This operation will close all connections and logout from
+  all applications." (OK/Cancel). The test before it had been killed, and a library build had just been
+  installed. UI Automation finds this dialog under the IDE's main window (process id from `/bench`, a child window
+  named `CODESYS`), and invoking its `OK` button completes the logout. Requests queued behind it then run.
 - After a PLC power cycle, wait until ETH1 answers ping and port 11740 accepts, then log out and in.
 - The PLC's clock runs on UTC from the NTP server at 192.168.50.240 since 2026-10-20. Before, it
   held local time and was 84 s off. It drifts about 30 ms an hour. Stepping the clock 4 hours

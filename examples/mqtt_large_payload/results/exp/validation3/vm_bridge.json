@@ -1,0 +1,36 @@
+{
+ "broker": "192.168.50.142:18883 (mochi 2.7.9)",
+ "passwordHasAtAndColon": true,
+ "connectedWithCredentials": true,
+ "restarts": [
+  {
+   "reconnectedAfterSeconds": 2.7,
+   "peerCloses": 1,
+   "reconnects": 1,
+   "rejected": 0,
+   "plcEchoesSince": 0,
+   "echoesInLast10s": 0,
+   "connected": true
+  },
+  {
+   "reconnectedAfterSeconds": 3.2,
+   "peerCloses": 1,
+   "reconnects": 1,
+   "rejected": 0,
+   "plcEchoesSince": 0,
+   "echoesInLast10s": 0,
+   "connected": true
+  }
+ ],
+ "duplicateClientId": {
+  "onceReconnects": 4,
+  "fightReconnects": 20,
+  "fightSeconds": 20,
+  "rejectedDuring": 0,
+  "recovered": true,
+  "plcEchoesAfterRecovery": 0,
+  "echoesInLast10s": 0
+ },
+ "backOnHq": true,
+ "success": false
+}

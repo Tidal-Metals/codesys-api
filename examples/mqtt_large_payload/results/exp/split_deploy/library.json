@@ -1,0 +1,12 @@
+{
+ "label": "split_deploy",
+ "commit": "d26ded1",
+ "diff": "",
+ "taskMs": 100,
+ "tasks": [
+  "MainTask=100 ms"
+ ],
+ "plcSet": [
+  "PLC_PRG.IsSecondClientCallEnabled=TRUE"
+ ]
+}

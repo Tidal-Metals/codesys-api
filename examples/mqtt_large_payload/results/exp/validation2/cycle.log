@@ -1,0 +1,315 @@
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\apply_session.py --fork-only
+{
+ "errors": [
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Publisher.Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: '((Pool[Index].done OR Pool[Index].SendTimeout) OR Pool[Index].Rejected)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'MQTT.URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "Cannot convert type 'Unknown type: 'MQTT.STRING_TO_URL(STR := Input, DEFAULT_PROTOCOL := '', DEFAULT_PATH := '/')'' to type 'MQTT.URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "Program name, function or function block instance expected instead of 'MQTT.STRING_TO_URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "'MQTT, 1.2.0.7 (STEFAN DREYER)' contains no definition for 'STRING_TO_URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "Cannot convert type 'Unknown type: 'Parsed.USER'' to type 'STRING(128)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'MQTT.URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "'' contains no definition for 'USER'"
+  },
+  {
+   "severity": "Error",
+   "text": "Cannot convert type 'Unknown type: 'Parsed.PASSWORD'' to type 'STRING(128)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'MQTT.URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "'' contains no definition for 'PASSWORD'"
+  },
+  {
+   "severity": "Error",
+   "text": "Cannot convert type 'Unknown type: 'Parsed.DOMAIN'' to type 'STRING(80)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'MQTT.URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "'' contains no definition for 'DOMAIN'"
+  },
+  {
+   "severity": "Error",
+   "text": "Cannot convert type 'Unknown type: 'Parsed.PORT'' to type 'WORD'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'MQTT.URL'"
+  },
+  {
+   "severity": "Error",
+   "text": "'' contains no definition for 'PORT'"
+  }
+ ],
+ "request_id": "74ef2f3f-eeae-4192-a8dd-eb00e5deb96e",
+ "libraries": [
+  "Standard, * (System)",
+  "#IoStandard",
+  "#3SLicense",
+  "#BreakpointLogging",
+  "#IoDrvEthernet",
+  "#IoDrvP2cds622NetConfig",
+  "#CDS_MemMan",
+  "#MQTT",
+  "#PRO_JSON",
+  "SysTime, 3.5.17.0 (System)",
+  "SysTimeCore, 3.5.17.0 (System)",
+  "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)",
+  "SysTimeRtc, 3.5.17.0 (System)",
+  "SNTP Service SL, 1.9.0.0 (CODESYS)"
+ ],
+ "success": true,
+ "saved": true,
+ "executed_by": "CODESYS PersistentSession",
+ "execution_time": 1792706356.5678558,
+ "warningCount": 3,
+ "steps": [
+  "dynamic memory 100000 bytes",
+  "sources written",
+  "rebuilding"
+ ],
+ "errorsAgainstOriginalReferences": 26,
+ "memory": []
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe tools/app_check.py --host C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo\mqtt_large_payload_demo.project --keep-as C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo_tm\mqtt_large_payload_demo.project
+{
+ "installed": "MQTT, 1.3.0.0 (Tidal Metals)",
+ "warnings": [],
+ "replaced": [
+  "#MQTT"
+ ],
+ "errors": [],
+ "info": [
+  "------ Build started: Application: P2CDS622.Application -------",
+  "Typify code...",
+  "implement parameter",
+  "make configurable",
+  "TODO implement!",
+  "here to implement certificate use",
+  "make size check due use of memmove...",
+  "make this to a parameter to chose disconnect or discharge",
+  "TODO:check to make disconnect as parameter",
+  "configure to disconnect?",
+  "make count var...",
+  "check here if to disconnect",
+  "check if last to big topic is to saved, or just take memmove",
+  "semaphore",
+  "semaphore",
+  "TODO: hind that this is blocking!",
+  "TODO test of zeros in strings",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "reconnect or wait or or or or ....",
+  "TODO check this, messeg is repeated!",
+  "check if we want to diplay topic error",
+  "semaphore",
+  "semaphore",
+  "need to check string length!",
+  "Compile complete -- 0 errors, 0 warnings",
+  "Additional code checks ...",
+  "Additional code checks complete -- 0 errors"
+ ],
+ "steps": [
+  "started",
+  "installed",
+  "opened host",
+  "references replaced",
+  "built"
+ ],
+ "success": true,
+ "seconds": 22.2,
+ "host": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo\\mqtt_large_payload_demo.project",
+ "kept_as": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo_tm\\mqtt_large_payload_demo.project"
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\deploy_demo.py
+{
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "98ec7b40-fd62-46f9-b4b3-0c80930c282e",
+ "execution_time": 1792706400.5390701,
+ "steps": [
+  "logged in, state=stop",
+  "state=run",
+  "boot application created"
+ ],
+ "success": true
+}
+{
+ "diagnostics": {
+  "PLC_PRG.ConcatSentCount": "UDINT#0",
+  "PLC_PRG.LastConcatLength": "UDINT#0",
+  "PLC_PRG.Sequence": "UDINT#5",
+  "PLC_PRG.IsBrokerConnected": "TRUE",
+  "PLC_PRG.TimeoutCount": "UDINT#0",
+  "PLC_PRG.SkippedBusyCount": "UDINT#0",
+  "PLC_PRG.LastLargeLength": "UDINT#7896",
+  "PLC_PRG.LargeSentCount": "UDINT#5",
+  "PLC_PRG.OverflowCount": "UDINT#0"
+ },
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "61c004fc-f352-41be-b902-f8e26c04f28f",
+ "execution_time": 1792706405.9425125,
+ "success": true
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\edge_test.py --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\validation2\edge.json --quick
+{
+ "send": {
+  "cases": 85,
+  "sent": 85,
+  "delivered": 85,
+  "timeouts": 0,
+  "connectedAfter": "TRUE",
+  "problems": [],
+  "slowest": [
+   {
+    "qos1": false,
+    "seq": 22,
+    "seconds": 0.418,
+    "size": 16360,
+    "done": true
+   },
+   {
+    "qos1": false,
+    "seq": 62,
+    "seconds": 0.411,
+    "size": 32759,
+    "done": true
+   },
+   {
+    "qos1": true,
+    "seq": 84,
+    "seconds": 0.403,
+    "size": 16369,
+    "done": true
+   }
+  ]
+ },
+ "receive": {
+  "checked": 60,
+  "problems": []
+ }
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\validation2\latency_idle.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": false,
+ "clientCalls": 1,
+ "secondCall": false,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 9.9,
+ "medianMs": 73.2,
+ "p90Ms": 121.4,
+ "maxMs": 146.4
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --load --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\validation2\latency_load.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": true,
+ "clientCalls": 1,
+ "secondCall": false,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 6.0,
+ "medianMs": 82.1,
+ "p90Ms": 249.1,
+ "maxMs": 279.2
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\measure_latency.py --count 40 --second-call --out C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\results\exp\validation2\latency_second_call.json
+{
+ "count": 40,
+ "lost": 0,
+ "load": false,
+ "clientCalls": 1,
+ "secondCall": true,
+ "clientLast": null,
+ "budgetUs": 1000000,
+ "minMs": 4.3,
+ "medianMs": 71.9,
+ "p90Ms": 119.6,
+ "maxMs": 145.8
+}

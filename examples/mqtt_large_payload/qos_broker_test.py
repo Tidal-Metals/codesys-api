@@ -22,7 +22,8 @@ FAKE_URL = "192.168.50.142:1885"
 HQ_URL = "192.168.50.240:1883"
 BROKER_SCRIPT = Path(__file__).resolve().parent / "qos_fake_broker.py"
 BROKER_PIDS = "pgrep -f '^python3 /tmp/qos_fake_broker.py'"
-SCENARIOS = ["dup_publish", "pubrel_unknown", "burst_qos1", "burst_qos2", "burst_large", "burst_large_window", "suback_reject", "no_pubcomp", "cut_publish"]
+SCENARIOS = ["dup_publish", "pubrel_unknown", "burst_qos1", "burst_qos2", "burst_large", "burst_large_window", "suback_reject", "no_pubcomp", "cut_publish",
+             "split_connack", "split_pingresp", "bad_topic_length"]
 R = "EdgeTest.Receiver"
 EXPECTED_FAILURES = {"burst_large"}
 
@@ -124,6 +125,10 @@ def plc_checks(scenario: str, before: dict, after: dict) -> dict:
     elif scenario == "cut_publish":
         checks["plcPublishDone"] = after["doneSequence"] == after["sendSequence"]
         checks["plcOk"] = checks["plcPublishDone"]
+    elif scenario in ("split_connack", "split_pingresp"):
+        checks["plcOk"] = after["connected"] and reconnects == 0
+    elif scenario == "bad_topic_length":
+        checks["plcOk"] = after["connected"] and reconnects >= 1
     return checks
 
 
@@ -170,7 +175,7 @@ def main() -> int:
            ("EdgeTest.IsEchoEnabled", "FALSE"), ("EdgeTest.IsEnabled", "TRUE")])
     try:
         for scenario in args.scenario or SCENARIOS:
-            hold = args.hold if scenario == "no_pubcomp" else 6
+            hold = args.hold if scenario == "no_pubcomp" else (14 if scenario == "split_pingresp" else 6)
             report["scenarios"][scenario] = run_scenario(scenario, hold)
             row = report["scenarios"][scenario]
             print(scenario, "ok" if row["ok"] else "FAIL",

@@ -10,7 +10,7 @@ VAR
 	IsInitialized : BOOL;
 
 	// Settings, writable online
-	BrokerUrl : STRING(64) := '192.168.50.240:1883';
+	BrokerUrl : STRING(250) := '192.168.50.240:1883';
 	LargeTopic : STRING(64) := 'raw_data_demo';
 	ConcatTopic : STRING(64) := 'raw_data_demo/concat';
 	ValueCount : UINT := 500;            // values per message
@@ -316,6 +316,12 @@ ScaleTest();
 EdgeTest();
 // The same data as one message or many (idle unless SplitTest.IsEnabled; split_test.py drives it).
 SplitTest();
+// BCNF's own MQTT code with its two client connections (idle unless BcnfComms.IsEnabled; bcnf_test.py drives it).
+BcnfComms();
+// Rewritten by online_change_test.py to make online changes (does nothing else).
+OnlineChangeProbe();
+// Broker URL parsing check (idle unless UrlProbe.Input is written; url_test.py).
+UrlProbe();
 // The second call sends what the publishers requested in this scan (a command's acknowledgement), but only
 // while the first call left room in the scan's client budget: during a full refresh the first call already
 // sent a 16 KB buffer, and a second one would double the scan's client time.

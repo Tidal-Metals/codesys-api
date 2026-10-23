@@ -1,0 +1,12 @@
+{
+ "label": "validation_deploy",
+ "commit": "e87dab8",
+ "diff": "",
+ "taskMs": 100,
+ "tasks": [
+  "MainTask=100 ms"
+ ],
+ "plcSet": [
+  "PLC_PRG.IsSecondClientCallEnabled=TRUE"
+ ]
+}

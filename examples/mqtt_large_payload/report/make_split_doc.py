@@ -116,6 +116,20 @@ def regression_rows():
             '<th>Result</th></tr></thead><tbody>%s</tbody></table>' % "".join(rows))
 
 
+def vm_bridge_row():
+    """Dev bridge restarts before (results/exp/validation3) and after the subscribe fix (results/exp/resubscribe)."""
+    def echoes(name):
+        path = HERE.parent / "results" / "exp" / name / "vm_bridge.json"
+        if not path.exists():
+            return None
+        restarts = json.loads(path.read_text(encoding="utf-8"))["restarts"]
+        return "%s commands received after the restarts" % " and ".join(str(r["plcEchoesSince"]) for r in restarts)
+    before, after = echoes("validation3"), echoes("resubscribe")
+    if before is None or after is None:
+        return ""
+    return "<tr><td>dev bridge restarted twice, a command every 0.5 s</td><td>%s</td><td>%s</td></tr>" % (before, after)
+
+
 def csv(rows):
     keys = ["parts", "partBytes", "publishers", "qos", "allowance", "rounds", "roundMs", "maxRoundMs", "roundScans",
             "maxScanClientMs", "messagesPerSecond", "timeouts", "brokerMissing", "brokerDuplicates", "brokerBad", "ok"]
@@ -139,7 +153,7 @@ def main():
     failed = sum(1 for r in rows if not r["ok"])
     text = TEMPLATE.replace("@@style@@", style).replace("@@charts@@", charts).replace("@@legend@@", legend)
     text = text.replace("@@tables@@", "".join(tables)).replace("@@cells@@", str(len(rows)))
-    text = text.replace("@@regression@@", regression_rows())
+    text = text.replace("@@regression@@", regression_rows()).replace("@@vmbridge@@", vm_bridge_row())
     text = text.replace("@@failed@@", str(failed)).replace("@@throughput@@", THROUGHPUT_URL)
     text = text.replace("@@csv@@", json.dumps(csv(rows))).replace("@@json@@", json.dumps(json.dumps(rows, indent=1)))
     leftover = re.findall(r"@@\w+@@", text)
@@ -195,7 +209,7 @@ our broker (mochi in the bridge) found in the QoS and publish paths, and the fix
 </header>
 <nav class="toc"><ul>
 <li><a href="#summary">Summary</a></li><li><a href="#recommendations">Recommendations</a></li>
-<li><a href="#chart">Chart</a></li><li><a href="#tables">All results</a></li><li><a href="#broker">Broker and QoS</a></li><li><a href="#method">Method</a></li>
+<li><a href="#chart">Chart</a></li><li><a href="#tables">All results</a></li><li><a href="#broker">Broker and QoS</a></li><li><a href="#validation">Production checks</a></li><li><a href="#method">Method</a></li>
 <li><a href="#data">Data</a></li></ul></nav>
 <main>
 
@@ -212,10 +226,11 @@ eight of 3.2 KB cost about 4 ms in each of two. Small messages lower the per-sca
 (two round trips). With a client budget the acknowledgements come back within the scan: QoS 1 and 2 then cost
 nothing extra for a few messages.</li>
 <li>All @@cells@@ cells delivered every message once and byte-exact at the broker, with no timeouts (@@failed@@ failed).</li>
-<li><strong>Our broker (mochi) exposed two upstream library bugs that would hit production</strong>
+<li><strong>Our broker (mochi) exposed three upstream library bugs that would hit production</strong>
 (<a href="#broker">details</a>): a burst of more QoS 1/2 commands than the client's slots disconnected it and lost the
-rest, and a QoS 1/2 publish to a topic outside the PLC's ACL kept the PLC offline for good. Both are fixed in the fork;
-the second now ends in three reconnects and a <code>Rejected</code> output.</li>
+rest; a QoS 1/2 publish to a topic outside the PLC's ACL kept the PLC offline for good; and after a fast reconnect a
+subscriber could keep a subscription the broker no longer had, so the PLC stayed connected and received nothing. All
+three are fixed in the fork; the second now ends in three reconnects and a <code>Rejected</code> output.</li>
 </ul>
 </section>
 
@@ -287,7 +302,7 @@ closes an MQTT 3.1.1 connection; a refused QoS 0 PUBLISH is dropped silently (th
 <table class="split text"><thead><tr><th>Case</th><th>Upstream library</th><th>Fork 1.3.0.0</th></tr></thead><tbody>
 <tr><td>QoS 0</td><td>"done", dropped by the broker</td><td>same: nothing to detect</td></tr>
 <tr><td>QoS 1 or 2, a command every 2 s meanwhile</td><td>about 40 reconnects in 30 s, 0 of 15 commands delivered, offline even after the topic was corrected</td>
-<td>3 reconnects, then the new output <code>Rejected</code>; link stays up, 12 of 15 commands delivered, a corrected message goes through</td></tr>
+<td>3 reconnects, then the new output <code>Rejected</code>; link stays up, 12-13 of 15 commands delivered, a corrected message goes through</td></tr>
 </tbody></table>
 <p>So: every topic a PLC publishes at QoS 1 or 2 must be in its broker ACL (a generator that writes the PLC's topics
 should write its ACL entry too), and PLC code ends a publish request on <code>Rejected</code> as on <code>done</code>.</p>
@@ -296,6 +311,34 @@ should write its ACL entry too), and PLC code ends a publish request on <code>Re
 <p>The give-up rule must not drop good messages when the link really fails. The full-refresh and acknowledgement
 publishers in this test do not handle <code>Rejected</code>, so a wrongly given-up message would stop their traffic.</p>
 @@regression@@
+
+<h3>Subscriptions after a reconnect (HQ mochi)</h3>
+<p>With the client called several times a scan (the recommended budget), the link can drop and come back between two
+calls of a subscriber. The upstream <code>MQTTSubscribe</code> saw a reconnect only if the link was still down at its
+next call; otherwise it kept a subscription the new clean session no longer had, and still reported
+<code>SubscribeDone</code>. Test: 32 client calls a scan with a full refresh in flight; after each reconnect, 3 commands
+on the subscribed topic (<code>resubscribe_test.py</code>).</p>
+<table class="split text"><thead><tr><th>Reconnect, 15 times</th><th>Upstream library</th><th>Fork 1.3.0.0</th></tr></thead><tbody>
+<tr><td>broker drops the PLC at once (another client takes its id)</td><td>4 of 15 left the PLC connected and receiving nothing, until a later reconnect it happened to see</td><td>15 of 15; every command delivered exactly once</td></tr>
+<tr><td>the PLC closes and reconnects (<code>DoDisconnect</code>)</td><td>15 of 15 (the slower close is always seen)</td><td>15 of 15</td></tr>
+@@vmbridge@@
+</tbody></table>
+<p>The fix follows the client's connect counter, and the client marks each subscribe request with the connection that
+took it, so a request the old connection took is sent again and one still queued is not sent twice. Four review rounds
+of the subscriber also fixed the upstream request handling: switched off and on while the client was busy, it
+subscribed twice (each message reached the callback twice) and then unsubscribed.</p>
+
+<h2 id="validation">Production checks</h2>
+<table class="split text"><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>
+<tr><td>BCNF's MQTT code unchanged on the fork (two connections, HQ broker)</td><td>compiles; commands 10 of 10 at QoS 1 and 2, status 5 of 5; reconnect and resubscribe; <code>MQTTState</code> and the <code>#</code> wildcard correct (both had upstream bugs)</td></tr>
+<tr><td>Online change with traffic: code, <code>PLC_PRG</code> variables, and the library itself (to a marked test build)</td><td>no reconnect; worst gap in traffic 0.7-0.8 s</td></tr>
+<tr><td>Warm and cold reset, 5 times</td><td>back in under 1 s; dynamic memory unchanged</td></tr>
+<tr><td>Incoming message over <code>MaxPayloadSize</code></td><td>2,500 bytes: acknowledged and dropped, counted. 20,000 bytes: one disconnect, then recovery</td></tr>
+<tr><td>Broker URL with credentials (<code>@</code> and <code>:</code> in the password), 8 cases</td><td>all parse correctly</td></tr>
+<tr><td>Broker by host name</td><td>fails at once: the PLC has no DNS server. Use IP addresses</td></tr>
+<tr><td>Scripted broker: CONNACK and PINGRESP split across TCP segments, a PUBLISH with a bad topic length</td><td>handled (the bad packet disconnects, no buffer overrun); upstream misread the split packets and read past the buffer</td></tr>
+<tr><td>Dev bridge restarts; two clients fighting over one client id for 20 s</td><td>reconnect in 3-6 s, nothing given up as <code>Rejected</code>, commands at the full rate afterwards (with the subscribe fix); 20 reconnects in the fight, recovery when the other client leaves</td></tr>
+</tbody></table>
 
 <h2 id="method">Method</h2>
 <ul class="prose">

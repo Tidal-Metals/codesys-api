@@ -1,0 +1,26 @@
+{
+ "cases": [
+  {
+   "case": "HQ broker by name",
+   "url": "tigstack.localdomain:1883",
+   "connected": false,
+   "connectedAfterSeconds": null,
+   "connectAttempts": 6,
+   "maxScanMs": 3.2,
+   "maxClientMs": 2.4,
+   "ok": false
+  },
+  {
+   "case": "name that does not exist",
+   "url": "no-such-broker.localdomain:1883",
+   "connected": false,
+   "connectedAfterSeconds": null,
+   "connectAttempts": 6,
+   "maxScanMs": 2.5,
+   "maxClientMs": 1.9,
+   "ok": true
+  }
+ ],
+ "backOnIp": true,
+ "success": false
+}

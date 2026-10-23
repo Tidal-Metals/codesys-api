@@ -1,0 +1,111 @@
+{
+ "rows": [
+  {
+   "reconnect": 1,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 2,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 3,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 4,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 5,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 6,
+   "reconnected": true,
+   "commandsArrived": 0,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 7,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 8,
+   "reconnected": true,
+   "commandsArrived": 0,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 9,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 10,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 11,
+   "reconnected": true,
+   "commandsArrived": 0,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 12,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 13,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 14,
+   "reconnected": true,
+   "commandsArrived": 0,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  },
+  {
+   "reconnect": 15,
+   "reconnected": true,
+   "commandsArrived": 3,
+   "subscribeDone": "TRUE",
+   "subscriberBusy": "FALSE"
+  }
+ ],
+ "deadAfterReconnect": 4,
+ "success": false
+}

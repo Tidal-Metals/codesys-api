@@ -44,7 +44,8 @@ result = {'success': True, 'connected': text('PLC_PRG.IsBrokerConnected') == 'TR
           'timeouts': int(text('EdgeTest.TimeoutCount')), 'received': int(text('EdgeTest.Receiver.ReceivedCount')),
           'rejected': int(text('EdgeTest.RejectedCount')),
           'subscribeDone': text('EdgeTest.Subscriber.SubscribeDone') == 'TRUE',
-          'subscribeFail': text('EdgeTest.Subscriber.SubscribeFail') == 'TRUE'}
+          'subscribeFail': text('EdgeTest.Subscriber.SubscribeFail') == 'TRUE',
+          'peerCloses': int(text(C + '.counts.CountPeerCloses')), 'lastClose': int(text(C + '.counts.LastPeerCloseResult'))}
 """
 
 
@@ -100,6 +101,7 @@ def publish_case(name: str, topic: str, qos: int, cmd, watch: float) -> dict:
             "timeoutsDuring": after["timeouts"] - before["timeouts"], "rejectedDuring": after["rejected"] - before["rejected"],
             "reconnectsDuring": after["connectAttempts"] - before["connectAttempts"],
             "commandsSent": commands, "commandsReceived": after["received"] - before["received"],
+            "peerClosesDuring": after["peerCloses"] - before["peerCloses"], "lastCloseResult": after["lastClose"],
             "connectedAtEnd": after["connected"]}
 
 

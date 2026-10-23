@@ -1,0 +1,80 @@
+{
+ "steps": [
+  {
+   "step": "reset warm",
+   "applied": true,
+   "error": null,
+   "loginSeconds": null,
+   "running": true,
+   "probe": 201,
+   "connected": true,
+   "dynMemBefore": 57744,
+   "dynMemAfter": 57744,
+   "scaleTimeouts": 0,
+   "secondsUntilAnswered": 0.2,
+   "longestEchoGapAfterThat": 0.8,
+   "echoesSince": 48
+  },
+  {
+   "step": "reset warm",
+   "applied": true,
+   "error": null,
+   "loginSeconds": null,
+   "running": true,
+   "probe": 201,
+   "connected": true,
+   "dynMemBefore": 57744,
+   "dynMemAfter": 57744,
+   "scaleTimeouts": 0,
+   "secondsUntilAnswered": 0.3,
+   "longestEchoGapAfterThat": 0.8,
+   "echoesSince": 48
+  },
+  {
+   "step": "reset warm",
+   "applied": true,
+   "error": null,
+   "loginSeconds": null,
+   "running": true,
+   "probe": 201,
+   "connected": true,
+   "dynMemBefore": 57744,
+   "dynMemAfter": 57744,
+   "scaleTimeouts": 0,
+   "secondsUntilAnswered": 0.6,
+   "longestEchoGapAfterThat": 0.8,
+   "echoesSince": 48
+  },
+  {
+   "step": "reset cold",
+   "applied": true,
+   "error": null,
+   "loginSeconds": null,
+   "running": true,
+   "probe": 201,
+   "connected": true,
+   "dynMemBefore": 57744,
+   "dynMemAfter": 57744,
+   "scaleTimeouts": 0,
+   "secondsUntilAnswered": 0.3,
+   "longestEchoGapAfterThat": 0.8,
+   "echoesSince": 48
+  },
+  {
+   "step": "reset cold",
+   "applied": true,
+   "error": null,
+   "loginSeconds": null,
+   "running": true,
+   "probe": 201,
+   "connected": true,
+   "dynMemBefore": 57744,
+   "dynMemAfter": 57744,
+   "scaleTimeouts": 0,
+   "secondsUntilAnswered": 0.3,
+   "longestEchoGapAfterThat": 0.8,
+   "echoesSince": 49
+  }
+ ],
+ "success": true
+}

@@ -1,0 +1,167 @@
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\apply_session.py --fork-only
+{
+ "errors": [
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Publisher.Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: '((Pool[Index].done OR Pool[Index].SendTimeout) OR Pool[Index].Rejected)'"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  },
+  {
+   "severity": "Error",
+   "text": "Expression of type 'BOOL' expected in this place"
+  },
+  {
+   "severity": "Error",
+   "text": "Unknown type: 'Pool[Index].Rejected'"
+  },
+  {
+   "severity": "Error",
+   "text": "'Rejected' is no component of 'MqttPublish'"
+  }
+ ],
+ "request_id": "3e6eef1f-2ffd-41ee-b018-674b83c7e9e4",
+ "libraries": [
+  "Standard, * (System)",
+  "#IoStandard",
+  "#3SLicense",
+  "#BreakpointLogging",
+  "#IoDrvEthernet",
+  "#IoDrvP2cds622NetConfig",
+  "#CDS_MemMan",
+  "#MQTT",
+  "#PRO_JSON",
+  "SysTime, 3.5.17.0 (System)",
+  "SysTimeCore, 3.5.17.0 (System)",
+  "CAA Memory, 3.5.12.0 (CAA Technical Workgroup)",
+  "SysTimeRtc, 3.5.17.0 (System)",
+  "SNTP Service SL, 1.9.0.0 (CODESYS)"
+ ],
+ "success": true,
+ "saved": true,
+ "executed_by": "CODESYS PersistentSession",
+ "execution_time": 1792704639.511177,
+ "warningCount": 3,
+ "steps": [
+  "dynamic memory 100000 bytes",
+  "sources written",
+  "rebuilding"
+ ],
+ "errorsAgainstOriginalReferences": 10,
+ "memory": []
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe tools/app_check.py --host C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo\mqtt_large_payload_demo.project --keep-as C:\Users\KevinTritz\projects\codesys_projects\mqtt_large_payload_demo_tm\mqtt_large_payload_demo.project
+{
+ "installed": "MQTT, 1.3.0.0 (Tidal Metals)",
+ "warnings": [],
+ "replaced": [
+  "#MQTT"
+ ],
+ "errors": [],
+ "info": [
+  "------ Build started: Application: P2CDS622.Application -------",
+  "Typify code...",
+  "implement parameter",
+  "make configurable",
+  "TODO implement!",
+  "here to implement certificate use",
+  "make size check due use of memmove...",
+  "make this to a parameter to chose disconnect or discharge",
+  "TODO:check to make disconnect as parameter",
+  "configure to disconnect?",
+  "make count var...",
+  "check here if to disconnect",
+  "check if last to big topic is to saved, or just take memmove",
+  "semaphore",
+  "semaphore",
+  "TODO: hind that this is blocking!",
+  "TODO test of zeros in strings",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "semaphore",
+  "reconnect or wait or or or or ....",
+  "TODO check this, messeg is repeated!",
+  "check if we want to diplay topic error",
+  "semaphore",
+  "semaphore",
+  "need to check string length!",
+  "Compile complete -- 0 errors, 0 warnings",
+  "Additional code checks ...",
+  "Additional code checks complete -- 0 errors"
+ ],
+ "steps": [
+  "started",
+  "installed",
+  "opened host",
+  "references replaced",
+  "built"
+ ],
+ "success": true,
+ "seconds": 40.7,
+ "host": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo\\mqtt_large_payload_demo.project",
+ "kept_as": "C:\\Users\\KevinTritz\\projects\\codesys_projects\\mqtt_large_payload_demo_tm\\mqtt_large_payload_demo.project"
+}
+
+$ C:\Users\KevinTritz\AppData\Local\Programs\Python\Python313\python.exe C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\deploy_demo.py
+{
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "7ab3132f-88f3-4230-9027-888ef3abccc9",
+ "execution_time": 1792704703.506134,
+ "steps": [
+  "logged in, state=stop",
+  "state=run",
+  "boot application created"
+ ],
+ "success": true
+}
+{
+ "diagnostics": {
+  "PLC_PRG.ConcatSentCount": "UDINT#0",
+  "PLC_PRG.LastConcatLength": "UDINT#0",
+  "PLC_PRG.Sequence": "UDINT#5",
+  "PLC_PRG.IsBrokerConnected": "TRUE",
+  "PLC_PRG.TimeoutCount": "UDINT#0",
+  "PLC_PRG.SkippedBusyCount": "UDINT#0",
+  "PLC_PRG.LastLargeLength": "UDINT#7896",
+  "PLC_PRG.LargeSentCount": "UDINT#5",
+  "PLC_PRG.OverflowCount": "UDINT#0"
+ },
+ "state": "run",
+ "executed_by": "CODESYS PersistentSession",
+ "request_id": "669cff87-e44e-44da-87ed-fa6f7b85e39a",
+ "execution_time": 1792704709.2552032,
+ "success": true
+}

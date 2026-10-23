@@ -49,7 +49,8 @@ def main() -> int:
     action = sys.argv[1]
     if action == "add" and not PASSWORD_FILE.exists():
         PASSWORD_FILE.parent.mkdir(exist_ok=True)
-        PASSWORD_FILE.write_text(secrets.token_urlsafe(12))
+        # with "@" and ":" inside, so every run also checks the library's URL parsing of credentials
+        PASSWORD_FILE.write_text(secrets.token_urlsafe(8) + "@:" + secrets.token_urlsafe(8))
     password = PASSWORD_FILE.read_text().strip() if action == "add" else ""
     script = ADD if action == "add" else RESTORE
     result = subprocess.run(["ssh", "-o", "BatchMode=yes", VM, script], input=password,

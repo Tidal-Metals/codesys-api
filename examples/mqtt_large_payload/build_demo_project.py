@@ -31,9 +31,12 @@ FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
 # BCNF's StringPublication (verbatim) and the 2,000-tag scale test, both called by PLC_PRG
 PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"),
             ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync"), ("EdgeTest", "edge/EdgeTest"),
-            ("SplitTest", "split/SplitTest")]
+            ("SplitTest", "split/SplitTest"), ("BcnfComms", "bcnf_comms/BcnfComms"),
+            ("OnlineChangeProbe", "probe/OnlineChangeProbe"), ("UrlProbe", "probe/UrlProbe")]
 # MQTT library edge-case test (edge_test.py): its subscription callback
-FUNCTION_BLOCKS = [("FB_EdgeReceiver", "edge/FB_EdgeReceiver")]
+FUNCTION_BLOCKS = [("FB_EdgeReceiver", "edge/FB_EdgeReceiver"),
+                   ("BenchFirstSubscription", "bcnf_comms/BenchFirstSubscription"),
+                   ("BenchFirstPublish", "bcnf_comms/BenchFirstPublish")]
 METHODS = [("FB_EdgeReceiver", "PublishReceived", "BOOL", "edge/FB_EdgeReceiver.PublishReceived")]
 ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"), ("PLC_PRG", "CallClient", "PLC_PRG.CallClient"),
            ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),

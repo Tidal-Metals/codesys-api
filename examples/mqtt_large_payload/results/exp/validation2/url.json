@@ -1,0 +1,141 @@
+{
+ "cases": [
+  {
+   "case": "plain",
+   "url": "plc-01:secret@192.168.50.240:1883",
+   "parsed": [
+    "plc-01",
+    "secret",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "secret",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "user only",
+   "url": "plc-01@192.168.50.240:1883",
+   "parsed": [
+    "plc-01",
+    "",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "no credentials",
+   "url": "192.168.50.240:1883",
+   "parsed": [
+    "",
+    "",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "",
+    "",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "'@' in password",
+   "url": "plc-01:p@ss@192.168.50.240:1883",
+   "parsed": [
+    "plc-01",
+    "p@ss",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "p@ss",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "':' in password",
+   "url": "plc-01:a:b:c@192.168.50.240:1883",
+   "parsed": [
+    "plc-01",
+    "a:b:c",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "a:b:c",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "80-char password",
+   "url": "plc-01:ppppppppppppppppppppppppppppppppppppppppQ9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9@192.168.50.240:1883",
+   "parsed": [
+    "plc-01",
+    "ppppppppppppppppppppppppppppppppppppppppQ9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "ppppppppppppppppppppppppppppppppppppppppQ9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "hostname",
+   "url": "plc-01:secret@tigstack.localdomain:1883",
+   "parsed": [
+    "plc-01",
+    "secret",
+    "tigstack.localdomain",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "secret",
+    "tigstack.localdomain",
+    1883
+   ],
+   "ok": true
+  },
+  {
+   "case": "mqtt:// prefix",
+   "url": "mqtt://plc-01:secret@192.168.50.240:1883",
+   "parsed": [
+    "plc-01",
+    "secret",
+    "192.168.50.240",
+    1883
+   ],
+   "expected": [
+    "plc-01",
+    "secret",
+    "192.168.50.240",
+    1883
+   ],
+   "ok": true
+  }
+ ],
+ "success": true
+}

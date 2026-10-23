@@ -1,0 +1,71 @@
+{
+ "broker": "192.168.50.240:1883",
+ "bothConnected": true,
+ "publish": {
+  "seconds": 10,
+  "rawMessages": 77,
+  "perSecond": 7.7,
+  "groups": [
+   "group1",
+   "group2",
+   "group3",
+   "group4",
+   "group5",
+   "group6",
+   "group7"
+  ]
+ },
+ "mainClientDuringBcnf": {
+  "connected": true
+ },
+ "commands": [
+  {
+   "topic": "raw_data_demo/bcnf/commands",
+   "qos": 1,
+   "sent": 10,
+   "seenInReceiveString": 10,
+   "changes": 10,
+   "subReconnects": 0
+  },
+  {
+   "topic": "raw_data_demo/bcnf/commands",
+   "qos": 2,
+   "sent": 10,
+   "seenInReceiveString": 10,
+   "changes": 10,
+   "subReconnects": 0
+  }
+ ],
+ "status": {
+  "topic": "raw_data_demo/bcnf/status",
+  "qos": 1,
+  "sent": 5,
+  "seenInReceiveString": 5,
+  "changes": 5,
+  "subReconnects": 0
+ },
+ "mqttState": {
+  "changes": 3,
+  "published": [
+   "on",
+   "off",
+   "on"
+  ]
+ },
+ "subReconnect": {
+  "reconnected": true,
+  "afterReconnect": {
+   "topic": "raw_data_demo/bcnf/commands",
+   "qos": 2,
+   "sent": 3,
+   "seenInReceiveString": 3,
+   "changes": 3,
+   "subReconnects": 0
+  }
+ },
+ "mainClientEnd": {
+  "connected": true,
+  "echoAcknowledgedSinceStart": 0
+ },
+ "success": false
+}

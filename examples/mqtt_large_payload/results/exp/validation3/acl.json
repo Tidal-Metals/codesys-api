@@ -1,0 +1,76 @@
+{
+ "broker": "192.168.50.142:18883 (mochi 2.7.9, user plc-bench-mqtt-test)",
+ "cases": [
+  {
+   "case": "allowed QoS 1",
+   "topic": "raw_data_demo/edge",
+   "qos": 1,
+   "watchSeconds": 6,
+   "publishDone": true,
+   "timeoutsDuring": 0,
+   "rejectedDuring": 0,
+   "reconnectsDuring": 0,
+   "commandsSent": 3,
+   "commandsReceived": 3,
+   "peerClosesDuring": 0,
+   "lastCloseResult": 0,
+   "connectedAtEnd": true
+  },
+  {
+   "case": "denied QoS 0",
+   "topic": "raw_data_denied/edge",
+   "qos": 0,
+   "watchSeconds": 30,
+   "publishDone": true,
+   "timeoutsDuring": 0,
+   "rejectedDuring": 0,
+   "reconnectsDuring": 0,
+   "commandsSent": 15,
+   "commandsReceived": 15,
+   "peerClosesDuring": 0,
+   "lastCloseResult": 0,
+   "connectedAtEnd": true
+  },
+  {
+   "case": "denied QoS 1",
+   "topic": "raw_data_denied/edge",
+   "qos": 1,
+   "watchSeconds": 30,
+   "publishDone": false,
+   "timeoutsDuring": 0,
+   "rejectedDuring": 1,
+   "reconnectsDuring": 3,
+   "commandsSent": 15,
+   "commandsReceived": 13,
+   "peerClosesDuring": 3,
+   "lastCloseResult": 529,
+   "connectedAtEnd": true,
+   "recoveredAfterTopicFix": true,
+   "reconnectsAfterFix": 0
+  },
+  {
+   "case": "denied QoS 2",
+   "topic": "raw_data_denied/edge",
+   "qos": 2,
+   "watchSeconds": 30,
+   "publishDone": false,
+   "timeoutsDuring": 0,
+   "rejectedDuring": 1,
+   "reconnectsDuring": 3,
+   "commandsSent": 15,
+   "commandsReceived": 13,
+   "peerClosesDuring": 3,
+   "lastCloseResult": 529,
+   "connectedAtEnd": true,
+   "recoveredAfterTopicFix": true,
+   "reconnectsAfterFix": 0
+  }
+ ],
+ "connectedWithCredentials": true,
+ "deniedSubscribe": {
+  "subscribeFail": true,
+  "subscribeDone": true,
+  "connected": true
+ },
+ "backOnHq": true
+}

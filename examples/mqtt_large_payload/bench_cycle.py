@@ -88,8 +88,12 @@ def main() -> int:
         if run([PY, "tools/build_library.py"], fork, log) != 0:
             sys.exit("build failed; see %s" % log)
     step("close session project")
-    api("/plc/logout")
-    api("/project/close")
+    # nothing to log out of or close when the session has no project open (the API answers 500)
+    for path in ("/plc/logout", "/project/close"):
+        try:
+            api(path)
+        except requests.HTTPError as error:
+            print("   (%s: %s)" % (path, error.response.status_code), flush=True)
     if args.apply_sources:
         step("apply demo sources to the original demo")
         api("/project/open", {"path": str(DEMO).replace("\\", "/")})

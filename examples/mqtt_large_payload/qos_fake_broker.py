@@ -145,11 +145,25 @@ class Connection:
         finally:
             self.closed.set()
 
+    def send_split(self, data, split_at, label):
+        """Send one packet in two TCP writes 0.3 s apart (TCP_NODELAY is on, so they go out as two segments)."""
+        with self.send_lock:
+            self.sock.sendall(data[:split_at])
+            time.sleep(0.3)
+            self.sock.sendall(data[split_at:])
+        self.log.write(dir="out", conn=self.number, type=label, length=len(data), split=split_at)
+
     def answer(self, kind, info, packet):
         if kind == 1:
-            self.send(bytes([0x20, 2, 0, 0]))
+            if self.policy.get("split_connack"):
+                self.send_split(bytes([0x20, 2, 0, 0]), 1, "CONNACK")
+            else:
+                self.send(bytes([0x20, 2, 0, 0]))
         elif kind == 12:
-            self.send(bytes([0xD0, 0]))
+            if self.policy.get("split_pingresp"):
+                self.send_split(bytes([0xD0, 0]), 1, "PINGRESP")
+            else:
+                self.send(bytes([0xD0, 0]))
         elif kind == 8:
             code = self.policy.get("suback_code", {}).get(info["topic"], info["qos"])
             self.send(bytes([0x90, 3]) + struct.pack(">H", info["id"]) + bytes([code]))
@@ -344,6 +358,31 @@ def scenario_cut_publish(conn, args, server):
             "ok": first_type == "CONNECT" and len(publishes) == 1 and publishes[0]["payloadLength"] == args.large}
 
 
+def scenario_split(conn, args, label):
+    """The connection survives packets that arrive in two pieces (CONNACK already did, at connect)."""
+    conn.subscribed.wait(30)
+    got = conn.collect(args.hold)
+    pings = ids_of(got, 12)
+    return {"split": label, "pingsAnswered": len(pings), "closed": conn.closed.is_set(),
+            "ok": not conn.closed.is_set() and (label == "CONNACK" or len(pings) >= 2)}
+
+
+def scenario_bad_topic_length(conn, args, server):
+    """A PUBLISH whose topic length points past the packet: the client must drop the connection and come back."""
+    conn.subscribed.wait(30)
+    time.sleep(1)
+    with conn.send_lock:
+        conn.sock.sendall(bytes([0x32, 0x04, 0x4E, 0x20, 0x00, 0x01]))  # QoS 1, remaining 4, topic length 20000
+    conn.log.write(dir="out", conn=conn.number, type="PUBLISH (malformed)", length=6)
+    closed = conn.closed.wait(15)
+    again = server.wait_newer_than(conn.number, 30) if closed else None
+    if again is not None:
+        again.subscribed.wait(15)
+    return {"closedByClient": closed, "reconnected": again is not None,
+            "resubscribed": again is not None and again.subscribed.is_set(),
+            "ok": closed and again is not None and again.subscribed.is_set()}
+
+
 class Server:
     """Accepts every connection on a thread (a reconnect is never left in the backlog); latest is the newest."""
 
@@ -390,6 +429,10 @@ def main():
     policy = {}
     if args.scenario == "suback_reject":
         policy["suback_code"] = {TOPIC_IN: 0x80}
+    if args.scenario == "split_connack":
+        policy["split_connack"] = True
+    if args.scenario == "split_pingresp":
+        policy["split_pingresp"] = True
     if args.scenario == "no_pubcomp":
         policy["ignore_pubrel"] = True
     server = Server(args.port, log, policy, small_receive_buffer=args.scenario == "cut_publish")
@@ -407,7 +450,10 @@ def main():
                "burst_large": lambda c, a: scenario_burst(c, a, 2, large_at=31),
                "burst_large_window": lambda c, a: scenario_burst(c, a, 2, large_at=31, inflight=20),
                "suback_reject": scenario_suback_reject, "no_pubcomp": scenario_no_pubcomp,
-               "cut_publish": lambda c, a: scenario_cut_publish(c, a, server)}
+               "cut_publish": lambda c, a: scenario_cut_publish(c, a, server),
+               "split_connack": lambda c, a: scenario_split(c, a, "CONNACK"),
+               "split_pingresp": lambda c, a: scenario_split(c, a, "PINGRESP"),
+               "bad_topic_length": lambda c, a: scenario_bad_topic_length(c, a, server)}
     try:
         result = runners[args.scenario](conn, args)
     except Exception as error:  # the log must always end with a done record

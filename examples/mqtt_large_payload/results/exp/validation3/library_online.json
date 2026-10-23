@@ -1,0 +1,28 @@
+{
+ "testLibrary": "MQTT 1.3.0.99 (Tidal Metals test).library",
+ "switch": {
+  "installed": "MQTT, 1.3.0.99 (Tidal Metals)",
+  "replaced": [
+   "MQTT, 1.3.0.0 (Tidal Metals)"
+  ]
+ },
+ "libraryChange": {
+  "step": "library change",
+  "applied": true,
+  "error": null,
+  "loginSeconds": 7.0,
+  "running": true,
+  "probe": 301,
+  "connected": true,
+  "dynMemBefore": 57744,
+  "dynMemAfter": 57744,
+  "scaleTimeouts": 0,
+  "reconnects": 0,
+  "longestEchoGapSeconds": 0.8,
+  "longestRefreshGapSeconds": 1.3,
+  "echoesDuring": 99,
+  "probeOk": true,
+  "newLibraryVariable": "UDINT#7"
+ },
+ "success": true
+}
