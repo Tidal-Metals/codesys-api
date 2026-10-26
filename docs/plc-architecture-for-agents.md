@@ -167,7 +167,10 @@ Each of these cost time on this bench; none is obvious from the code.
   right side runs (and consumes data) even when the left is FALSE.
 - **`done` is a one-call pulse; `SendTimeout` is not an ending.** `MQTTPublish.done` is TRUE for one call.
   `SendTimeout` stays TRUE while a request is slow, and the library keeps that request (it resends after a
-  reconnect) until `done`; nothing cancels it. Treat `SendTimeout` as a diagnostic only.
+  reconnect) until `done`; nothing cancels it. Treat `SendTimeout` as a diagnostic only. On the Tidal Metals
+  fork (1.3.0.0), `Rejected` also ends a request: the broker refused the message (usually a topic outside
+  the PLC's ACL). End on `done OR Rejected` and log `Rejected`; on 1.2.0.7 such a message kept the PLC
+  reconnecting for good.
 - **`MQTTPublish` starts on a rising edge of `send`.** It must see FALSE between two messages; setting `send`
   again in the call after `done` sends nothing. Track an "armed" flag as `PRG_Comms.PublishData` does.
 - **The library reads payloads through the pointer over several scans.** Leave the buffer, and anything that

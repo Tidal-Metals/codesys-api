@@ -1,9 +1,15 @@
 # Large MQTT payloads from CODESYS
 
-Bench demo showing that the Stefan Dreyer MQTT library (1.2.0.7, unmodified) publishes one 17.6 KB
-message without trouble. The 255-character cap seen on the BCNF PLC comes from `CONCAT` and
-`STRING(255)` copies, not from the library. Write-up with results and performance:
+Bench demo for the MQTT library, and since 2026-10-21 the test bed of our fork, MQTT 1.3.0.0 (Tidal Metals)
+(`~/projects/CODESYS-MQTT`).
+
+It started by showing that the Stefan Dreyer library (1.2.0.7, unmodified) publishes one 17.6 KB message
+without trouble. The 255-character cap seen on the BCNF PLC comes from `CONCAT` and `STRING(255)` copies,
+not from the library. Write-up:
 [Doc Shelf report](https://docs.local.tidalmetals.org/documents/projects/codesys/mqtt-large-payload/latest/).
+The fork's tests are in "Library tests" below; their results are summarised in the fork's
+`OPTIMIZATION.md`, and the comparison with upstream is on
+[Doc Shelf](https://docs.local.tidalmetals.org/documents/projects/codesys/mqtt-fork-vs-upstream/latest/).
 
 ## Files
 
@@ -20,8 +26,35 @@ message without trouble. The 255-character cap seen on the BCNF PLC comes from `
 | `deploy_demo.py` | Full download to the bench PLC, start, boot application, then a fresh login and readback |
 | `measure_performance.py` | Sweeps `ValueCount` online and reads the PLC's timing counters |
 | `verify_payloads.py` | Subscribes on the HQ broker and checks every value of every message |
-| `results/` | JSON from the runs on 2026-10-19 (`performance_real_*`, `performance_int_qos0` and `verify_production_sweep` are the production benchmarks) |
-| `report/` | Generator and template for the Doc Shelf report |
+| `results/` | JSON from the runs on 2026-10-19 (`performance_real_*`, `performance_int_qos0` and `verify_production_sweep` are the production benchmarks); `results/ab/` the 1.2.0.7 vs 1.3.0.0 A/B, `results/exp/<label>/` every fork experiment and test |
+| `report/` | Generators and templates for the Doc Shelf reports (`make_report.py`, `make_throughput_doc.py`, `make_split_doc.py`: message size vs count) |
+
+## Library tests
+
+All run against whatever build is deployed; reserve the PLC first. Brokers: HQ `192.168.50.240:1883`
+(anonymous) and the VM dev bridge `192.168.50.142:18883` (per-PLC users and ACLs). The test user's password
+is never stored in the repo.
+
+| Path | Purpose |
+|---|---|
+| `bench_cycle.py` | One library experiment: build the fork, compile into the demo, deploy, measure (`--label`, results in `results/exp/<label>/`) |
+| `run_ab.py`, `compare_ab.py` | The A/B measurement set for one build, and the comparison between builds |
+| `measure_profile.py`, `show_profile.py`, `show_tcp_profile.py` | Where the client's time goes (`MqttClient.Profile`) |
+| `edge_test.py`, `st/edge/` | Every payload size around the send and receive buffer boundaries, byte-exact |
+| `measure_latency.py` | Command to acknowledgement round trip (`EdgeTest` echo) |
+| `split_test.py`, `show_split.py`, `st/split/` | The same 26 KB as 1 to 1,625 messages at QoS 0, 1 and 2 |
+| `qos_test.py`, `show_qos.py` | Every subscribe x publish QoS, paced and back to back, with loss and duplicate counts (HQ broker) |
+| `qos_broker_test.py`, `qos_fake_broker.py` | QoS corner cases mochi does not produce, played by a scripted broker on the VM |
+| `acl_test.py`, `acl_bridge_user.py` | A broker that refuses topics (dev bridge ACLs): `MQTTPublish.Rejected` |
+| `resubscribe_test.py` | Subscriptions across reconnects; `--kick` is the regression test after any subscribe or reconnect change |
+| `vm_bridge_test.py` | Dev bridge restarts and a duplicate client id |
+| `measure_link_loss.py`, `mqtt_link_proxy.py`, `link_loss_broker.conf` | Link loss through a proxy on the VM (kills, a silent link) or a private broker restart |
+| `measure_reconnect.py` | Time one reconnect |
+| `measure_soak.py` | Production-like load for many minutes, everything checked at the broker |
+| `soak_disturbed.py` | Long soak on the dev bridge with broker kicks and bridge restarts; samples every 5 min |
+| `bcnf_test.py`, `st/bcnf_comms/` | BCNF's MQTT code unchanged on the fork (HQ broker only) |
+| `online_change_test.py`, `library_online_change_test.py`, `st/probe/OnlineChangeProbe.st` | Online changes, resets, and an online change of the library itself, with traffic |
+| `url_test.py`, `dns_test.py`, `st/probe/UrlProbe.st` | Broker URL parsing; a broker by host name |
 
 ## Run it
 
@@ -55,7 +88,8 @@ today (about 2.6 ms per scan on the bench); it is off by default.
 timings. `results/performance_with_concat_control.json` is the first sweep, measured with it on.
 
 Deploying replaces the Modbus bench application on the PLC. The demo publishes on
-`raw_data_demo` and `raw_data_demo/concat` at `192.168.50.240:1883`, never on the bridge's `raw_data`.
+`raw_data_demo` and `raw_data_demo/concat` at `192.168.50.240:1883`, never on the bridge's `raw_data`. The
+dev-bridge tests point it at `192.168.50.142:18883` and restore the HQ broker when they finish.
 
 Edits to the project need a logged-out session; `apply_session.py` fails with "affects a device you
 are currently logged into" otherwise (`POST /api/v1/plc/logout`).
