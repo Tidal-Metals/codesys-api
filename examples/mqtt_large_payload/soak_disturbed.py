@@ -169,7 +169,9 @@ class BrokerSide:
         while self.running:
             n += 1
             info = self.commander.publish(COMMANDS, b"soak-%d" % n, qos=1)
-            if info.rc == mqtt.MQTT_ERR_SUCCESS:
+            # paho queues a QoS 1 message published while disconnected (rc NO_CONN) and sends it after the
+            # reconnect, so it counts as sent; counting only SUCCESS made a bridge restart look like duplicates.
+            if info.rc in (mqtt.MQTT_ERR_SUCCESS, mqtt.MQTT_ERR_NO_CONN):
                 with self.lock:
                     self.commands_sent += 1
             time.sleep(0.2)
