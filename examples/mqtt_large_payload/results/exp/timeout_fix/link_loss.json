@@ -1,0 +1,47 @@
+{
+ "mode": "proxy",
+ "faults": [
+  {
+   "kind": "kill",
+   "detectSeconds": 2.0,
+   "reconnectSeconds": 6.1,
+   "scaleSentSince": 14,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 41,
+   "connected": true
+  },
+  {
+   "kind": "kill",
+   "detectSeconds": 2.1,
+   "reconnectSeconds": 6.4,
+   "scaleSentSince": 13,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 39,
+   "connected": true
+  },
+  {
+   "kind": "kill",
+   "detectSeconds": 2.1,
+   "reconnectSeconds": 6.7,
+   "scaleSentSince": 13,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 40,
+   "connected": true
+  },
+  {
+   "kind": "freeze",
+   "frozenSeconds": 40,
+   "detectSeconds": 26.7,
+   "reconnectSeconds": 2.0,
+   "scaleSentSince": 31,
+   "scaleTimeoutsSince": 0,
+   "echoesSince": 36,
+   "connected": true
+  }
+ ],
+ "connectSeconds": 4.1,
+ "restoreSeconds": 4.2,
+ "echoesTotal": 210,
+ "duplicateEchoes": 0,
+ "success": true
+}

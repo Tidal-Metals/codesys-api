@@ -1,0 +1,70 @@
+{
+ "started": "2026-10-26 11:01:17",
+ "hours": 0.3,
+ "broker": "192.168.50.142:18883 (mochi 2.7.9, user plc-bench-mqtt-test)",
+ "kicks": 5,
+ "bridgeRestarts": 1,
+ "disturbancesNotRecovered": [],
+ "reconnectSecondsMax": 4.5,
+ "commandsSent": 5382,
+ "commandsReceived": 4747,
+ "refreshesSent": 770,
+ "refreshesAtBroker": 867,
+ "reconnects": 6,
+ "brokerCloses": 6,
+ "verifierProblems": 0,
+ "verifierDuplicates": 0,
+ "sequenceGaps": 0,
+ "unexplainedGaps": [],
+ "dynMemUsageFirst": 57744,
+ "dynMemUsageMin": 57744,
+ "dynMemUsageMax": 57744,
+ "maxCycleUs": 43301,
+ "maxScanClientUs": 5872,
+ "intervalsOverScan10ms": 8,
+ "problems": [],
+ "problemCount": 0,
+ "disturbances": [
+  {
+   "time": 1793027067.9629862,
+   "kind": "kick",
+   "ok": true,
+   "reconnectSeconds": 4.1
+  },
+  {
+   "time": 1793027248.4159853,
+   "kind": "kick",
+   "ok": true,
+   "reconnectSeconds": 4.2
+  },
+  {
+   "time": 1793027428.2742605,
+   "kind": "kick",
+   "ok": true,
+   "reconnectSeconds": 4.4
+  },
+  {
+   "time": 1793027487.8632798,
+   "kind": "bridge restart",
+   "ok": true,
+   "reconnectSeconds": 4.2
+  },
+  {
+   "time": 1793027607.655332,
+   "kind": "kick",
+   "ok": true,
+   "reconnectSeconds": 4.5
+  },
+  {
+   "time": 1793027787.7221832,
+   "kind": "kick",
+   "ok": true,
+   "reconnectSeconds": 4.2
+  }
+ ],
+ "backOnHq": true,
+ "testUserRemoved": true,
+ "reservationReleased": true,
+ "finished": "2026-10-26 11:19:37",
+ "success": true
+}
