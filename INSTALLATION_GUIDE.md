@@ -1,21 +1,23 @@
 # CODESYS REST API Installation Guide
 
-This document provides detailed instructions for installing and setting up the CODESYS REST API wrapper service.
+For the agent-ready IDE workflow, follow the [README installation and getting started guide](README.md#installation). This document contains additional installation and legacy Windows service notes. Establish the interactive IDE workflow before considering service deployment.
 
 ## Prerequisites
 
 - Windows Operating System (Windows 10 or Windows Server 2016+)
-- CODESYS 3.5 or later installed
-- Python 3.x installed
+- CODESYS 3.5 with scripting support, plus the target device packages and project libraries
+- Python 3.11 or later installed
   - Note: Only the PERSISTENT_SESSION.py script maintains compatibility with CODESYS IronPython environment
-- Administrator privileges on the target system
+- Administrator privileges for optional service installation
 
 ## Required Python packages
 
 The following Python packages are required:
 
 ```
-pip install requests pywin32
+python -m pip install -r requirements.txt
+# Only for the optional Windows service wrapper:
+python -m pip install pywin32
 ```
 
 ## Installation Steps
@@ -53,7 +55,7 @@ By default, the system uses a single API key `admin`. For production use, you sh
 
 #### Using the Installation Script
 
-The simplest way to install is to use the provided installation script:
+The legacy installer installs a Windows service. Its path prompt still targets `HTTP_SERVER.py`; configure `CODESYS_PATH` and `CODESYS_PROFILE` in `server_config.py` yourself. For an interactive agent-controlled IDE, use the README workflow. If you specifically need the service installer:
 
 ```
 install.bat
@@ -219,7 +221,7 @@ When updating to a new version:
 
 To change the port number:
 
-1. Edit `HTTP_SERVER.py`
+1. Edit `server_config.py`
 2. Change the `SERVER_PORT` variable to your preferred port
 3. Restart the service
 
@@ -227,7 +229,7 @@ To change the port number:
 
 To change logging settings:
 
-1. Edit `HTTP_SERVER.py`
+1. Edit `server_config.py`
 2. Modify the logging configuration at the top of the file
 3. Restart the service
 
@@ -239,7 +241,7 @@ Rate limiting is not implemented by default. Consider using a reverse proxy like
 
 ### Python Version Requirements
 
-This API wrapper requires Python 3.x for all components except the script that runs inside CODESYS:
+Use Python 3.11 or later for the server and clients; the IDE script runs in CODESYS IronPython:
 
 1. **CODESYS Internal Scripts**: The `PERSISTENT_SESSION.py` script maintains compatibility with the CODESYS IronPython environment.
 2. **Server Components**: All server components (HTTP server, Windows service) require Python 3.x.

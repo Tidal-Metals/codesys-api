@@ -1,0 +1,5 @@
+# Python 3 API server and client dependencies.
+# The API imports simulator helpers even for project-only workflows.
+requests
+psutil
+pymodbus[serial]==3.16.1

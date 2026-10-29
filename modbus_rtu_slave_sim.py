@@ -249,9 +249,14 @@ def main() -> int:
         LOG.info("%s packet %s", direction, packet.hex(" "))
         return packet
 
-    def trace_pdu(is_send: bool, pdu) -> object:
+    def trace_pdu(is_send: bool, pdu) -> object | None:
         direction = "TX" if is_send else "RX"
         LOG.info("%s pdu %s", direction, pdu)
+        # SimCore raises KeyError for unknown units in PyModbus 3.16.1, which
+        # bypasses ignore_missing_devices and sends an exception on the bus.
+        # Discard foreign PDUs before the request handler accesses the datastore.
+        if not is_send and pdu.dev_id not in unit_ids:
+            return None
         return pdu
 
     try:
@@ -260,6 +265,7 @@ def main() -> int:
         parser.error(str(exc))
         return 2
 
+    unit_ids = {device["unit"] for device in devices}
     context = [create_sim_device(device) for device in devices]
 
     def _handle_signal(signum, _frame):
@@ -300,8 +306,6 @@ def main() -> int:
             parity=args.parity.upper(),
             stopbits=args.stopbits,
             timeout=args.timeout,
-            # Filter foreign requests and other responders' replies before decoding.
-            allow_multiple_devices=args.multidrop,
             ignore_missing_devices=args.multidrop,
             trace_packet=trace_packet,
             trace_pdu=trace_pdu,
