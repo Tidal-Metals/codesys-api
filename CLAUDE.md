@@ -64,6 +64,12 @@ Before testing or changing the PLC, gateways, RS485 simulators or COM ports, rea
 `docs/modbus-bench.md`. It covers topology, port ownership, safe API/IDE restarts and verified
 limits. Other agents may be running tests; never open a COM port the simulator manager owns.
 
+## Field PLCs
+
+Before opening a `.project` downloaded from a site, or logging in to a site PLC (DEH at 10.2.40.30), read
+`docs/field-plc-projects.md`: read-only first, rebinding the gateway, reading Modbus state online, and
+which configuration edits are safe by script.
+
 ## Python Version Compatibility
 
 - **HTTP_SERVER.py**: Python 3.x only

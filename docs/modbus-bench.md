@@ -109,10 +109,17 @@ TRUE before judging them.
 - **Native mapping is per word.** The mapping call maps one word of a channel (`leafIndex`, default 0): a
   6-register channel needs six mappings, to `UnitN[0]`..`UnitN[5]` (the runner's `mappings[].leafIndex`). Each
   call round-trips every server's I/O, so 60 mappings take about 10 minutes.
-- **A channel's length can't be changed in place.** The channel PATCH now refuses `readLength`/`writeLength`:
-  changing the config alone left the I/O image at the old size and the server stopped polling, with no
-  error flag. Recreate the server. Cycle-time changes in place are fine (`bench/set_native_cycle.py`, then
-  download).
+- **A channel's shape can't be changed by script in place: length, register offset or function code.** Each
+  channel is two parameters, a config (`0xSS100000`, fields FC, read offset, read length, write offset, write
+  length, trigger, cycle, error handling) and an I/O parameter whose ID carries the family and register offset
+  (`0xSS44OOOO`, e.g. `0x01442001` for 16#2001). Setting only the config leaves the two disagreeing, and the
+  server stops polling that slave with no error flag (`byModbusError` stays `UNDEFINED`). Lengths: bench,
+  2026-10-20. Offsets: field DEH PLC, 2026-11-10. The channel PATCH refuses `readLength`/`writeLength` but still
+  accepts `readOffset`/`writeOffset`/`accessType`; don't use it for those. Change them in the IDE's channel
+  dialog (it rebuilds the I/O parameter), recreate the server, or clone a working sibling slave by native export
+  (`export_native`, edit the name and parameter 9100, `import_native`; the clone lands last under the master
+  and shifts later slaves' `%IW` addresses). Cycle time, response timeout (9101) and error handling are safe in
+  place (`bench/set_native_cycle.py`, then download).
 - **Native health:** `xError` describes the latest poll. With auto-restart on, a dead server's flag clears at
   every retry (in error 65% of cycles at a 1 s cycle), so its last image passes as current between failures.
   Count a server healthy only after an error-free hold-off longer than cycle + timeout (the bench uses 2.5 s,
