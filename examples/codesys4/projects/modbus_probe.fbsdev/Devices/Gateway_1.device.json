@@ -1,0 +1,32 @@
+{
+	"deviceDescription": {
+		"identification": {
+			"type": 89,
+			"id": "0000 0005",
+			"version": "4.6.0.0"
+		}
+	},
+	"extensions": {
+		"modbus.tcp.server": {
+			"configuration": {
+				"ipAddress": "0.0.0.0",
+				"responseTimeout": 1000,
+				"port": 502,
+				"enableFallbackIp": false,
+				"secondIpAddress": "0.0.0.0",
+				"preferredLine": 0,
+				"connectInactiveLine": true,
+				"modbusChannels": [],
+				"modbusInitChannels": []
+			}
+		},
+		"BaseDevice.GenericDeviceConfig": {
+			"configuration": {
+				"parameterSets": {
+					"deviceParameterSet": [],
+					"hostParameterSets": {}
+				}
+			}
+		}
+	}
+}

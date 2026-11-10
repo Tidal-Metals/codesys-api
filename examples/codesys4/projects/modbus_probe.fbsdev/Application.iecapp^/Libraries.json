@@ -1,0 +1,9 @@
+{
+    "references": {
+        "Standard": {
+            "$type": "Placeholder",
+            "placeholder": "Standard"
+        } 
+    },
+    "placeholderOverrides": {}
+}

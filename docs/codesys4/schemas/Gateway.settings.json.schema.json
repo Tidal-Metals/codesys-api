@@ -1,0 +1,75 @@
+{
+  "$id": "https://www.codesys.com/c4/schemas/Gateway.settings.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gateway settings",
+  "description": "The list of communication gateways known to CODESYS 4. A gateway relays the connection between the engineering tool and a plc.",
+  "examples": [
+    {
+      "gateways": [
+        {
+          "type": "CODESYS.GwV3",
+          "name": "Local gateway",
+          "hostName": "localhost",
+          "port": 1217
+        }
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "gateways": {
+      "type": "array",
+      "title": "Gateways",
+      "description": "The configured gateways to choose from when going online with a plc.",
+      "items": {
+        "type": "object",
+        "examples": [
+          {
+            "type": "CODESYS.GwV3",
+            "name": "Local gateway",
+            "hostName": "localhost",
+            "port": 1217
+          }
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "The gateway driver identifier. \"CODESYS.GwV3\" is the built-in CODESYS 3 gateway.",
+            "examples": [
+              "CODESYS.GwV3"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "A user-defined display name for this gateway."
+          },
+          "hostName": {
+            "type": "string",
+            "title": "Host name",
+            "description": "IP address or host name where the gateway runs. Currently only IPv4 is fully supported.",
+            "default": "localhost"
+          },
+          "port": {
+            "type": "integer",
+            "title": "Port",
+            "description": "TCP port the gateway listens on.",
+            "minimum": 0,
+            "maximum": 65535,
+            "default": 1217
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "hostName",
+          "port"
+        ]
+      }
+    }
+  },
+  "required": [
+    "gateways"
+  ]
+}

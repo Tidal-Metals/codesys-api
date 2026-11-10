@@ -1,0 +1,341 @@
+{
+  "$id": "https://www.codesys.com/c4/schemas/Libraries.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Library references",
+  "description": "Declares the libraries an application or library project depends on. This is the file you edit to add, remove or configure library dependencies; the resolved result is written by the tooling to Libraries.lock.json.",
+  "unevaluatedProperties": false,
+  "type": "object",
+  "properties": {
+    "references": {
+      "$ref": "#/$defs/references"
+    },
+    "placeholderOverrides": {
+      "type": "object",
+      "title": "Placeholder overrides",
+      "description": "Redirects placeholder references to a concrete library. Each key is a placeholder name and each value is the library id that should resolve it, overriding the placeholder's default resolution.",
+      "defaultSnippets": [
+        {
+          "label": "Example placeholder override",
+          "description": "Redirect a placeholder to a concrete library id.",
+          "body": {
+            "SomePlaceholder": "MyLibrary, 3.5.18.0 (MyCompany)"
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "libraryParameters": {
+      "type": "object",
+      "title": "Library parameters",
+      "description": "Parameter values passed to parameterized libraries. The outer key identifies the library (a library id, or the relative path for a relative reference); the inner object maps a parameter name to its value.",
+      "examples": [
+        {
+          "Analyzation, 4.1.0 (System)": {
+            "STRING_LENGTH_ADDRESS": "12"
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "v3Meta": {
+      "type": "object",
+      "title": "Meta data used by CODESYS V3",
+      "description": "Free-form metadata carried over from imported CODESYS V3 projects. Omit it for new files."
+    },
+    "v3SystemLibraries": {
+      "type": "array",
+      "title": "CODESYS V3 system libraries",
+      "description": "System libraries implicitly present in imported CODESYS V3 projects. Free-form; omit it for new files."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "references": {
+      "type": "object",
+      "title": "References",
+      "description": "The declared library dependencies. Each key is the name under which the library is referenced in the project; the value describes where the library comes from.",
+      "defaultSnippets": [
+        {
+          "label": "Example reference",
+          "description": "One managed library referenced by id.",
+          "body": {
+            "MyLibrary": {
+              "$${_///}type": "ManagedLibrary",
+              "libraryId": "Standard, 3.5.18.0 (System)"
+            }
+          }
+        }
+      ],
+      "examples": [
+        {
+          "Analyzation": {
+            "$type": "ManagedLibrary",
+            "libraryId": "Analyzation, 4.1.0 (System)"
+          },
+          "Standard": {
+            "$type": "Placeholder",
+            "placeholder": "Standard"
+          }
+        }
+      ],
+      "additionalProperties": {
+        "defaultSnippets": [
+          {
+            "label": "Example relative path reference",
+            "description": "Reference a library file stored relative to this project.",
+            "body": {
+              "$${_///}type": "RelativePath",
+              "path": "../MyLibrary.fbslib/"
+            }
+          },
+          {
+            "label": "Example placeholder reference",
+            "description": "Reference a library indirectly through a placeholder; the concrete library is chosen by resolution.",
+            "body": {
+              "$${_///}type": "Placeholder",
+              "placeholder": "SomePlaceholder"
+            }
+          },
+          {
+            "label": "Example managed library reference",
+            "description": "Reference a managed library resolved by id from a configured repository.",
+            "body": {
+              "$${_///}type": "ManagedLibrary",
+              "libraryId": "Standard, 3.5.18.0 (System)"
+            }
+          }
+        ],
+        "allOf": [
+          {
+            "properties": {
+              "$type": {
+                "type": "string",
+                "title": "Reference kind",
+                "description": "How the library is located: RelativePath (a library file stored relative to the project), ManagedLibrary (resolved by id from a configured repository), or Placeholder (resolved indirectly through a placeholder name).",
+                "enum": [
+                  "RelativePath",
+                  "ManagedLibrary",
+                  "Placeholder"
+                ]
+              }
+            },
+            "required": [
+              "$type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "$type": {
+                  "const": "RelativePath"
+                }
+              },
+              "required": [
+                "$type"
+              ]
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "$type": {
+                  "const": "RelativePath"
+                },
+                "allowUnqualifiedAccess": {
+                  "type": "boolean",
+                  "title": "Allow unqualified access",
+                  "description": "Allow using the library's symbols without their namespace prefix.",
+                  "default": false
+                },
+                "publishSymbolsInContainer": {
+                  "type": "boolean",
+                  "title": "Publish symbols in container",
+                  "description": "When this project is a container library, re-publish this library's symbols as part of the container.",
+                  "default": false
+                },
+                "linkAllContent": {
+                  "type": "boolean",
+                  "title": "Link all content",
+                  "description": "Link every POU of the library, even ones that are never referenced.",
+                  "default": false
+                },
+                "optional": {
+                  "type": "boolean",
+                  "title": "Optional",
+                  "description": "Do not fail the build if this library cannot be resolved.",
+                  "default": false
+                },
+                "path": {
+                  "type": "string",
+                  "title": "Path",
+                  "description": "Location of the library file, relative to this project.",
+                  "examples": [
+                    "../MyLibrary.fbslib/"
+                  ]
+                },
+                "noHash": {
+                  "type": "boolean",
+                  "title": "No hash",
+                  "description": "Skip the integrity-hash check for this relative reference.",
+                  "default": false
+                }
+              },
+              "required": [
+                "$type",
+                "path"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "$type": {
+                  "const": "ManagedLibrary"
+                }
+              },
+              "required": [
+                "$type"
+              ]
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "$type": {
+                  "const": "ManagedLibrary"
+                },
+                "allowUnqualifiedAccess": {
+                  "type": "boolean",
+                  "title": "Allow unqualified access",
+                  "description": "Allow using the library's symbols without their namespace prefix.",
+                  "default": false
+                },
+                "publishSymbolsInContainer": {
+                  "type": "boolean",
+                  "title": "Publish symbols in container",
+                  "description": "When this project is a container library, re-publish this library's symbols as part of the container.",
+                  "default": false
+                },
+                "linkAllContent": {
+                  "type": "boolean",
+                  "title": "Link all content",
+                  "description": "Link every POU of the library, even ones that are never referenced.",
+                  "default": false
+                },
+                "optional": {
+                  "type": "boolean",
+                  "title": "Optional",
+                  "description": "Do not fail the build if this library cannot be resolved.",
+                  "default": false
+                },
+                "libraryId": {
+                  "type": "string",
+                  "title": "Library id",
+                  "description": "Identifier of the managed library to resolve from a configured repository, in the form \"Name, Version (Company)\".",
+                  "examples": [
+                    "Standard, 3.5.18.0 (System)"
+                  ]
+                },
+                "includePrerelease": {
+                  "type": "boolean",
+                  "title": "Include pre-release",
+                  "description": "Consider pre-release versions when resolving the library.",
+                  "default": false
+                }
+              },
+              "required": [
+                "$type",
+                "libraryId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "$type": {
+                  "const": "Placeholder"
+                }
+              },
+              "required": [
+                "$type"
+              ]
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "$type": {
+                  "const": "Placeholder"
+                },
+                "allowUnqualifiedAccess": {
+                  "type": "boolean",
+                  "title": "Allow unqualified access",
+                  "description": "Allow using the library's symbols without their namespace prefix.",
+                  "default": false
+                },
+                "publishSymbolsInContainer": {
+                  "type": "boolean",
+                  "title": "Publish symbols in container",
+                  "description": "When this project is a container library, re-publish this library's symbols as part of the container.",
+                  "default": false
+                },
+                "linkAllContent": {
+                  "type": "boolean",
+                  "title": "Link all content",
+                  "description": "Link every POU of the library, even ones that are never referenced.",
+                  "default": false
+                },
+                "optional": {
+                  "type": "boolean",
+                  "title": "Optional",
+                  "description": "Do not fail the build if this library cannot be resolved.",
+                  "default": false
+                },
+                "placeholder": {
+                  "type": "string",
+                  "title": "Placeholder",
+                  "description": "Placeholder name that stands in for the concrete library; the actual library is chosen by the resolution (placeholder overrides, default resolution, or the device).",
+                  "examples": [
+                    "Standard"
+                  ]
+                },
+                "defaultResolution": {
+                  "type": "string",
+                  "title": "Default resolution",
+                  "description": "Library id used to resolve the placeholder when nothing else provides a resolution.",
+                  "default": null,
+                  "examples": [
+                    "Standard, 3.5.18.0 (System)"
+                  ]
+                },
+                "resolverGuid": {
+                  "type": "string",
+                  "title": "Resolver GUID",
+                  "description": "Identifier of the resolver responsible for this placeholder. Normally left at the default all-zero GUID.",
+                  "default": "00000000-0000-0000-0000-000000000000"
+                },
+                "includePrerelease": {
+                  "type": "boolean",
+                  "title": "Include pre-release",
+                  "description": "Consider pre-release versions when resolving the library.",
+                  "default": false
+                }
+              },
+              "required": [
+                "$type",
+                "placeholder"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      }
+    }
+  }
+}

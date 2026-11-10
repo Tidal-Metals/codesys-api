@@ -1,0 +1,133 @@
+{
+  "$id": "DeviceTree",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Device tree",
+  "description": "Describes the hierarchy of devices in a device project (.fbsdev): the top-level device (a PLC) and its nested child devices.",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "properties": {
+    "deviceName": {
+      "type": "string",
+      "title": "Device name",
+      "description": "Name of the PLC."
+    },
+    "identification": {
+      "$ref": "#/$defs/identification"
+    },
+    "children": {
+      "type": "array",
+      "title": "Children",
+      "description": "The child devices attached below the PLC.",
+      "defaultSnippets": [
+        {
+          "label": "Example child device",
+          "description": "One GPIO child device in slot 0.",
+          "body": [
+            {
+              "deviceName": "GPIOs_A_B",
+              "identification": {
+                "type": 504,
+                "id": "0000 0000",
+                "version": "4.10.0.0"
+              },
+              "slotIndex": 0
+            }
+          ]
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/device"
+      }
+    }
+  },
+  "required": [
+    "deviceName",
+    "identification"
+  ],
+  "$defs": {
+    "identification": {
+      "type": "object",
+      "title": "Device identification",
+      "description": "Identifies the device description this device instance is based on.",
+      "defaultSnippets": [
+        {
+          "label": "Example device identification",
+          "description": "Numeric type, id and version taken from the device description.",
+          "body": {
+            "type": 4096,
+            "id": "0000 0001",
+            "version": "3.5.17.0"
+          }
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "title": "Type",
+          "description": "Numeric device type from the device description."
+        },
+        "id": {
+          "type": "string",
+          "title": "Id",
+          "description": "Device identifier from the device description."
+        },
+        "version": {
+          "type": "string",
+          "title": "Version",
+          "description": "Version string of the referenced device description. Usually a dotted version, but for some fieldbus devices it is a revision expression or something else.",
+          "defaultSnippets": [
+            {
+              "label": "Example dotted version",
+              "description": "The usual dotted device-description version.",
+              "body": "4.10.0.0"
+            },
+            {
+              "label": "Example revision expression",
+              "description": "A revision expression, as used by some fieldbus devices instead of a dotted version.",
+              "body": "Revision=16#00110000"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "version"
+      ]
+    },
+    "device": {
+      "unevaluatedProperties": false,
+      "type": "object",
+      "title": "Device",
+      "description": "A device or module in the tree.",
+      "properties": {
+        "deviceName": {
+          "type": "string",
+          "title": "Device name",
+          "description": "Name of the device instance."
+        },
+        "identification": {
+          "$ref": "#/$defs/identification"
+        },
+        "slotIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "title": "Slot index",
+          "description": "Zero-based index of the slot this device occupies in its parent. Present only for slot-based devices; omitted otherwise."
+        },
+        "children": {
+          "type": "array",
+          "title": "Children",
+          "description": "Child devices and modules attached below this device.",
+          "items": {
+            "$ref": "#/$defs/device"
+          }
+        }
+      },
+      "required": [
+        "deviceName",
+        "identification"
+      ]
+    }
+  }
+}

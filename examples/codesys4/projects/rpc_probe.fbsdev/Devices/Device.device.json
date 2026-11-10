@@ -1,0 +1,23 @@
+{
+	"deviceDescription": {
+		"identification": {
+			"type": 4096,
+			"id": "0000 0004",
+			"version": "3.5.22.30"
+		}
+	},
+	"extensions": {
+		"BaseDevice.PlcConfig": {
+			"configuration": {
+				"applicationForIoHandling": "Application",
+				"updateIosInStop": false,
+				"stopResetBehaviour": "KeepCurrentValues",
+				"generateForceVariables": false,
+				"showIoWarningsAsErrors": false,
+				"deviceDiagnosis": false,
+				"symbolicIoAccess": false,
+				"busCycleTask": "DefaultTask"
+			}
+		}
+	}
+}

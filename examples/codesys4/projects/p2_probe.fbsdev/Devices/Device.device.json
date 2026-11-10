@@ -1,0 +1,31 @@
+{
+	"deviceDescription": {
+		"identification": {
+			"type": 4096,
+			"id": "1767 0001",
+			"version": "1.1.13.0"
+		}
+	},
+	"extensions": {
+		"BaseDevice.PlcConfig": {
+			"configuration": {
+				"applicationForIoHandling": "Application",
+				"updateIosInStop": false,
+				"stopResetBehaviour": "KeepCurrentValues",
+				"generateForceVariables": false,
+				"showIoWarningsAsErrors": false,
+				"deviceDiagnosis": false,
+				"symbolicIoAccess": false,
+				"busCycleTask": "DefaultTask"
+			}
+		},
+		"BaseDevice.GenericDeviceConfig": {
+			"configuration": {
+				"parameterSets": {
+					"deviceParameterSet": [],
+					"hostParameterSets": {}
+				}
+			}
+		}
+	}
+}

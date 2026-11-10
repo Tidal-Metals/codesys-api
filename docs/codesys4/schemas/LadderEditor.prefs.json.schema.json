@@ -1,0 +1,69 @@
+{
+  "$id": "https://www.codesys.com/go/schemas/LadderEditor.prefs.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ladder Editor",
+  "type": "object",
+  "properties": {
+    "generalEditing": {
+      "title": "General Editing",
+      "description": "Preferences for editing",
+      "type": "object",
+      "properties": {
+        "showNetworkTitle": {
+          "title": "Show Network Title",
+          "type": "boolean",
+          "default": true
+        },
+        "showNetworkComment": {
+          "title": "Show Network Comment",
+          "type": "boolean",
+          "default": true
+        },
+        "showNetworkSeparators": {
+          "title": "Show Network Separators",
+          "type": "boolean",
+          "default": true
+        },
+        "showIcon": {
+          "title": "Show Block Icon",
+          "type": "boolean",
+          "default": true
+        },
+        "showOperandComment": {
+          "title": "Show Operand Comment",
+          "type": "boolean",
+          "default": true
+        },
+        "showSymbolComment": {
+          "title": "Show Symbol Comment",
+          "type": "boolean",
+          "default": true
+        },
+        "showSymbolAddress": {
+          "title": "Show Symbol Address",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "operandSizing": {
+      "title": "Operand Sizing",
+      "description": "Controls how operands are displayed",
+      "type": "object",
+      "properties": {
+        "maxLinesShown": {
+          "title": "Maximum number of lines shown",
+          "type": "integer",
+          "minimum": 1,
+          "default": 3
+        },
+        "maxAvgCharsPerLine": {
+          "title": "Maximum average characters per line",
+          "type": "integer",
+          "minimum": 1,
+          "default": 20
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+	"deviceDescription": {
+		"identification": {
+			"type": 88,
+			"id": "0000 0003",
+			"version": "4.6.0.0"
+		}
+	},
+	"extensions": {
+		"modbus.tcp.client": {
+			"configuration": {
+				"responseTimeout": 1000,
+				"autoReconnect": false
+			}
+		},
+		"BaseDevice.GenericDeviceConfig": {
+			"configuration": {
+				"parameterSets": {
+					"deviceParameterSet": [],
+					"hostParameterSets": {}
+				}
+			}
+		}
+	}
+}

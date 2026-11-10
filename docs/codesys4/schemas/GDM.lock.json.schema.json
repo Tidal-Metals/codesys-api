@@ -1,0 +1,955 @@
+{
+  "$id": "GenericDeviceModel",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generic device model (GDM.lock.json)",
+  "description": "The generated device model of an application, derived from the device tree and the device descriptions. It is the input for generating the IEC code that drives the I/O. This is a generated build artifact in the application's .intermediate folder and is not meant to be written by hand.",
+  "unevaluatedProperties": false,
+  "type": "object",
+  "properties": {
+    "deviceTree": {
+      "type": "object",
+      "title": "Device tree",
+      "description": "The resolved device tree with the top-level device, its settings, parameters, channels, function blocks and connected sub-devices.",
+      "properties": {
+        "deviceName": {
+          "type": "string",
+          "title": "Device name",
+          "description": "Name of the top-level device instance."
+        },
+        "identification": {
+          "$ref": "#/$defs/identification"
+        },
+        "moduleListIndex": {
+          "type": "integer",
+          "title": "Module list index",
+          "description": "Index of this device in the flattened module list."
+        },
+        "plcSettings": {
+          "type": "object",
+          "title": "PLC settings",
+          "description": "I/O handling and stop behaviour settings of the PLC.",
+          "properties": {
+            "applicationForIoHandling": {
+              "type": "string",
+              "title": "Application for I/O handling",
+              "description": "Name of the application responsible for I/O handling. The code generated from the devices is generated for the application that bears this name."
+            },
+            "updateIosInStop": {
+              "type": "boolean",
+              "title": "Update I/Os in stop",
+              "description": "States if the values of I/Os are also updated when the PLC is in stop mode."
+            },
+            "stopResetBehaviour": {
+              "$ref": "#/$defs/stopResetBehaviourEnum",
+              "title": "Stop reset behaviour",
+              "description": "States the behaviour of the I/Os when the controller enters stop mode."
+            },
+            "generateForceVariables": {
+              "type": "boolean",
+              "title": "Generate force variables",
+              "description": "States if two global variables are created for each I/O, which can be used to force the input or output value of the respective I/O."
+            },
+            "showIoWarningsAsErrors": {
+              "type": "boolean",
+              "title": "Show warnings as errors",
+              "description": "States if warnings concerning the I/O configuration are displayed as errors."
+            },
+            "deviceDiagnosis": {
+              "type": "boolean",
+              "title": "Device diagnosis",
+              "description": "States if the diagnostics for devices are enabled."
+            },
+            "symbolicIoAccess": {
+              "type": "boolean",
+              "title": "Symbolic I/O access",
+              "description": "States if input and output variables are automatically created for the I/O channels of the PLC."
+            },
+            "needsBusCycle": {
+              "type": "boolean",
+              "title": "Needs bus cycle",
+              "description": "States if the device requires a bus cycle."
+            },
+            "needsBusCycleBeforeRead": {
+              "type": "boolean",
+              "title": "Needs bus cycle before read",
+              "description": "States if a bus cycle is required before the inputs are read."
+            },
+            "cycleControlInIec": {
+              "type": "boolean",
+              "title": "Cycle control in IEC",
+              "description": "States if the bus cycle is controlled from IEC code."
+            }
+          },
+          "if": {
+            "properties": {
+              "stopResetBehaviour": {
+                "const": "ExecuteProgram"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "stopResetBehaviourUserProgram": {
+                "type": "string",
+                "title": "Stop reset behaviour user program",
+                "description": "Name of the program executed when the controller enters stop mode. Only relevant when stopResetBehaviour executes a program."
+              }
+            },
+            "required": [
+              "applicationForIoHandling",
+              "updateIosInStop",
+              "stopResetBehaviour",
+              "stopResetBehaviourUserProgram",
+              "generateForceVariables",
+              "showIoWarningsAsErrors",
+              "deviceDiagnosis",
+              "symbolicIoAccess",
+              "needsBusCycle",
+              "needsBusCycleBeforeRead",
+              "cycleControlInIec"
+            ]
+          },
+          "else": {
+            "required": [
+              "applicationForIoHandling",
+              "updateIosInStop",
+              "stopResetBehaviour",
+              "generateForceVariables",
+              "showIoWarningsAsErrors",
+              "deviceDiagnosis",
+              "symbolicIoAccess",
+              "needsBusCycle",
+              "needsBusCycleBeforeRead",
+              "cycleControlInIec"
+            ]
+          }
+        },
+        "settings": {
+          "$ref": "#/$defs/settings"
+        },
+        "parameters": {
+          "type": "array",
+          "title": "Parameters",
+          "description": "Parameters of the top-level device.",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
+        "inputChannelEntries": {
+          "type": "array",
+          "title": "Input channel entries",
+          "description": "Generated input channel entries of the top-level device.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        },
+        "outputChannelEntries": {
+          "type": "array",
+          "title": "Output channel entries",
+          "description": "Generated output channel entries of the top-level device.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        },
+        "functionBlocks": {
+          "type": "array",
+          "title": "Function blocks",
+          "description": "Function block instances generated for the top-level device.",
+          "items": {
+            "$ref": "#/$defs/functionBlock"
+          }
+        },
+        "downwardConnectors": {
+          "type": "array",
+          "title": "Downward connectors",
+          "description": "Connections from the top-level device down to its child devices.",
+          "items": {
+            "$ref": "#/$defs/downwardConnector"
+          }
+        }
+      },
+      "required": [
+        "deviceName",
+        "identification",
+        "moduleListIndex",
+        "plcSettings",
+        "settings",
+        "parameters",
+        "functionBlocks",
+        "downwardConnectors",
+        "inputChannelEntries",
+        "outputChannelEntries"
+      ]
+    },
+    "taskConfig": {
+      "type": "array",
+      "title": "Task configuration",
+      "description": "The tasks referenced by the device model, mapping each task name to its GUID.",
+      "items": {
+        "type": "object",
+        "examples": [
+          {
+            "taskName": "Task",
+            "taskGuid": "5021dde5-7432-5b23-af03-fbe8b8dd3c6b"
+          }
+        ],
+        "properties": {
+          "taskName": {
+            "type": "string",
+            "title": "Task name",
+            "description": "Name of the task."
+          },
+          "taskGuid": {
+            "type": "string",
+            "title": "Task GUID",
+            "description": "GUID identifying the task."
+          }
+        },
+        "required": [
+          "taskName",
+          "taskGuid"
+        ]
+      }
+    },
+    "typeDefinitions": {
+      "type": "object",
+      "title": "Type definitions",
+      "description": "The generated IEC type definitions referenced by device parameters (by baseType) and channels, keyed by type name. Each value is a type definition discriminated by a `$type` field, one of Enum, Struct, Union, Bitfield, Array or Range; its remaining shape depends on `$type` and is not further constrained by this schema.",
+      "examples": [
+        {
+          "TypeDefinition_GPIOTypeCLK": {
+            "$type": "Enum",
+            "baseType": "std:BYTE",
+            "components": [
+              {
+                "identifier": "unconfigured",
+                "value": "255"
+              },
+              {
+                "identifier": "Input",
+                "value": "2#000"
+              }
+            ]
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  },
+  "required": [
+    "deviceTree",
+    "taskConfig",
+    "typeDefinitions"
+  ],
+  "$defs": {
+    "settings": {
+      "type": "object",
+      "title": "Device settings",
+      "description": "Bus and update settings for a device or module.",
+      "properties": {
+        "updateAlways": {
+          "type": "boolean",
+          "title": "Update always",
+          "description": "States if variables are always updated, even if not used in a task."
+        },
+        "busCycleTask": {
+          "type": "string",
+          "title": "Bus cycle task",
+          "description": "Name of the bus cycle task for this device."
+        },
+        "createBitChannels": {
+          "type": "boolean",
+          "title": "Create bit channels",
+          "description": "States if individual bit channels are created for the device's I/O."
+        }
+      },
+      "required": [
+        "updateAlways",
+        "busCycleTask",
+        "createBitChannels"
+      ]
+    },
+    "identification": {
+      "type": "object",
+      "title": "Device identification",
+      "description": "Identifies the device description this device is based on (numeric type, id and version).",
+      "properties": {
+        "type": {
+          "type": "integer",
+          "title": "Type",
+          "description": "Numeric device type from the device description."
+        },
+        "id": {
+          "type": "string",
+          "title": "Id",
+          "description": "Device identifier from the device description."
+        },
+        "version": {
+          "type": "string",
+          "title": "Version",
+          "description": "Version of the device description."
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "version"
+      ]
+    },
+    "parameter": {
+      "type": "object",
+      "title": "Parameter",
+      "description": "A device parameter, its value, access rights and (for I/O channels) its mappings.",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "title": "Id",
+          "description": "The parameter id from the device description."
+        },
+        "baseType": {
+          "type": "string",
+          "title": "Base type",
+          "description": "The IEC base type of the parameter."
+        },
+        "parameterValue": {
+          "$ref": "#/$defs/parameterValue",
+          "title": "Parameter value",
+          "description": "The parameter's value: a scalar value, a structured component list, or null."
+        },
+        "attributes": {
+          "type": "object",
+          "title": "Attributes",
+          "description": "Channel kind and access rights of the parameter.",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "title": "Channel",
+              "description": "Whether the parameter is a plain parameter (None) or an I/O channel (Input, Output, OutputReadOnly or Bidirectional).",
+              "enum": [
+                "None",
+                "Input",
+                "Output",
+                "OutputReadOnly",
+                "Bidirectional"
+              ]
+            },
+            "onlineAccess": {
+              "$ref": "#/$defs/parameterAccessEnum",
+              "title": "Online access",
+              "description": "Access to the parameter while connected to the controller."
+            },
+            "offlineAccess": {
+              "$ref": "#/$defs/parameterAccessEnum",
+              "title": "Offline access",
+              "description": "Access to the parameter in the editor while offline."
+            },
+            "functional": {
+              "type": "boolean",
+              "title": "Functional",
+              "description": "True when the parameter is a functional parameter. Omitted when false."
+            }
+          },
+          "required": [
+            "channel",
+            "onlineAccess",
+            "offlineAccess"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "attributes": {
+            "properties": {
+              "channel": {
+                "anyOf": [
+                  {
+                    "const": "Input"
+                  },
+                  {
+                    "const": "Output"
+                  },
+                  {
+                    "const": "OutputReadOnly"
+                  },
+                  {
+                    "const": "Bidirectional"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "channel"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "mappings": {
+            "$ref": "#/$defs/mapping",
+            "title": "Mappings",
+            "description": "The I/O mapping of this channel."
+          }
+        },
+        "required": [
+          "id",
+          "baseType",
+          "attributes",
+          "mappings"
+        ]
+      },
+      "else": {
+        "required": [
+          "id",
+          "baseType",
+          "attributes"
+        ]
+      }
+    },
+    "parameterAccessEnum": {
+      "type": "string",
+      "title": "Parameter access",
+      "description": "Access right for a parameter: ReadWrite, Read, Write or None.",
+      "enum": [
+        "ReadWrite",
+        "Read",
+        "Write",
+        "None"
+      ]
+    },
+    "functionBlock": {
+      "type": "object",
+      "title": "Function block",
+      "description": "A function block instance generated for the device, including its cyclic method calls.",
+      "properties": {
+        "instanceName": {
+          "type": "string",
+          "title": "Instance name",
+          "description": "Name of the generated function block instance."
+        },
+        "fbName": {
+          "type": "string",
+          "title": "Function block name",
+          "description": "Name of the function block type."
+        },
+        "namespace": {
+          "type": "string",
+          "title": "Namespace",
+          "description": "Namespace of the function block type."
+        },
+        "initialize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Initialize",
+          "description": "Name of the method called once on the instance to initialize it. Absent or null when the function block has no initialization method.",
+          "examples": [
+            "Initialize"
+          ]
+        },
+        "fbTypeInputMethod": {
+          "type": "boolean",
+          "title": "FB type input method",
+          "description": "Whether the function block exposes an input method."
+        },
+        "cyclicCalls": {
+          "type": "array",
+          "title": "Cyclic calls",
+          "description": "Method calls invoked cyclically relative to the bus cycle.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "methodName": {
+                "type": "string",
+                "title": "Method name",
+                "description": "Name of the method to call."
+              },
+              "task": {
+                "type": "string",
+                "title": "Task",
+                "description": "Name of the task in which the method is called."
+              },
+              "whenToCall": {
+                "type": "string",
+                "title": "When to call",
+                "description": "When in the I/O cycle the method is called.",
+                "enum": [
+                  "BeforeReadInputs",
+                  "AfterReadInputs",
+                  "BeforeWriteOutputs",
+                  "AfterWriteOutputs"
+                ]
+              }
+            },
+            "required": [
+              "methodName",
+              "task",
+              "whenToCall"
+            ]
+          }
+        }
+      },
+      "required": [
+        "instanceName",
+        "fbName",
+        "namespace",
+        "cyclicCalls",
+        "fbTypeInputMethod"
+      ]
+    },
+    "upwardConnector": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "Upward connector",
+      "description": "The connection from a device up to its parent module.",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "title": "Id",
+          "description": "Connector id."
+        },
+        "moduleListIndex": {
+          "type": "integer",
+          "title": "Module list index",
+          "description": "Index of the connected module in the module list."
+        },
+        "moduleType": {
+          "type": "integer",
+          "title": "Module type",
+          "description": "Numeric module type of the connected module."
+        },
+        "initialStatusFlag": {
+          "type": "integer",
+          "title": "Initial status flag",
+          "description": "Initial status flag of the connector."
+        },
+        "parameters": {
+          "type": "array",
+          "title": "Parameters",
+          "description": "Parameters of the connector.",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
+        "functionBlocks": {
+          "type": "array",
+          "title": "Function blocks",
+          "description": "Function blocks of the connector.",
+          "items": {
+            "$ref": "#/$defs/functionBlock"
+          }
+        },
+        "connectorSettings": {
+          "title": "Connector settings",
+          "description": "Bus-cycle settings of the connector.",
+          "$ref": "#/$defs/connectorSettings"
+        },
+        "inputChannelEntries": {
+          "type": "array",
+          "title": "Input channel entries",
+          "description": "Generated input channel entries of the connector.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        },
+        "outputChannelEntries": {
+          "type": "array",
+          "title": "Output channel entries",
+          "description": "Generated output channel entries of the connector.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "moduleListIndex",
+        "moduleType",
+        "initialStatusFlag",
+        "parameters",
+        "functionBlocks",
+        "connectorSettings",
+        "inputChannelEntries",
+        "outputChannelEntries"
+      ]
+    },
+    "downwardConnector": {
+      "unevaluatedProperties": false,
+      "type": "object",
+      "title": "Downward connector",
+      "description": "A connection from a device down to child devices, either as a list of devices or as indexed slots.",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "title": "Id",
+          "description": "Connector id."
+        },
+        "moduleListIndex": {
+          "type": "integer",
+          "title": "Module list index",
+          "description": "Index of the connector's module in the module list."
+        },
+        "slotCount": {
+          "type": "integer",
+          "title": "Slot count",
+          "description": "Number of slots when the connector is slot-based."
+        },
+        "moduleType": {
+          "type": "integer",
+          "title": "Module type",
+          "description": "Numeric module type of the connector."
+        },
+        "initialStatusFlag": {
+          "type": "integer",
+          "title": "Initial status flag",
+          "description": "Initial status flag of the connector."
+        },
+        "parameters": {
+          "type": "array",
+          "title": "Parameters",
+          "description": "Parameters of the connector.",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
+        "devices": {
+          "type": "array",
+          "title": "Devices",
+          "description": "Child devices connected as an ordered list.",
+          "items": {
+            "$ref": "#/$defs/device"
+          }
+        },
+        "slots": {
+          "type": "object",
+          "title": "Slots",
+          "description": "Child devices connected by slot, keyed by the numeric slot index.",
+          "patternProperties": {
+            "^\\d+$": {
+              "$ref": "#/$defs/device"
+            }
+          }
+        },
+        "functionBlocks": {
+          "type": "array",
+          "title": "Function blocks",
+          "description": "Function blocks of the connector.",
+          "items": {
+            "$ref": "#/$defs/functionBlock"
+          }
+        },
+        "connectorSettings": {
+          "title": "Connector settings",
+          "description": "Bus-cycle settings of the connector.",
+          "$ref": "#/$defs/connectorSettings"
+        },
+        "inputChannelEntries": {
+          "type": "array",
+          "title": "Input channel entries",
+          "description": "Generated input channel entries of the connector.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        },
+        "outputChannelEntries": {
+          "type": "array",
+          "title": "Output channel entries",
+          "description": "Generated output channel entries of the connector.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "moduleListIndex",
+        "moduleType",
+        "initialStatusFlag",
+        "parameters",
+        "functionBlocks",
+        "connectorSettings",
+        "inputChannelEntries",
+        "outputChannelEntries"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "devices"
+          ]
+        },
+        {
+          "required": [
+            "slots",
+            "slotCount"
+          ]
+        }
+      ]
+    },
+    "device": {
+      "type": "object",
+      "title": "Device",
+      "description": "A device or module in the model, with its identification, settings, parameters, connectors and channels.",
+      "properties": {
+        "deviceName": {
+          "type": "string",
+          "title": "Device name",
+          "description": "Name of the device instance."
+        },
+        "identification": {
+          "$ref": "#/$defs/identification"
+        },
+        "settings": {
+          "$ref": "#/$defs/settings"
+        },
+        "parameters": {
+          "type": "array",
+          "title": "Parameters",
+          "description": "Parameters of the device.",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
+        "upwardConnector": {
+          "$ref": "#/$defs/upwardConnector",
+          "title": "Upward connector",
+          "description": "The connection up to the parent module."
+        },
+        "downwardConnectors": {
+          "type": "array",
+          "title": "Downward connectors",
+          "description": "Connections down to child devices.",
+          "items": {
+            "$ref": "#/$defs/downwardConnector"
+          }
+        },
+        "inputChannelEntries": {
+          "type": "array",
+          "title": "Input channel entries",
+          "description": "Generated input channel entries of the device.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        },
+        "outputChannelEntries": {
+          "type": "array",
+          "title": "Output channel entries",
+          "description": "Generated output channel entries of the device.",
+          "items": {
+            "$ref": "#/$defs/GdmChannelEntry"
+          }
+        }
+      },
+      "required": [
+        "deviceName",
+        "identification",
+        "settings",
+        "parameters",
+        "upwardConnector",
+        "downwardConnectors",
+        "inputChannelEntries",
+        "outputChannelEntries"
+      ]
+    },
+    "mapping": {
+      "type": "object",
+      "title": "Mapping",
+      "description": "An I/O mapping of a channel or component to a variable or address, with optional sub-mappings.",
+      "properties": {
+        "mapping": {
+          "type": "string",
+          "title": "Mapping",
+          "description": "The variable the channel or component is mapped to."
+        },
+        "componentIdentifier": {
+          "type": "string",
+          "title": "Component identifier",
+          "description": "Identifier of the mapped component within the channel."
+        },
+        "tasks": {
+          "type": "array",
+          "title": "Tasks",
+          "description": "Names of the tasks in which the mapping is updated.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mappingTypeCategory": {
+          "type": "string",
+          "title": "Mapping type category",
+          "description": "The category of the mapped type.",
+          "enum": [
+            "Numeric",
+            "Array",
+            "Struct",
+            "Union",
+            "Bitfield"
+          ]
+        },
+        "submappings": {
+          "type": "array",
+          "title": "Submappings",
+          "description": "Mappings of the nested components of this mapping.",
+          "items": {
+            "$ref": "#/$defs/mapping"
+          }
+        }
+      },
+      "required": [
+        "mapping",
+        "tasks",
+        "mappingTypeCategory"
+      ]
+    },
+    "stopResetBehaviourEnum": {
+      "type": "string",
+      "title": "Stop reset behaviour",
+      "description": "Behaviour of the outputs when the controller stops.",
+      "enum": [
+        "KeepCurrentValues",
+        "SetAllOutputsToDefault",
+        "ExecuteProgram"
+      ]
+    },
+    "parameterValue": {
+      "title": "Parameter value",
+      "description": "A parameter's value: a structured component list, a scalar 'value', or null.",
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "components": {
+              "$ref": "#/$defs/parameterValueComponentList"
+            }
+          },
+          "required": [
+            "components"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "title": "Value",
+              "description": "The scalar value as a string."
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parameterValueComponentList": {
+      "type": "array",
+      "title": "Value components",
+      "description": "A list of named value components; each component is either a scalar value or a nested component list.",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "identifier": {
+                "type": "string",
+                "title": "Identifier",
+                "description": "Name of the component."
+              },
+              "value": {
+                "type": "string",
+                "title": "Value",
+                "description": "The scalar value of the component as a string."
+              }
+            },
+            "required": [
+              "identifier",
+              "value"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "identifier": {
+                "type": "string",
+                "title": "Identifier",
+                "description": "Name of the component."
+              },
+              "components": {
+                "$ref": "#/$defs/parameterValueComponentList"
+              }
+            },
+            "required": [
+              "identifier",
+              "components"
+            ]
+          }
+        ]
+      }
+    },
+    "connectorSettings": {
+      "type": "object",
+      "title": "Connector settings",
+      "description": "Bus-cycle settings for a connector.",
+      "properties": {
+        "needsBusCycle": {
+          "type": "boolean",
+          "title": "Needs bus cycle",
+          "description": "States if the connector requires a bus cycle."
+        },
+        "needsBusCycleBeforeRead": {
+          "type": "boolean",
+          "title": "Needs bus cycle before read",
+          "description": "States if a bus cycle is required before the inputs are read."
+        }
+      },
+      "required": [
+        "needsBusCycle",
+        "needsBusCycleBeforeRead"
+      ]
+    },
+    "GdmChannelEntry": {
+      "type": "object",
+      "title": "Channel entry",
+      "description": "A generated input or output channel entry: the mapped variable and the path to the mapped component.",
+      "properties": {
+        "mappedVariable": {
+          "type": "string",
+          "title": "Mapped variable",
+          "description": "The IEC variable the channel is mapped to."
+        },
+        "mappingType": {
+          "type": "string",
+          "title": "Mapping type",
+          "description": "The type of the mapped variable."
+        },
+        "componentPath": {
+          "type": "string",
+          "title": "Component path",
+          "description": "Path to the channel component within the device."
+        },
+        "pathToMappedComponent": {
+          "type": "string",
+          "title": "Path to mapped component",
+          "description": "Path to the mapped component of the variable."
+        },
+        "parameterIndex": {
+          "type": "integer",
+          "title": "Parameter index",
+          "description": "Index of the parameter this channel belongs to."
+        }
+      },
+      "required": [
+        "mappedVariable",
+        "mappingType",
+        "componentPath",
+        "pathToMappedComponent",
+        "parameterIndex"
+      ]
+    }
+  }
+}

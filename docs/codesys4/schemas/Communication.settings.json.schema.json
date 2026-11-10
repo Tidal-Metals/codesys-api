@@ -1,0 +1,174 @@
+{
+  "$id": "https://www.codesys.com/c4/schemas/Communication.settings.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Communication settings",
+  "description": "Selects the plc an application communicates with and, optionally, the gateway used to reach it. One Communication.settings.json lives in each device project.",
+  "examples": [
+    {
+      "device": {
+        "nodeName": "MyPlc"
+      },
+      "gateway": {
+        "name": "Local gateway",
+        "hostName": "localhost",
+        "port": 1217,
+        "type": "CODESYS.GwV3"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "device": {
+      "type": "object",
+      "title": "Device",
+      "description": "The plc the application connects to.",
+      "properties": {
+        "nodeName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "Node name",
+          "description": "Name of the target plc node. May be null or omitted when no plc has been selected yet.",
+          "examples": [
+            "MyPlc"
+          ]
+        }
+      }
+    },
+    "gateway": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Gateway",
+      "description": "The gateway that relays the connection to the plc. May be null or omitted when no gateway has been selected yet, but a gateway must be set before the application can go online. When set, 'type' selects the gateway driver.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Type",
+          "description": "Gateway driver identifier. \"CODESYS.GwV3\" is the built-in CODESYS 3 gateway.",
+          "examples": [
+            "CODESYS.GwV3"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Display name of the selected gateway. Written by the editor when it saves the file; the online service ignores it and addresses the gateway by 'hostName' and 'port'.",
+          "examples": [
+            "Local gateway"
+          ]
+        },
+        "hostName": {
+          "type": "string",
+          "title": "Host name",
+          "description": "IP address or host name where the gateway runs. Currently only IPv4 is fully supported.",
+          "default": "localhost",
+          "examples": [
+            "localhost",
+            "192.168.0.10"
+          ]
+        },
+        "port": {
+          "type": "integer",
+          "title": "Port",
+          "description": "TCP port the gateway listens on.",
+          "minimum": 0,
+          "maximum": 65535,
+          "default": 1217
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "scanInformation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "title": "Scan information",
+      "description": "Snapshot of the identity of the plc, taken when it was last identified uniquely - either by selecting it in the device browser or by re-identifying it on connect. Maintained automatically: the device browser writes it on selection and the online service refreshes it after every successful connect. Used to re-identify the plc and to detect that a different device answers under the configured node name. May be omitted or null, in which case the plc is identified by its node name alone.",
+      "properties": {
+        "nodeName": {
+          "type": "string",
+          "title": "Node name",
+          "description": "Node name of the plc at scan time. When this no longer matches 'device.nodeName' the snapshot is stale and is ignored.",
+          "examples": [
+            "MyPlc"
+          ]
+        },
+        "lastKnownAddress": {
+          "type": "string",
+          "title": "Last known address",
+          "description": "Hierarchical CODESYS router address at scan time. A cache for fast reconnection, not a stable identity: the responder is verified before it is used, and the value is refreshed after every successful re-identification.",
+          "examples": [
+            "0301.a1f2"
+          ]
+        },
+        "targetId": {
+          "type": "string",
+          "title": "Target id",
+          "description": "Vendor and device id of the plc type, as reported by the plc. Identifies the device type, not the individual device.",
+          "examples": [
+            "1234 5678"
+          ]
+        },
+        "targetType": {
+          "type": "string",
+          "title": "Target type",
+          "description": "Device type class of the plc, e.g. \"Programmable\".",
+          "examples": [
+            "Programmable"
+          ]
+        },
+        "targetVersion": {
+          "type": "string",
+          "title": "Target version",
+          "description": "Version of the plc type.",
+          "examples": [
+            "3.5.20.0"
+          ]
+        },
+        "targetVendor": {
+          "type": "string",
+          "title": "Target vendor",
+          "description": "Vendor name reported by the plc.",
+          "examples": [
+            "CODESYS Development GmbH"
+          ]
+        },
+        "serialNumber": {
+          "type": "string",
+          "title": "Serial number",
+          "description": "Serial number reported by the plc. Optional and not guaranteed to be unique, so it is only compared when both the snapshot and the plc report one.",
+          "examples": [
+            "0000-0000-0000-0001"
+          ]
+        },
+        "targetName": {
+          "type": "string",
+          "title": "Target name",
+          "description": "Name of the plc type.",
+          "examples": [
+            "CODESYS Control for Linux SL"
+          ]
+        },
+        "encryptedCommunication": {
+          "type": "string",
+          "title": "Encrypted communication",
+          "description": "Encrypted communication capability the plc reported at scan time.",
+          "enum": [
+            "None",
+            "Supported",
+            "Required"
+          ]
+        }
+      },
+      "required": [
+        "nodeName"
+      ]
+    }
+  }
+}

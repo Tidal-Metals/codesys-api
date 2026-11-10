@@ -1,0 +1,29 @@
+{
+	"taskGroups": [
+		{
+			"groupName": "IEC-Tasks",
+			"tasks": {
+				"ControlTask": {
+					"calls": [ "PRG_Control" ],
+					"priority": 1,
+					"type": "Cyclic",
+					"interval": 50000,
+					"watchdogEnable": false,
+					"watchdogTime": 0,
+					"watchdogSensitivity": 0
+				},
+				"CommsTask": {
+					"calls": [ "PRG_Comms" ],
+					"priority": 5,
+					"type": "Cyclic",
+					"interval": 100000,
+					"watchdogEnable": false,
+					"watchdogTime": 0,
+					"watchdogSensitivity": 0
+				}
+			},
+			"coreConfig": "FixedPinned"
+		}
+	],
+	"systemEvents": []
+}

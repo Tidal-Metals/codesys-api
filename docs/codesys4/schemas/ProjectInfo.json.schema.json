@@ -1,0 +1,169 @@
+{
+  "$id": "https://www.codesys.com/c4/schemas/ProjectInfo.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Information",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "default": "<unknown>",
+      "pattern": "^[^,()]+$",
+      "title": "Title",
+      "description": "Name of the application or library"
+    },
+    "version": {
+      "type": "string",
+      "default": "0.0.0",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?(?:-(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*)?(?:\\+[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*)?$",
+      "title": "Version",
+      "description": "Version of the application or library",
+      "defaultSnippets": [
+        {
+          "label": "Example version",
+          "description": "Major.minor.patch(.build) version of the application or library.",
+          "body": "1.0.0.0"
+        }
+      ]
+    },
+    "author": {
+      "type": "string",
+      "title": "Author",
+      "description": "Author of the application or library"
+    },
+    "company": {
+      "type": "string",
+      "minLength": 1,
+      "default": "<unknown>",
+      "pattern": "^[^,()]+$",
+      "title": "Company",
+      "description": "Serves for structuring (filter) in the \u201cAdd Library\u201d dialog"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "Short description of the purpose of the application or library"
+    },
+    "defaultNamespace": {
+      "type": "string",
+      "title": "Default Namespace",
+      "description": "Unique prefix, for defining the scope of the symbols of the library",
+      "defaultSnippets": [
+        {
+          "label": "Example namespace",
+          "description": "Unique prefix scoping the library's symbols.",
+          "body": "MyCompany.MyLibrary"
+        }
+      ]
+    },
+    "released": {
+      "type": "boolean",
+      "title": "Released",
+      "description": "A library should not be modified after having been released",
+      "default": false
+    },
+    "placeholder": {
+      "type": "string",
+      "title": "Placeholder",
+      "description": "Which Placeholder should be used for referencing this library.\nThis library follows the rules for a Common Library.",
+      "defaultSnippets": [
+        {
+          "label": "Example placeholder",
+          "description": "Placeholder name used to reference this library.",
+          "body": "MyLibrary"
+        }
+      ]
+    },
+    "autoResolveUnbound": {
+      "type": "boolean",
+      "title": "AutoResolveUnbound",
+      "description": "This library has no device dependencies and requires the automatic resolving of its placeholder",
+      "default": false
+    },
+    "isContainerLibrary": {
+      "type": "boolean",
+      "title": "IsContainerLibrary",
+      "description": "This library follows the rules for a Container Library",
+      "default": false
+    },
+    "isInterfaceLibrary": {
+      "type": "boolean",
+      "title": "IsInterfaceLibrary",
+      "description": "This library follows the rules for an Interface Library",
+      "default": false
+    },
+    "isCommonLibraryContainer": {
+      "type": "boolean",
+      "title": "Common Library Container",
+      "description": "This library follows the rules for a Container Library, but is referenced by a Placeholder",
+      "default": false
+    },
+    "languageModelAttribute": {
+      "type": "string",
+      "title": "Language Model Attribute",
+      "description": "The access on symbols of the library is only possible via Namespace/Prefix",
+      "default": "qualified-access-only"
+    },
+    "categories": {
+      "type": "array",
+      "title": "Library Categories",
+      "description": "Library category paths this library is listed under in the 'Add Library' dialog; '|' separates hierarchy levels.",
+      "items": {
+        "type": "string"
+      },
+      "defaultSnippets": [
+        {
+          "label": "Example category paths",
+          "description": "Category paths shown in the 'Add Library' dialog; '|' separates hierarchy levels.",
+          "body": [
+            "System|SysLibs",
+            "Use Cases"
+          ]
+        }
+      ]
+    },
+    "generateProjectInfoFunctions": {
+      "type": "boolean",
+      "title": "Generate Project Info Functions",
+      "description": "Whether to generate the project information accessor functions",
+      "default": false
+    },
+    "generateLibraryInfoFunctions": {
+      "type": "boolean",
+      "title": "Generate Library Info Functions",
+      "description": "Whether to generate the library information accessor functions",
+      "default": false
+    },
+    "customProperties": {
+      "type": "object",
+      "title": "Custom Properties",
+      "description": "User-defined metadata.",
+      "defaultSnippets": [
+        {
+          "label": "Example custom properties",
+          "description": "User-defined key/value metadata. A value is a string, number or boolean, or a typed object with a 'type' and 'value' (e.g. DateTime or Version).",
+          "body": {
+            "MyText": "some text",
+            "MyNumber": 42,
+            "MyFlag": true,
+            "MyTimestamp": {
+              "type": "DateTime",
+              "value": "2024-12-24T23:42:11+01:00"
+            },
+            "MyVersion": {
+              "type": "Version",
+              "value": "1.0.0"
+            }
+          }
+        }
+      ]
+    },
+    "v3Meta": {
+      "type": "object",
+      "title": "Meta data used by CODESYS V3",
+      "description": "Metadata carried over from CODESYS V3. Editing by hand is not advised."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

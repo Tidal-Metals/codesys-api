@@ -1,0 +1,6 @@
+# CODESYS 4 generated folders
+.library-cache/
+.devDesc-cache/
+.intermediate/
+.bootapp/
+__pycache__/

@@ -1,0 +1,14 @@
+{
+    "references": {
+        "Standard": { "$type": "Placeholder", "placeholder": "Standard" },
+        "ModbusFB": { "$type": "ManagedLibrary", "libraryId": "ModbusFB, 4.5.0 (CODESYS)" },
+        "SysCom": { "$type": "ManagedLibrary", "libraryId": "SysCom, 3.5.17 (System)" },
+        "SysTimeCore": { "$type": "ManagedLibrary", "libraryId": "SysTimeCore, 3.5.17 (System)" },
+        "SysTimeRtc": { "$type": "ManagedLibrary", "libraryId": "SysTimeRtc, 3.5.22 (System)" },
+        "SNTP": { "$type": "ManagedLibrary", "libraryId": "SNTP Service SL, 1.9.0 (CODESYS)" },
+        "MQTT": { "$type": "ManagedLibrary", "libraryId": "MQTT Client SL, 1.13.0 (CODESYS)" },
+        "JSON": { "$type": "ManagedLibrary", "libraryId": "JSON Utilities SL, 1.13.0 (CODESYS)" },
+        "NBS": { "$type": "ManagedLibrary", "libraryId": "Net Base Services, 5.0.0 (CODESYS)" }
+    },
+    "placeholderOverrides": {}
+}

@@ -1,0 +1,28 @@
+{
+	"deviceDescription": {
+		"identification": {
+			"type": 110,
+			"id": "0000 0002",
+			"version": "4.2.0.0"
+		}
+	},
+	"extensions": {
+		"ethernet": {
+			"configuration": {
+				"networkInterfaceName": "Ethernet",
+				"ipAddress": "0.0.0.0",
+				"subnetMask": "0.0.0.0",
+				"gatewayAddress": "0.0.0.0",
+				"adjustOperatingSystemSettings": false
+			}
+		},
+		"BaseDevice.GenericDeviceConfig": {
+			"configuration": {
+				"parameterSets": {
+					"deviceParameterSet": [],
+					"hostParameterSets": {}
+				}
+			}
+		}
+	}
+}

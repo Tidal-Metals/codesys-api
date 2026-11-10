@@ -1,0 +1,626 @@
+{
+  "title": "Library Repositories",
+  "description": "Configures where CODESYS 4 looks for managed libraries. For most cases only 'localRepositories' is needed; 'storages' and 'c4LibraryRepositories' offer the full, advanced configuration.",
+  "type": "object",
+  "properties": {
+    "storages": {
+      "type": "array",
+      "title": "Storages",
+      "description": "Named storage backends that physically hold libraries. A repository refers to a storage by its name.",
+      "defaultSnippets": [
+        {
+          "label": "Example file system storage",
+          "description": "A storage backed by a directory on disk.",
+          "body": [
+            {
+              "kind": "FileSystem",
+              "name": "MyStorage",
+              "rootDirectory": "C:/Libraries/MyRepository"
+            }
+          ]
+        }
+      ],
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/$defs/fileSystemStorage"
+          },
+          {
+            "$ref": "#/$defs/s3Storage"
+          }
+        ]
+      }
+    },
+    "c4LibraryRepositories": {
+      "type": "array",
+      "title": "Library repositories",
+      "description": "The configured library repositories. Each entry has a 'kind' that selects its behavior (local, remote, cached or combined).",
+      "defaultSnippets": [
+        {
+          "label": "Example local repository",
+          "description": "A local repository backed by the 'MyStorage' storage above.",
+          "body": [
+            {
+              "kind": "Local",
+              "name": "MyRepository",
+              "isPublic": true,
+              "storage": "MyStorage"
+            }
+          ]
+        }
+      ],
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/$defs/localRepository"
+          },
+          {
+            "$ref": "#/$defs/remoteRepository"
+          },
+          {
+            "$ref": "#/$defs/cachedRepository"
+          },
+          {
+            "$ref": "#/$defs/combinedRepository"
+          }
+        ]
+      }
+    },
+    "localRepositories": {
+      "title": "Local Repositories",
+      "description": "Simple configuration for local library repositories. Key is the repository name, value is the path to the repository root directory. Set a value to null to disable a repository of that name that was defined on a lower layer or contributed by an extension.",
+      "type": "object",
+      "additionalProperties": {
+        "defaultSnippets": [
+          {
+            "label": "Example repository path",
+            "description": "Path to the repository root directory.",
+            "body": "C:\\\\Libraries\\\\MyRepository"
+          },
+          {
+            "label": "Disable this repository",
+            "description": "null disables a repository of that name defined on a lower layer or contributed by an extension.",
+            "body": null
+          }
+        ]
+      },
+      "examples": [
+        {
+          "MyRepository": "C:\\Libraries\\MyRepository"
+        },
+        {
+          "Default": null
+        }
+      ]
+    }
+  },
+  "required": [],
+  "$defs": {
+    "fileSystemStorage": {
+      "type": "object",
+      "title": "File system storage",
+      "description": "A storage backed by a directory on disk.",
+      "defaultSnippets": [
+        {
+          "label": "File system storage",
+          "description": "A storage backed by a directory on disk.",
+          "body": {
+            "kind": "FileSystem",
+            "name": "MyStorage",
+            "rootDirectory": "C:/Libraries/MyRepository"
+          }
+        }
+      ],
+      "properties": {
+        "kind": {
+          "const": "FileSystem",
+          "description": "Storage kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/storageName"
+        },
+        "rootDirectory": {
+          "type": "string",
+          "title": "Root directory",
+          "description": "Path to the directory that holds the libraries."
+        },
+        "createIfNotExisting": {
+          "type": "boolean",
+          "title": "Create if not existing",
+          "description": "If true, the directory is created when it does not exist; if false, it must already exist.",
+          "default": false
+        },
+        "deleteOnDispose": {
+          "type": "boolean",
+          "title": "Delete on dispose",
+          "description": "If true, the directory is deleted when the storage is disposed. Use with extreme caution.",
+          "default": false
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "rootDirectory"
+      ]
+    },
+    "s3Storage": {
+      "type": "object",
+      "title": "S3 storage",
+      "description": "A storage backed by an S3-compatible object store.",
+      "properties": {
+        "kind": {
+          "const": "S3",
+          "description": "Storage kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/storageName"
+        },
+        "bucket": {
+          "type": "string",
+          "title": "Bucket",
+          "description": "The S3 bucket name."
+        },
+        "region": {
+          "type": "string",
+          "title": "Region",
+          "description": "The AWS region endpoint. If omitted, the AWS fallback region resolution is used."
+        },
+        "serviceUrl": {
+          "type": "string",
+          "format": "uri",
+          "title": "Service URL",
+          "description": "Service URL of an S3-compatible provider other than AWS."
+        },
+        "accessKey": {
+          "type": "string",
+          "title": "Access key",
+          "description": "The AWS access key."
+        },
+        "secretKey": {
+          "type": "string",
+          "title": "Secret key",
+          "description": "The AWS secret key."
+        },
+        "queue": {
+          "type": "string",
+          "title": "Queue",
+          "description": "The SQS queue name."
+        },
+        "createIfNotExisting": {
+          "type": "boolean",
+          "title": "Create if not existing",
+          "description": "If true, the bucket is created when it does not exist; if false, it must already exist.",
+          "default": false
+        },
+        "deleteOnDispose": {
+          "type": "boolean",
+          "title": "Delete on dispose",
+          "description": "If true, the bucket is deleted when the storage is disposed. Use with extreme caution.",
+          "default": false
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "bucket"
+      ]
+    },
+    "localRepository": {
+      "type": "object",
+      "title": "Local repository",
+      "description": "A repository whose libraries live directly in a storage.",
+      "properties": {
+        "kind": {
+          "const": "Local",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "storage": {
+          "$ref": "#/$defs/storageName"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "storage"
+      ]
+    },
+    "cachedRepository": {
+      "type": "object",
+      "title": "Cached repository",
+      "description": "A repository that caches the content of another repository into a local storage.",
+      "properties": {
+        "kind": {
+          "const": "Cached",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "sourceRepository": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "cacheStorage": {
+          "$ref": "#/$defs/storageName"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "sourceRepository",
+        "cacheStorage"
+      ]
+    },
+    "combinedRepository": {
+      "type": "object",
+      "title": "Combined repository",
+      "description": "A repository that presents several source repositories as one.",
+      "properties": {
+        "kind": {
+          "const": "Combined",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "sourceRepositories": {
+          "type": "array",
+          "title": "Source repositories",
+          "description": "Names of the repositories to combine, in priority order.",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/repositoryName"
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "sourceRepositories"
+      ]
+    },
+    "proxyRepository": {
+      "type": "object",
+      "title": "Proxy repository",
+      "description": "A repository that proxies a source repository and periodically refreshes a local proxy storage.",
+      "properties": {
+        "kind": {
+          "const": "Proxy",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "sourceRepository": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "proxyStorage": {
+          "$ref": "#/$defs/storageName"
+        },
+        "updateIntervalInMinutes": {
+          "$ref": "#/$defs/nonNegativeInteger",
+          "title": "Update interval (minutes)",
+          "description": "How often the proxy refreshes from its source, in minutes."
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "sourceRepository",
+        "proxyStorage",
+        "updateIntervalInMinutes"
+      ]
+    },
+    "redirectedRepository": {
+      "type": "object",
+      "title": "Redirected repository",
+      "description": "A repository that rewrites selected library requests to other libraries or repositories.",
+      "properties": {
+        "kind": {
+          "const": "Redirected",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "sourceRepository": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "redirections": {
+          "type": "array",
+          "title": "Redirections",
+          "description": "The redirection rules applied to the source repository.",
+          "items": {
+            "$ref": "#/$defs/redirection"
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "sourceRepository",
+        "redirections"
+      ]
+    },
+    "reducedRepository": {
+      "type": "object",
+      "title": "Reduced repository",
+      "description": "A repository that exposes only a filtered subset of a source repository.",
+      "properties": {
+        "kind": {
+          "const": "Reduced",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "sourceRepository": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "predicates": {
+          "type": "array",
+          "title": "Predicates",
+          "description": "The rules selecting which libraries pass the filter.",
+          "items": {
+            "$ref": "#/$defs/predicate"
+          }
+        },
+        "positiveMatch": {
+          "type": "boolean",
+          "title": "Positive match",
+          "description": "If true the predicates select what is kept; if false they select what is excluded."
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "sourceRepository",
+        "predicates",
+        "positiveMatch"
+      ]
+    },
+    "remoteRepository": {
+      "type": "object",
+      "title": "Remote repository",
+      "description": "A repository served over the network at a base address.",
+      "properties": {
+        "kind": {
+          "const": "Remote",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "remoteName": {
+          "type": "string",
+          "title": "Remote name",
+          "description": "Name of the repository as published at the remote server (its identifier at baseAddress), not a repository defined in this file."
+        },
+        "baseAddress": {
+          "$ref": "#/$defs/uri"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "remoteName",
+        "baseAddress"
+      ]
+    },
+    "cachedKeysAndVersionsRepository": {
+      "type": "object",
+      "title": "Cached keys and versions repository",
+      "description": "A repository that proxies a source repository but caches only its library keys and versions (not the content) into a storage, refreshing them periodically.",
+      "properties": {
+        "kind": {
+          "const": "CachedKeysAndVersions",
+          "description": "Repository kind discriminator."
+        },
+        "name": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "isPublic": {
+          "type": "boolean",
+          "title": "Is public",
+          "description": "Whether this repository is public. Public repositories are exposed for direct use; non-public ones serve only as building blocks for virtual repositories such as Combined or Cached."
+        },
+        "sourceRepository": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "proxyStorage": {
+          "$ref": "#/$defs/storageName"
+        },
+        "checkIntervalInMinutes": {
+          "$ref": "#/$defs/nonNegativeInteger",
+          "title": "Check interval (minutes)",
+          "description": "How often the cached keys and versions are refreshed from the source, in minutes."
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "sourceRepository",
+        "proxyStorage",
+        "checkIntervalInMinutes"
+      ]
+    },
+    "storageName": {
+      "type": "string",
+      "title": "Storage name",
+      "description": "Unique name of a storage defined in 'storages'."
+    },
+    "repositoryName": {
+      "type": "string",
+      "title": "Repository name",
+      "description": "Unique name of a repository."
+    },
+    "libraryKey": {
+      "type": "string",
+      "title": "Library key",
+      "description": "Identifies a library as 'Title (Company)': the title, then the company in parentheses. Both parts are required \u2014 a bare title such as 'Standard' is rejected.",
+      "pattern": "^[^()]+\\(.*\\)$",
+      "patternErrorMessage": "Expected the format 'Title (Company)', for example 'Standard (System)'.",
+      "examples": [
+        "Standard (System)",
+        "IoDrvEthercat (3S - Smart Software Solutions GmbH)"
+      ]
+    },
+    "libraryVersion": {
+      "type": "string",
+      "title": "Library version",
+      "description": "A semantic version. Two to four numeric parts, optionally followed by a pre-release label and/or build metadata (NuGet version syntax).",
+      "examples": [
+        "4.2.0",
+        "1.0.0-beta.1"
+      ]
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "title": "URI",
+      "description": "An absolute URI (for example the base address of a remote repository)."
+    },
+    "redirection": {
+      "type": "object",
+      "title": "Redirection",
+      "description": "Rewrites a library request. Specify either an exact 'sourceVersion' or a 'sourceVersionFrom'/'sourceVersionTo' range, together with the target.",
+      "properties": {
+        "sourceKey": {
+          "$ref": "#/$defs/libraryKey",
+          "title": "Source key",
+          "description": "The library to match, as 'Title (Company)', for example 'Standard (System)'."
+        },
+        "sourceVersion": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Source version",
+          "description": "Exact version to match."
+        },
+        "sourceVersionFrom": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Source version from",
+          "description": "Inclusive lower bound of the version range to match."
+        },
+        "sourceVersionTo": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Source version to",
+          "description": "Inclusive upper bound of the version range to match."
+        },
+        "targetRepository": {
+          "$ref": "#/$defs/repositoryName"
+        },
+        "targetKey": {
+          "$ref": "#/$defs/libraryKey",
+          "title": "Target key",
+          "description": "The library to redirect to, as 'Title (Company)', for example 'Standard (System)'."
+        },
+        "targetVersion": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Target version",
+          "description": "Version to redirect to."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "sourceKey",
+            "sourceVersion",
+            "targetVersion"
+          ]
+        },
+        {
+          "required": [
+            "sourceKey",
+            "sourceVersionFrom",
+            "sourceVersionTo",
+            "targetVersion"
+          ]
+        }
+      ]
+    },
+    "predicate": {
+      "type": "object",
+      "title": "Predicate",
+      "description": "Matches libraries by id and version. Specify either an exact 'version' or a 'versionFrom'/'versionTo' range.",
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/libraryKey",
+          "title": "Key",
+          "description": "The library to match, as 'Title (Company)', for example 'Standard (System)'."
+        },
+        "version": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Version",
+          "description": "Exact version to match."
+        },
+        "versionFrom": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Version from",
+          "description": "Inclusive lower bound of the version range to match."
+        },
+        "versionTo": {
+          "$ref": "#/$defs/libraryVersion",
+          "title": "Version to",
+          "description": "Inclusive upper bound of the version range to match."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "key",
+            "version"
+          ]
+        },
+        {
+          "required": [
+            "key",
+            "versionFrom",
+            "versionTo"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1504 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Device configuration",
+  "description": "Configures a device instance in the device tree (a *.device.json). It identifies the device description the instance is based on and holds the configuration of each registered extension to the device configuration format.",
+  "type": "object",
+  "properties": {
+    "deviceDescription": {
+      "type": "object",
+      "title": "Device description",
+      "description": "Identifies the device description this configuration is based on.",
+      "defaultSnippets": [
+        {
+          "label": "Example device description",
+          "description": "Identification taken from the device description.",
+          "body": {
+            "identification": {
+              "type": 4096,
+              "id": "0000 0001",
+              "version": "3.5.17.0"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "identification": {
+          "$ref": "#/$defs/deviceIdentification"
+        },
+        "checksum": {
+          "description": "Optional checksum of the device description, used to detect that it has changed. Currently unused",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identification"
+      ],
+      "unevaluatedProperties": false
+    },
+    "extensions": {
+      "description": "A dictionary in which extensions store their configuration, keyed by extension. Each key is defined by the extension that registers it in the base system, not chosen when editing this file; the extension developer gives it a globally unique prefix (e.g. company_name.key). Each entry has a `configuration` property, in which the extension stores its own settings for the device, plus an optional `ioMapping` property holding the device's I/O mapping managed by this extension entry.",
+      "type": "object",
+      "defaultSnippets": [
+        {
+          "label": "Example extension entry",
+          "description": "The base-system PLC configuration under its extension key.",
+          "body": {
+            "BaseDevice.PlcConfig": {
+              "configuration": {
+                "applicationForIoHandling": "Application",
+                "updateIosInStop": true,
+                "stopResetBehaviour": "KeepCurrentValues",
+                "generateForceVariables": false,
+                "showIoWarningsAsErrors": false,
+                "deviceDiagnosis": false,
+                "symbolicIoAccess": false,
+                "busCycleTask": "MainTask"
+              }
+            }
+          }
+        }
+      ],
+      "patternProperties": {
+        ".*": {
+          "description": "Unique extension key. The extension must register this key in the base system. An extension can also make multiple registrations.",
+          "$ref": "#/$defs/extension"
+        }
+      },
+      "properties": {
+        "BaseDevice.PlcConfig": {
+          "title": "Device PLC configuration",
+          "description": "I/O handling and stop behaviour settings of a PLC device. This is the 'configuration' an extension stores under the base-system PLC key in a *.device.json.",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/BaseDevice_PlcConfig"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        },
+        "BaseDevice.GenericDeviceConfig": {
+          "title": "Device parameter configuration",
+          "description": "Configures the parameter values of a device. This is the object under extensions[\"BaseDevice.GenericDeviceConfig\"].configuration in a *.device.json.",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/BaseDevice_GenericDeviceConfig"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        },
+        "BaseDevice.GenericIoMapping": {
+          "title": "Device I/O mapping",
+          "description": "Maps a device's I/O channels to IEC variables or addresses. This is the 'configuration' an extension stores under the base-system I/O-mapping key in a *.device.json.",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/BaseDevice_GenericIoMapping"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        },
+        "modbus.tcp.client": {
+          "title": "Modbus TCP Client Configuration",
+          "description": "Schema for the extensions[\"modbus.tcp.client\"].configuration",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/modbus_tcp_client"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        },
+        "modbus.tcp.server": {
+          "title": "Modbus TCP Server Configuration",
+          "description": "Schema for the extensions[\"modbus.tcp.server\"].configuration payload. Mirrors ModbusTcpServerDataSchema (Zod) 1:1.",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/modbus_tcp_server"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        },
+        "modbus.tcp.serverdevice": {
+          "title": "Modbus TCP Server-Device Configuration",
+          "description": "Schema for the extensions[\"modbus.tcp.serverdevice\"].configuration",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/modbus_tcp_serverdevice"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        },
+        "ethernet": {
+          "title": "Ethernet Configuration",
+          "description": "Schema for the extensions[\"ethernet\"].configuration",
+          "properties": {
+            "configuration": {
+              "$ref": "#/$defs/ethernet"
+            },
+            "ioMapping": {
+              "$ref": "#/$defs/extension/properties/ioMapping"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "deviceDescription"
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "extension": {
+      "type": "object",
+      "title": "Extension entry",
+      "description": "What an extension stores for the device under its key.",
+      "properties": {
+        "configuration": {
+          "type": "object",
+          "title": "Configuration",
+          "description": "The extension's own settings for the device. Its shape is defined by the extension that registered this key (for example the base-system PLC, generic-device and I/O-mapping extensions)."
+        },
+        "ioMapping": {
+          "type": "object",
+          "title": "I/O mapping",
+          "description": "The device's I/O mapping: input, output and bidirectional channel mappings.",
+          "defaultSnippets": [
+            {
+              "label": "Example I/O mapping",
+              "description": "One input channel with a bit sub-mapping and one output channel.",
+              "body": {
+                "inputMappings": [
+                  {
+                    "name": "Channel 1",
+                    "mappingTarget": "PLC_PRG.in",
+                    "components": {
+                      "Bit0": {
+                        "mappingTarget": "PLC_PRG.in_bit0"
+                      }
+                    }
+                  }
+                ],
+                "outputMappings": [
+                  {
+                    "name": "Channel 2",
+                    "mappingTarget": "PLC_PRG.out"
+                  }
+                ],
+                "bidirectionalMappings": []
+              }
+            }
+          ],
+          "properties": {
+            "inputMappings": {
+              "type": "array",
+              "description": "List of input mapping configuration parameters",
+              "items": {
+                "$ref": "#/$defs/parameterConfiguration"
+              }
+            },
+            "outputMappings": {
+              "type": "array",
+              "description": "List of output mapping configuration parameters",
+              "items": {
+                "$ref": "#/$defs/parameterConfiguration"
+              }
+            },
+            "bidirectionalMappings": {
+              "type": "array",
+              "description": "List of bidirectional mapping configuration parameters",
+              "items": {
+                "$ref": "#/$defs/parameterConfiguration"
+              }
+            }
+          },
+          "unevaluatedProperties": false
+        }
+      },
+      "required": [
+        "configuration"
+      ],
+      "unevaluatedProperties": false
+    },
+    "deviceIdentification": {
+      "type": "object",
+      "title": "Device identification",
+      "description": "Identifies the device description this device instance is based on.",
+      "defaultSnippets": [
+        {
+          "label": "Example device identification",
+          "description": "Numeric type, id and version taken from the device description.",
+          "body": {
+            "type": 4096,
+            "id": "0000 0001",
+            "version": "3.5.17.0"
+          }
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "title": "Type",
+          "description": "Numeric device type from the device description."
+        },
+        "id": {
+          "type": "string",
+          "title": "Id",
+          "description": "Device identifier from the device description."
+        },
+        "version": {
+          "type": "string",
+          "title": "Version",
+          "description": "Version of the device description."
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "version"
+      ],
+      "unevaluatedProperties": false
+    },
+    "parameterConfiguration": {
+      "type": "object",
+      "unevaluatedProperties": false,
+      "title": "Parameter Configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "The name of the parameter"
+        },
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "title": "Id",
+          "description": "The id of the parameter, references the parameterId from the DevDesc, required when specifying multiple parameters with the same name, otherwise optional",
+          "default": null
+        },
+        "mappingTarget": {
+          "type": "string",
+          "title": "Mapping Target",
+          "description": "The (fully qualified) name of the variable the channel or component is mapped to: either the name of a new variable to create or the fully-qualified name of an existing variable.",
+          "defaultSnippets": [
+            {
+              "label": "Example new variable",
+              "description": "Create a new variable with this name and map the channel to it.",
+              "body": "NewVariableName"
+            },
+            {
+              "label": "Example existing variable",
+              "description": "Map to an existing variable by its fully qualified name.",
+              "body": "FullyQualifiedName.VariableIdentifier"
+            }
+          ]
+        },
+        "components": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "title": "Submappings",
+          "description": "The submappings of the respective channel or component",
+          "additionalProperties": {
+            "$ref": "#/$defs/mappingObject"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "mappingTarget"
+      ]
+    },
+    "mappingObject": {
+      "type": "object",
+      "unevaluatedProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "Ignored on submappings (the identifier is the dictionary key). Accepted for backward compatibility with configurations written before the submapping name was dropped."
+        },
+        "mappingTarget": {
+          "type": "string",
+          "title": "Mapping Target",
+          "description": "The (fully qualified) name of the variable the channel or component is mapped to: either the name of a new variable to create or the fully-qualified name of an existing variable.",
+          "defaultSnippets": [
+            {
+              "label": "Example new variable",
+              "description": "Create a new variable with this name and map the channel to it.",
+              "body": "NewVariableName"
+            },
+            {
+              "label": "Example existing variable",
+              "description": "Map to an existing variable by its fully qualified name.",
+              "body": "FullyQualifiedName.VariableIdentifier"
+            }
+          ]
+        },
+        "components": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "title": "Submappings",
+          "description": "The submappings of the respective channel or component",
+          "additionalProperties": {
+            "$ref": "#/$defs/mappingObject"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "mappingTarget"
+          ]
+        },
+        {
+          "required": [
+            "components"
+          ]
+        }
+      ]
+    },
+    "BaseDevice_PlcConfig": {
+      "title": "Device PLC configuration",
+      "description": "I/O handling and stop behaviour settings of a PLC device. This is the 'configuration' an extension stores under the base-system PLC key in a *.device.json.",
+      "defaultSnippets": [
+        {
+          "label": "Example PLC configuration (keep values on stop)",
+          "description": "Bus cycle on MainTask; outputs keep their current values when the controller stops.",
+          "body": {
+            "applicationForIoHandling": "Application",
+            "updateIosInStop": true,
+            "stopResetBehaviour": "KeepCurrentValues",
+            "generateForceVariables": false,
+            "showIoWarningsAsErrors": false,
+            "deviceDiagnosis": false,
+            "symbolicIoAccess": false,
+            "busCycleTask": "MainTask"
+          }
+        },
+        {
+          "label": "Example PLC configuration (run program on stop)",
+          "description": "Runs a user program on stop; requires stopResetBehaviourUserProgram.",
+          "body": {
+            "applicationForIoHandling": "Application",
+            "updateIosInStop": true,
+            "stopResetBehaviour": "ExecuteProgram",
+            "stopResetBehaviourUserProgram": "ResetUserProgram",
+            "generateForceVariables": false,
+            "showIoWarningsAsErrors": false,
+            "deviceDiagnosis": false,
+            "symbolicIoAccess": false,
+            "busCycleTask": "Task"
+          }
+        }
+      ],
+      "unevaluatedProperties": false,
+      "type": "object",
+      "properties": {
+        "applicationForIoHandling": {
+          "type": "string",
+          "title": "Application for I/O handling",
+          "description": "Name of the application that is responsible for the I/O handling. The code generated from the devices is generated for the application that bears the name provided here"
+        },
+        "updateIosInStop": {
+          "type": "boolean",
+          "title": "Update I/Os in stop",
+          "description": "States if the values of I/Os are also updated when the plc is in stop mode"
+        },
+        "stopResetBehaviour": {
+          "$ref": "#/$defs/BaseDevice_PlcConfig/$defs/stopResetBehaviourEnum",
+          "title": "Stop reset behaviour",
+          "description": "States the behaviour of the I/Os when the controller enters stop mode"
+        },
+        "generateForceVariables": {
+          "type": "boolean",
+          "title": "Generate force variables",
+          "description": "States if two global variables are created for each I/O, which can be used to force the input or output value of the respective I/O"
+        },
+        "showIoWarningsAsErrors": {
+          "type": "boolean",
+          "title": "Show warnings as errors",
+          "description": "States if warnings concerning the I/O configuration are displayed as errors"
+        },
+        "deviceDiagnosis": {
+          "type": "boolean",
+          "title": "Device diagnosis",
+          "description": "States if the diagnostics for devices are enabled"
+        },
+        "symbolicIoAccess": {
+          "type": "boolean",
+          "title": "Symbolic I/O access",
+          "description": "States if input and output variables are automatically created for the I/O channels of the plc"
+        },
+        "busCycleTask": {
+          "type": "string",
+          "title": "Bus cycle task name",
+          "description": "The name of the bus cycle task for the respective device."
+        },
+        "stopResetBehaviourUserProgram": {
+          "type": "string",
+          "title": "Stop reset behaviour user program",
+          "description": "Name of the program to be executed when the controller enters stop mode. Only takes effect if stopResetBehaviour has value 'ExecuteProgram'"
+        },
+        "updateAlwaysIo": {
+          "type": "boolean",
+          "deprecated": true,
+          "title": "Update I/Os always (legacy)",
+          "description": "Legacy flag. Ignored on read and never written; I/Os are always updated. Present only in files written by older versions. Will be fully supported in future versions."
+        }
+      },
+      "if": {
+        "properties": {
+          "stopResetBehaviour": {
+            "const": "ExecuteProgram"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "stopResetBehaviourUserProgram"
+        ],
+        "properties": {
+          "stopResetBehaviourUserProgram": {
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "applicationForIoHandling",
+        "updateIosInStop",
+        "stopResetBehaviour",
+        "generateForceVariables",
+        "showIoWarningsAsErrors",
+        "deviceDiagnosis",
+        "symbolicIoAccess",
+        "busCycleTask"
+      ],
+      "$defs": {
+        "stopResetBehaviourEnum": {
+          "type": "string",
+          "enum": [
+            "KeepCurrentValues",
+            "SetAllOutputsToDefault",
+            "ExecuteProgram"
+          ]
+        }
+      }
+    },
+    "BaseDevice_GenericDeviceConfig": {
+      "title": "Device parameter configuration",
+      "description": "Configures the parameter values of a device. This is the object under extensions[\"BaseDevice.GenericDeviceConfig\"].configuration in a *.device.json.",
+      "defaultSnippets": [
+        {
+          "label": "Example device parameter configuration",
+          "description": "A host connector parameter set that assigns a binary literal to one device parameter.",
+          "body": {
+            "parameterSets": {
+              "deviceParameterSet": [],
+              "hostParameterSets": {
+                "1": [
+                  {
+                    "name": "GPIO17",
+                    "parameterValue": {
+                      "value": "2#000"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false,
+      "type": "object",
+      "properties": {
+        "parameterSets": {
+          "type": "object",
+          "title": "Parameter sets",
+          "description": "Structure for the configuration of device parameters",
+          "unevaluatedProperties": false,
+          "properties": {
+            "deviceParameterSet": {
+              "type": "array",
+              "title": "Device parameter set",
+              "description": "Parameter values configured for the device's own parameter set (parameters not tied to a connector). Each entry names a device-description parameter and its configured value.",
+              "items": {
+                "$ref": "#/$defs/BaseDevice_GenericDeviceConfig/$defs/parameterObject"
+              }
+            },
+            "hostParameterSets": {
+              "type": "object",
+              "title": "Host parameter sets",
+              "description": "Parameter values configured per host connector. Each key is the connector id (an integer, from the device description) and its value is the list of configured parameters for that connector.",
+              "unevaluatedProperties": false,
+              "patternProperties": {
+                "^[0-9]+$": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/BaseDevice_GenericDeviceConfig/$defs/parameterObject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "$defs": {
+        "parameterObject": {
+          "unevaluatedProperties": false,
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Parameter name",
+              "description": "The name of the parameter in the corresponding DevDesc"
+            },
+            "id": {
+              "type": "integer",
+              "title": "Parameter id",
+              "description": "The id of the parameter in the corresponding DevDesc (optional if parameter name is unique)"
+            },
+            "parameterValue": {
+              "$ref": "#/$defs/BaseDevice_GenericDeviceConfig/$defs/parameterValue",
+              "title": "Parameter value",
+              "description": "Structure for specifying the configured value of the parameter"
+            }
+          },
+          "required": [
+            "name",
+            "parameterValue"
+          ]
+        },
+        "parameterValue": {
+          "unevaluatedProperties": false,
+          "oneOf": [
+            {
+              "required": [
+                "components"
+              ]
+            },
+            {
+              "required": [
+                "value"
+              ]
+            }
+          ],
+          "type": "object",
+          "properties": {
+            "components": {
+              "$ref": "#/$defs/BaseDevice_GenericDeviceConfig/$defs/parameterValueComponentList",
+              "title": "Parameter components",
+              "description": "The components of a structured parameter value"
+            },
+            "value": {
+              "type": [
+                "string",
+                "integer",
+                "boolean"
+              ],
+              "title": "Value",
+              "description": "The scalar value assigned to the parameter, written as a JSON string, integer, or boolean. String values may hold IEC literals such as binary. Numbers must be integers.",
+              "defaultSnippets": [
+                {
+                  "label": "Example binary literal value",
+                  "description": "A scalar value written as an IEC binary literal.",
+                  "body": "2#000"
+                }
+              ]
+            }
+          }
+        },
+        "parameterValueComponentList": {
+          "type": "array",
+          "defaultSnippets": [
+            {
+              "label": "Example min/max components",
+              "description": "A structured value expressed as a list of named components.",
+              "body": [
+                {
+                  "identifier": "MinValue",
+                  "value": 0
+                },
+                {
+                  "identifier": "MaxValue",
+                  "value": 1000
+                }
+              ]
+            }
+          ],
+          "items": {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "properties": {
+              "identifier": {
+                "type": "string",
+                "title": "Component identifier",
+                "description": "The identifier of the component"
+              },
+              "components": {
+                "$ref": "#/$defs/BaseDevice_GenericDeviceConfig/$defs/parameterValueComponentList",
+                "title": "Sub-components",
+                "description": "The sub-components of the component"
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "integer",
+                  "boolean"
+                ],
+                "title": "Component value",
+                "description": "The specific plain value of the parameter component"
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "value"
+                ]
+              },
+              {
+                "required": [
+                  "components"
+                ]
+              }
+            ],
+            "required": [
+              "identifier"
+            ]
+          }
+        }
+      }
+    },
+    "BaseDevice_GenericIoMapping": {
+      "title": "Device I/O mapping",
+      "description": "Maps a device's I/O channels to IEC variables or addresses. This is the 'configuration' an extension stores under the base-system I/O-mapping key in a *.device.json.",
+      "defaultSnippets": [
+        {
+          "label": "Example host parameter set mapping",
+          "description": "Maps a bit sub-channel of a host connector's digital-input channel to an IEC variable.",
+          "body": {
+            "hostParameterSets": {
+              "1": {
+                "inputMappings": [
+                  {
+                    "name": "digital inputs (GPIO0..GPIO31)",
+                    "mappingTarget": "",
+                    "components": {
+                      "Bit17": {
+                        "mappingTarget": "PLC_PRG.switchOn"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false,
+      "type": "object",
+      "properties": {
+        "deviceParameterSet": {
+          "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/ioMapping",
+          "title": "Device parameter set",
+          "description": "I/O mapping for the device parameter set (DPS)."
+        },
+        "hostParameterSets": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "title": "Host parameter sets",
+          "description": "A dictionary mapping the connectorId (key) to an IO mapping",
+          "patternProperties": {
+            "^\\d+$": {
+              "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/ioMapping"
+            }
+          }
+        }
+      },
+      "$defs": {
+        "ioMapping": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "title": "I/O mapping",
+          "description": "Per-direction parameter configurations (input / output / bidirectional)",
+          "properties": {
+            "inputMappings": {
+              "type": "array",
+              "title": "Input mappings",
+              "description": "Parameter configurations for input channels",
+              "items": {
+                "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/parameterConfiguration"
+              }
+            },
+            "outputMappings": {
+              "type": "array",
+              "title": "Output mappings",
+              "description": "Parameter configurations for output channels",
+              "items": {
+                "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/parameterConfiguration"
+              }
+            },
+            "bidirectionalMappings": {
+              "type": "array",
+              "title": "Bidirectional mappings",
+              "description": "Parameter configurations for bidirectional channels",
+              "items": {
+                "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/parameterConfiguration"
+              }
+            }
+          }
+        },
+        "parameterConfiguration": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "title": "Parameter configuration",
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Name",
+              "description": "The name of the parameter"
+            },
+            "id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "title": "Id",
+              "description": "The id of the parameter, references the parameterId from the DevDesc, required when specifying multiple parameters with the same name, otherwise optional",
+              "default": null
+            },
+            "mappingTarget": {
+              "type": "string",
+              "title": "Mapping target",
+              "description": "The (fully qualified) name of the variable the channel or component is mapped to, or an empty string when this level is not directly mapped (typically when only its `components` carry mappings). A non-empty value is either the name of a new variable to create or the fully-qualified name of an existing variable.",
+              "defaultSnippets": [
+                {
+                  "label": "Example not directly mapped",
+                  "description": "Empty string: this level carries no mapping itself (typically only its components are mapped).",
+                  "body": ""
+                },
+                {
+                  "label": "Example new variable",
+                  "description": "Create a new variable with this name and map the channel to it.",
+                  "body": "NewVariableName"
+                },
+                {
+                  "label": "Example existing variable",
+                  "description": "Map to an existing variable by its fully qualified name.",
+                  "body": "FullyQualifiedName.VariableIdentifier"
+                }
+              ]
+            },
+            "components": {
+              "type": "object",
+              "unevaluatedProperties": false,
+              "title": "Submappings",
+              "description": "The submappings of the respective channel or component",
+              "additionalProperties": {
+                "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/mappingObject"
+              }
+            }
+          },
+          "required": [
+            "name",
+            "mappingTarget"
+          ]
+        },
+        "mappingObject": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "properties": {
+            "name": {
+              "title": "Name",
+              "description": "Ignored on submappings (the identifier is the dictionary key). Accepted for backward compatibility with configurations written before the submapping name was dropped."
+            },
+            "id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "title": "Id",
+              "description": "The id of the parameter (references the parameterId from the DevDesc). Not set on submappings, which are identified by their dictionary key.",
+              "default": null
+            },
+            "mappingTarget": {
+              "type": "string",
+              "title": "Mapping target",
+              "description": "The (fully qualified) name of the variable the channel or component is mapped to: either the name of a new variable to create or the fully-qualified name of an existing variable.",
+              "defaultSnippets": [
+                {
+                  "label": "Example new variable",
+                  "description": "Create a new variable with this name and map the channel to it.",
+                  "body": "NewVariableName"
+                },
+                {
+                  "label": "Example existing variable",
+                  "description": "Map to an existing variable by its fully qualified name.",
+                  "body": "FullyQualifiedName.VariableIdentifier"
+                }
+              ]
+            },
+            "components": {
+              "type": "object",
+              "unevaluatedProperties": false,
+              "title": "Submappings",
+              "description": "The submappings of the respective channel or component",
+              "additionalProperties": {
+                "$ref": "#/$defs/BaseDevice_GenericIoMapping/$defs/mappingObject"
+              }
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "mappingTarget"
+              ]
+            },
+            {
+              "required": [
+                "components"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "modbus_tcp_client": {
+      "title": "Modbus TCP Client Configuration",
+      "description": "Schema for the extensions[\"modbus.tcp.client\"].configuration",
+      "type": "object",
+      "required": [
+        "responseTimeout",
+        "autoReconnect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "responseTimeout": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 10000,
+          "description": "Response timeout in ms.",
+          "default": 1000
+        },
+        "autoReconnect": {
+          "type": "boolean",
+          "description": "Automatically attempt a reconnect after a connection was interrupted and confirm all errors of the server",
+          "default": false
+        }
+      }
+    },
+    "modbus_tcp_server": {
+      "title": "Modbus TCP Server Configuration",
+      "description": "Schema for the extensions[\"modbus.tcp.server\"].configuration payload. Mirrors ModbusTcpServerDataSchema (Zod) 1:1.",
+      "type": "object",
+      "required": [
+        "ipAddress",
+        "responseTimeout",
+        "port",
+        "enableFallbackIp",
+        "secondIpAddress",
+        "preferredLine",
+        "connectInactiveLine",
+        "modbusChannels",
+        "modbusInitChannels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ipAddress": {
+          "type": "string",
+          "format": "ipv4",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "description": "IPv4 address of the Modbus TCP server (slave).",
+          "default": "0.0.0.0"
+        },
+        "responseTimeout": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295,
+          "description": "Response timeout in ms.",
+          "default": 1000
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "TCP port (Modbus default 502).",
+          "default": 502
+        },
+        "enableFallbackIp": {
+          "type": "boolean",
+          "description": "Use secondIpAddress as a fallback address (ConnectivityRedundancy).",
+          "default": false
+        },
+        "secondIpAddress": {
+          "type": "string",
+          "format": "ipv4",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "description": "Second IPv4 address, used when enableFallbackIp is true.",
+          "default": "0.0.0.0"
+        },
+        "preferredLine": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Preferred line: 0=None, 1=Line1, 2=Line2.",
+          "default": 0
+        },
+        "connectInactiveLine": {
+          "type": "boolean",
+          "description": "Also establish a connection on the currently inactive line.",
+          "default": true
+        },
+        "modbusChannels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/modbus_tcp_server/$defs/modbusChannel"
+          },
+          "default": []
+        },
+        "modbusInitChannels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/modbus_tcp_server/$defs/modbusInitChannel"
+          },
+          "default": []
+        }
+      },
+      "$defs": {
+        "modbusChannel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "index",
+            "channelName",
+            "accessType",
+            "trigger",
+            "cycleTime",
+            "readOffset",
+            "readLength",
+            "errorHandling",
+            "writeOffset",
+            "writeLength",
+            "comment"
+          ],
+          "properties": {
+            "index": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99
+            },
+            "channelName": {
+              "type": "string"
+            },
+            "accessType": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                15,
+                16,
+                23
+              ],
+              "description": "Modbus function code: 1=ReadCoils, 2=ReadDiscreteInputs, 3=ReadHoldingRegisters, 4=ReadInputRegisters, 5=WriteSingleCoil, 6=WriteSingleRegister, 15=WriteMultipleCoils, 16=WriteMultipleRegisters, 23=ReadWriteMultipleRegisters."
+            },
+            "trigger": {
+              "type": "integer",
+              "enum": [
+                0,
+                5,
+                6
+              ],
+              "description": "Trigger: 0=Application, 5=Cyclic, 6=RisingEdge."
+            },
+            "cycleTime": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295,
+              "description": "Cycle time in ms (used when trigger=Cyclic)."
+            },
+            "readOffset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "readLength": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2000
+            },
+            "errorHandling": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ],
+              "description": "Error handling: 0=KeepLastValue, 1=SetToZero."
+            },
+            "writeOffset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "writeLength": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1968
+            },
+            "comment": {
+              "type": "string"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "required": [
+                  "accessType"
+                ],
+                "properties": {
+                  "accessType": {
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "writeOffset": {
+                    "const": 0
+                  },
+                  "writeLength": {
+                    "const": 0
+                  },
+                  "readLength": {
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "accessType"
+                ],
+                "properties": {
+                  "accessType": {
+                    "enum": [
+                      5,
+                      6
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "readOffset": {
+                    "const": 0
+                  },
+                  "readLength": {
+                    "const": 0
+                  },
+                  "writeLength": {
+                    "const": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "accessType"
+                ],
+                "properties": {
+                  "accessType": {
+                    "enum": [
+                      15,
+                      16
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "readOffset": {
+                    "const": 0
+                  },
+                  "readLength": {
+                    "const": 0
+                  },
+                  "writeLength": {
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "accessType"
+                ],
+                "properties": {
+                  "accessType": {
+                    "const": 23
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "readLength": {
+                    "minimum": 1
+                  },
+                  "writeLength": {
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "trigger"
+                ],
+                "properties": {
+                  "trigger": {
+                    "enum": [
+                      0,
+                      6
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "cycleTime": {
+                    "const": 0
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "trigger"
+                ],
+                "properties": {
+                  "trigger": {
+                    "const": 5
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "cycleTime": {
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "modbusInitChannel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "index",
+            "accessType",
+            "writeOffset",
+            "defaultValue",
+            "writeLength",
+            "comment"
+          ],
+          "properties": {
+            "index": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 19
+            },
+            "accessType": {
+              "type": "integer",
+              "enum": [
+                5,
+                6,
+                15,
+                16
+              ],
+              "description": "Modbus write function code: 5=WriteSingleCoil, 6=WriteSingleRegister, 15=WriteMultipleCoils, 16=WriteMultipleRegisters."
+            },
+            "writeOffset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "defaultValue": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "writeLength": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1968
+            },
+            "comment": {
+              "type": "string"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "required": [
+                  "accessType"
+                ],
+                "properties": {
+                  "accessType": {
+                    "enum": [
+                      5,
+                      6
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "writeLength": {
+                    "const": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "accessType"
+                ],
+                "properties": {
+                  "accessType": {
+                    "const": 5
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "defaultValue": {
+                    "maximum": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "modbus_tcp_serverdevice": {
+      "title": "Modbus TCP Server-Device Configuration",
+      "description": "Schema for the extensions[\"modbus.tcp.serverdevice\"].configuration",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "port",
+        "bindToAdapter",
+        "enableWatchdog",
+        "watchdogTimeout",
+        "closeTcpSocket",
+        "holdingRegisters",
+        "writeableHoldingRegisters",
+        "inputRegisters",
+        "enableDiscreteBitAreas",
+        "coils",
+        "discreteInputs",
+        "addressCoils",
+        "addressDiscreteInputs",
+        "addressHoldingRegisters",
+        "addressInputRegisters",
+        "overlayRegisterDataAreas",
+        "serialGatewayActive",
+        "comPort",
+        "baudRate"
+      ],
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "TCP port (Modbus default 502).",
+          "default": 502
+        },
+        "bindToAdapter": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableWatchdog": {
+          "type": "boolean",
+          "default": false
+        },
+        "watchdogTimeout": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200000,
+          "description": "Watchdog timeout in ms (used when enableWatchdog is true).",
+          "default": 0
+        },
+        "closeTcpSocket": {
+          "type": "boolean",
+          "default": true
+        },
+        "holdingRegisters": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 4096,
+          "description": "Number of holding registers.",
+          "default": 10
+        },
+        "writeableHoldingRegisters": {
+          "type": "boolean",
+          "default": false
+        },
+        "inputRegisters": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 4096,
+          "description": "Number of input registers.",
+          "default": 10
+        },
+        "enableDiscreteBitAreas": {
+          "type": "boolean",
+          "default": false
+        },
+        "coils": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Number of coils (used when enableDiscreteBitAreas is true).",
+          "default": 0
+        },
+        "discreteInputs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Number of discrete inputs (used when enableDiscreteBitAreas is true).",
+          "default": 0
+        },
+        "addressCoils": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Start address of the coils area.",
+          "default": 0
+        },
+        "addressDiscreteInputs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Start address of the discrete-inputs area.",
+          "default": 0
+        },
+        "addressHoldingRegisters": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Start address of the holding-registers area.",
+          "default": 0
+        },
+        "addressInputRegisters": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Start address of the input-registers area.",
+          "default": 0
+        },
+        "overlayRegisterDataAreas": {
+          "type": "boolean",
+          "default": false
+        },
+        "serialGatewayActive": {
+          "type": "boolean",
+          "description": "Enable the serial Modbus gateway (uses comPort/baudRate).",
+          "default": false
+        },
+        "comPort": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Serial COM port (used when serialGatewayActive is true).",
+          "default": 1
+        },
+        "baudRate": {
+          "type": "integer",
+          "enum": [
+            1200,
+            2400,
+            4800,
+            9600,
+            19200,
+            38400,
+            57600,
+            115200
+          ],
+          "description": "Serial baud rate (used when serialGatewayActive is true).",
+          "default": 9600
+        }
+      }
+    },
+    "ethernet": {
+      "title": "Ethernet Configuration",
+      "description": "Schema for the extensions[\"ethernet\"].configuration",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "networkInterfaceName",
+        "ipAddress",
+        "subnetMask",
+        "gatewayAddress",
+        "adjustOperatingSystemSettings"
+      ],
+      "properties": {
+        "networkInterfaceName": {
+          "type": "string",
+          "description": "The name of the network interface as registered in the operating system.",
+          "default": "Ethernet"
+        },
+        "ipAddress": {
+          "type": "string",
+          "format": "ipv4",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "description": "IPv4 address of the network interface.",
+          "default": "0.0.0.0"
+        },
+        "subnetMask": {
+          "type": "string",
+          "format": "ipv4",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "description": "IPv4 subnet mask.",
+          "default": "0.0.0.0"
+        },
+        "gatewayAddress": {
+          "type": "string",
+          "format": "ipv4",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "description": "IPv4 default gateway address.",
+          "default": "0.0.0.0"
+        },
+        "adjustOperatingSystemSettings": {
+          "type": "boolean",
+          "description": "Apply these settings to the operating system's network configuration.",
+          "default": false
+        }
+      }
+    }
+  }
+}

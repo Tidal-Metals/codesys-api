@@ -1,0 +1,50 @@
+{
+  "$id": "https://www.codesys.com/c4/schemas/WebApp.prefs.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Web Application",
+  "type": "object",
+  "properties": {
+    "theme": {
+      "title": "Theme",
+      "description": "The UI theme used by CODESYS 4",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "",
+          "title": "System default"
+        },
+        {
+          "const": "codesys.light",
+          "title": "CODESYS Light"
+        },
+        {
+          "const": "codesys.dark",
+          "title": "CODESYS Dark"
+        }
+      ],
+      "default": "",
+      "x-commonlyUsed": true
+    },
+    "language": {
+      "title": "Language",
+      "description": "The display language used by CODESYS 4",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "",
+          "title": "System default"
+        },
+        {
+          "const": "en",
+          "title": "English"
+        },
+        {
+          "const": "de",
+          "title": "Deutsch"
+        }
+      ],
+      "default": "",
+      "x-commonlyUsed": true
+    }
+  }
+}

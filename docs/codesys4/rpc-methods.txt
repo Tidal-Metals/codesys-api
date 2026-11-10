@@ -1,0 +1,184 @@
+CODESYS.C4.Devices
+    AddDevice
+    GetAvailableDevices
+    GetDeviceNames
+    ModifyDeviceExtensionConfiguration
+    ModifyDeviceExtensionIoMapping
+    MonitorDeviceStatus
+    RemoveDevice
+    RenameDevice
+    ResetDeviceConfig
+    WatchDeviceExtensionConfiguration
+    WatchDeviceExtensionIoMapping
+    WatchDeviceExtensionKeys
+    WatchDeviceTree
+    WatchIoHandlingApplicationOnlineStatus
+CODESYS.C4.Essentials.Modules.FileBrowser
+    RenameEmptyNameMessage
+    RenameFailedMessage
+    RenameInvalidCharsMessage
+    RenameNameExistsMessage
+CODESYS.C4.Essentials.Modules.LibraryRepositoryManagement.InstallLibrariesIntoRepository
+    CommandDescription
+    CommandLabel
+    FileSizeExceededMessage
+    UploadFailedMessage
+CODESYS.C4.Essentials.Modules.OnlineMode
+    AppStateBreakpointTooltip
+    AppStateExceptionTooltip
+    AppStateRunningTooltip
+    AppStateStoppedTooltip
+    AppStateUnknownTooltip
+CODESYS.C4.Essentials.Shared.FormValidation
+    IsRequiredMessage
+    MaxLengthMessage
+    MaxMessage
+    MinMessage
+CODESYS.C4.Modules.Bootstrapping
+    GetLicenseInfo
+CODESYS.C4.Modules.Bootstrapping.HostEnvInfo
+    GetHostEnvInformation
+CODESYS.C4.Modules.Compiler
+    ICompilerService
+CODESYS.C4.Modules.Compiler.EditorSupport.SymbolInfoProvider
+    GetSymbolInfo
+CODESYS.C4.Modules.Compiler.ICompilerService
+    Compile
+    CompilerCheckLibrary
+    GetAvailableCompilerVersions
+    ResolveChangedLibrariesAndWriteLockFile
+    ResolveLibrariesAndWriteLockFile
+    RestoreMissingLibraries
+    SaveCompiledLibrary
+CODESYS.C4.Modules.Compiler.IDownloadService
+    CompileAndDownload
+CODESYS.C4.Modules.Compiler.IJsonSchemaProvider
+    SchemaChanges
+CODESYS.C4.Modules.Compiler.Intellisense
+    IntellisenseService
+CODESYS.C4.Modules.Compiler.Intellisense.IntellisenseService
+    GetConversionOperators
+    GetIntellisenseItems
+    GetKeywords
+CODESYS.C4.Modules.Compiler.LengthyOperations
+    Abort
+    Changes
+CODESYS.C4.Modules.Compiler.Libraries.ILibraryInfoProvider
+    GetLibrariesAsync
+CODESYS.C4.Modules.Compiler.Libraries.ILibraryRepoInstallService
+    GetDefaultRepositoryPathAsync
+    GetMaxUploadSizeBytes
+CODESYS.C4.Modules.FileSystem
+    IFileSystemWatcher
+CODESYS.C4.Modules.FileSystem.IFileSystemWatcher
+    WatchDirectoryEntries
+    WatchEntry
+CODESYS.C4.Modules.MessagePool.RunMessagePool
+    Categories
+    Changes
+CODESYS.C4.Modules.MessagePool.StatusMessagePool
+    Categories
+    Changes
+CODESYS.C4.Modules.OnlineService
+    Monitoring
+CODESYS.C4.Modules.OnlineService.InstancePath
+    GetInstancePaths
+CODESYS.C4.Modules.OnlineService.Monitoring
+    ChangeVisibilityAsync
+    RegisterInstanceVariablesAsync
+    RegisterVariableAsync
+    StartMonitoringSessionAsync
+    UnregisterVariableAsync
+CODESYS.C4.Modules.OnlineService.OnlineService
+    IOnlineAppService
+    IOnlineGatewayService
+CODESYS.C4.Modules.OnlineService.OnlineService.IOnlineAppService
+    AppStatusChanges
+    ConnectionChanges
+    DeleteAsync
+    HasSession
+    IsConnected
+    LoginAsync
+    LogoutAsync
+    ResetAsync
+    StartAsync
+    StopAsync
+CODESYS.C4.Modules.OnlineService.OnlineService.IOnlineGatewayService
+    CheckGatewayConnectionAsync
+    ScanDevices
+CODESYS.C4.Modules.OnlineService.OnlineService.IOnlinePlcService
+    CheckConnectionAsync
+CODESYS.C4.Modules.OptionService
+    IOptionModificationService
+    IOptionRegistry
+    IOptionService
+    ISettingService
+CODESYS.C4.Modules.OptionService.IOptionModificationService
+    LocateOptionAsync
+    ResetCategoryAsync
+    ResetOptionAsync
+    SetOptionAsync
+    SetOptionsAsync
+CODESYS.C4.Modules.OptionService.IOptionRegistry
+    GetSchema
+    ObserveCategories
+    Register
+CODESYS.C4.Modules.OptionService.IOptionService
+    ObserveOptionErrors
+    ObserveOptionNode
+    ObserveOptionRoot
+    ObserveOptionScope
+CODESYS.C4.Modules.OptionService.ISettingService
+    GetGlobalAsync
+    GetProjectAsync
+    GetSettingAsync
+    GetUserGlobalAsync
+    GetUserProjectAsync
+    GetUserWorkspaceAsync
+    SaveGlobalAsync
+    SaveProjectAsync
+    SaveUserGlobalAsync
+    SaveUserProjectAsync
+    SaveUserWorkspaceAsync
+    SetSettingAsync
+CODESYS.C4.Modules.UserManagement
+    BrowserLanguagesUpdated
+CODESYS.C4.Modules.WorkspaceManager
+    AddProject
+    AddProjectInfo
+    AddTaskConfiguration
+    CloseWorkspace
+    CreateApplication
+    CreateDeviceProject
+    CreateLibraryProject
+    CreateWorkspace
+    GetOpenProjects
+    GetOpenWorkspaceFile
+    GetProjectListChanges
+    OpenWorkspace
+    RemoveProject
+    SaveWorkspaceAs
+    SetOpenEditors
+    WatchApplicationListChanges
+    WatchOpenWorkspaceFileChanges
+CODESYS.C4.Sdk.FileSystem.IEntryPoints
+    GetDefaultFsEntryPoint
+    GetFsEntryPoints
+CODESYS.C4.Sdk.FileSystem.IFileSystem
+    CreateDirectoryAsync
+    DeleteAsync
+    ExistsAsync
+    GetEntriesAsync
+    GetEntryAsync
+    GetRoots
+    MoveAsync
+CODESYS.C4.Sdk.ObjectModel.Services.IObjectModelService
+    CanCreateChildFolderAsync
+    CanCreateChildObjectAsync
+    CanRenameNodeAsync
+    CreateChildFolderAsync
+    CreateChildObjectAsync
+    DeleteNodeAsync
+    GetChildNodesAsync
+    RenameNodeAsync
+    TryGetNodeAsync

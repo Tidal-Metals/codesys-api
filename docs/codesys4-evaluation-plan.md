@@ -19,13 +19,16 @@ From the vendor docs and two hands-on reviews (sources at the end):
   `librepo install`, dependency `install|restore`, `bootapp compile`, workspace creation, controller
   login/logout/reset. No published command reference yet; whether it can download or read variables is
   unknown. Build machines need no license.
-- **No scripting interface.** The replacement for `scriptengine` is file access plus `c4-cli`.
+- **No documented scripting interface.** The replacement for `scriptengine` is file access plus `c4-cli`.
+  In practice the IDE backend's JSON-RPC (the one the browser UI uses) is scriptable from Python; see
+  Results, Phase 0.
 - **Same compiler, libraries, runtime and gateway as CODESYS 3.** Library projects open in both;
   `.compiled-library` files from CODESYS 4 work in CODESYS 3 projects. Device projects need a conversion
   tool that isn't released yet.
 - **Free until the end of 2028.**
 
-Also documented: Control SL runtimes only (third-party devices "technically possible, no guarantee",
+Also documented (the install also ships Control Win V3, Win V3 x64, RTE V3 and the simulation devices):
+Control SL runtimes only (third-party devices "technically possible, no guarantee",
 installable as Content Extensions from 1.1), Modbus TCP as the only fieldbus, online monitoring without
 write or force, ST and LD only, minimum runtime V3.5 SP19, and no TLS or certificate authentication for
 PLC communication.
@@ -207,13 +210,124 @@ Outcomes:
 
 Done when: the table is filled in and a person has picked an outcome.
 
+## Status: paused (decided 2026-10-21)
+
+CODESYS 4 work is on hold until a release ships a Cortex-M3 (ARM Thumb-2) code generator, without which
+nothing builds for the P2CDS-622. Porting the MQTT fork to a CODESYS 4 library waits until the fork's
+optimization work is done. Until then, check each CODESYS 4 release note for a Cortex-M generator and
+do nothing else here.
+
 ## Results
 
-### Phase 0 (2026-10-21): blocked on the installer
+### Phase 0 (2026-10-21): installed, and the IDE backend is scriptable
 
-.NET 8.0.32 (NETCore, AspNetCore, WindowsDesktop) is already installed. CODESYS 4 isn't in the CODESYS
-Installer, and codesys.com and store.codesys.com answer scripted requests with 429/503, so the installer
-has to be downloaded through a browser with a CODESYS account.
+`CODESYS-4-Setup-1.0.0.0.msi` (product 1.0.0.12180, signed by CODESYS Development GmbH) installed to
+`C:\Program Files\CODESYS-4\` side by side with CODESYS 3.5.22.10. The bundled compiler is 3.5.22.30 (code
+generators x86, x86-64, ARM, ARM64). Nothing on the bench PLC was touched; no gateway scan was run.
+
+**`c4-cli`** (full help tree: `docs/codesys4/cli-reference.md`, from `examples/codesys4/dump_cli_help.py`)
+has `library` (resolve, check, save-compiled, pack, install, verify, and others), `librepo install`,
+`bootapp compile` and `standalone-session`. Answers to the Phase 0 questions:
+
+| Question | Answer |
+|---|---|
+| Download an application | no (CLI); yes over the backend RPC (`IDownloadService.CompileAndDownload`) |
+| Start / stop | no (CLI); yes over RPC (`IOnlineAppService.StartAsync`, `StopAsync`, `ResetAsync`) |
+| Read variables | no (CLI); yes over RPC (`OnlineService.Monitoring.RegisterVariableAsync`, by expression string) |
+| Write or force variables | no, anywhere: no RPC method, no CLI command |
+| Create a device project | no (CLI); yes over RPC (`WorkspaceManager.CreateDeviceProject`, `Devices.AddDevice`), or write the files |
+| Diagnostics with file and line | yes. CLI prints `path (line, col, length)` and exits 1; RPC returns `{message, severity, position: {path, line, length}}` |
+
+**The backend RPC.** `standalone-session` starts an ASP.NET server on a random localhost port and hands
+`http://localhost:<port>/index.html#<token>` to a browser. `--with-browser <script>` lets a script capture
+the URL instead. `GET /api/UserSessions` with header `InitToken: <token>` returns the session cookie. The
+UI then opens `ws://localhost:<port>/api/JsonRpc` (Origin must match, subprotocol `tab.<uuid>`) and speaks
+JSON-RPC 2.0. Observables take a callback id as their first argument; events come back as server calls to
+`_c4-callback/call [id, "onNext", [value]]`. Errors carry the .NET exception type, message and stack. The
+server assemblies are Wibu AxProtector-encrypted, but the method names are readable from the UI bundles:
+`docs/codesys4/rpc-methods.txt` (from `extract_rpc_methods.py`). The Python client is
+`examples/codesys4/c4_rpc.py`. A new connection displaces an open browser tab (close code 4001).
+
+**JSON schemas.** The backend publishes schemas with descriptions for `DeviceTree.json`, `*.device.json`
+(including Modbus TCP client/server/server-device and Ethernet configuration), `Libraries.json`, the lock
+file, `Communication.settings.json`, `GDM.lock.json` and the preference files. Saved in
+`docs/codesys4/schemas/` (from `dump_schemas.py`).
+
+### Phase 1 and part of Phase 2 (2026-10-21): desk checks with CODESYS 4 installed
+
+Projects under `examples/codesys4/projects/`, all created by script or RPC, none by the UI:
+
+- `rpc_probe.fbsdev`: one program on CODESYS Control Win V3 x64. Seeded faults were reported at the right
+  lines: `Cannot convert type 'INT' to type 'BOOL'` (line 7), `Identifier 'undeclared' not defined` (line 8).
+- `feature_probe.fbsdev`: two tasks (50 ms priority 1, 100 ms priority 5), RETAIN and PERSISTENT
+  variables, ModbusFB `ClientTCP`, `ClientSerial` and `ClientRequestReadHoldingRegisters`, SysCom,
+  SysTimeCore, SysTimeRtc, MQTT Client SL, JSON Utilities SL, Net Base Services and SNTP Service SL. It
+  builds with 0 errors.
+- `modbus_probe.fbsdev`: native device tree PLC → Ethernet → Modbus TCP Client → Modbus TCP Server,
+  built with `Devices.AddDevice` over RPC. It builds with 0 errors. Server channels are a JSON array
+  (`modbusChannels`).
+- `p2_probe.fbsdev`: the P2CDS-622. See below.
+
+**Timing** (`bench_bootapp.py`): `c4-cli bootapp compile` takes about 11 s wall, of which about 1.4 s is
+compiling and the rest startup. A one-file change costs the same. Two builds in parallel in separate
+copies finish in 12 s wall. Over RPC in a warm session, compiling takes 0.2 to 4 s. Two builds from the
+same source give different `Application.app` bytes (probably timestamps). Not yet compared against
+`check_compile.py`.
+
+**P2CDS-622: blocked at code generation.**
+1. `build_p2_extension.py` packs the 62 AutomationDirect device descriptions from
+   `C:\ProgramData\CODESYS\Devices` into an unsigned `TidalMetals.P2CDS622.Ext` nupkg. `c4-pkm install`
+   accepted it (elevated). Both CPU versions then appear in `Devices.GetAvailableDevices`. Remove with
+   `c4-pkm remove TidalMetals.P2CDS622.Ext/1.0.0`.
+2. The device pins CmpApp, CmpLog, Component Manager and IoStandard at 3.5.17, older than CODESYS 4 ships.
+   `import_missing_libraries.py` copies them from the CODESYS 3 store with `librepo install`, after which
+   the libraries resolve. The AutomationDirect NetConfig, SystemTags and Info libraries were installed the
+   same way.
+3. The compiler accepts the device and its embedded bases, generates the I/O code and type-checks. It then
+   stops: `Creating a code generator failed: The required add-on 'CODESYS Code Generator Cortex M3' is not
+   installed`. The P2CDS-622 compiles for ARM Thumb-2 (backend `{66F31C7B-…}`, `CodeCortexM3.plugin.dll`
+   in CODESYS 3). CODESYS 4 1.0 has no Cortex-M generator, and a CODESYS 3 plug-in can't be loaded into it.
+   I/O modules under the bases were not tried, since nothing can be built for this CPU anyway.
+
+**Other gaps found:**
+- Source libraries (`.library`) are rejected by `librepo install` ("unknown file type"). That covers
+  MQTT 1.2.0.7 (Stefan Dreyer) and PRO JSON 1.0.0.16. They work only as compiled libraries saved from
+  CODESYS 3, or ported to a CODESYS 4 text library (`.fbslib`). The `CODESYS-MQTT` fork's text sources are
+  the natural input for the port.
+- `__NEW` fails with `No memory for dynamic object creation defined for application`. Dynamic memory size
+  comes from the device's target settings (`runtime_features\default_dynamic_memory_size`). No project file
+  or published schema sets it per application. A repackaged device description with the setting is the
+  untested workaround.
+- `Devices.AddDevice` and `ResetDeviceConfig` leave `BaseDevice.GenericDeviceConfig` out of
+  `*.device.json`. The device then can't take children ("ParentDeviceConfigMissing"), and devices with
+  parameters don't compile. `ensure_generic_config.py` adds the empty entry.
+- No serial port, `Modbus_COM` or RTU device exists. ModbusFB `ClientSerial` plus CAA SerialCom compile,
+  so RTU from IEC code is possible on targets CODESYS 4 can build for.
+- `bootapp compile <app> <dir>` writes to the parent folder when `<dir>` doesn't exist yet.
+- The UI models `EncryptedCommSupported` / `EncryptedCommRequired` device flags, and the online service has
+  a TLS secure channel. So encrypted communication may exist in 1.0, contrary to the docs. Untested
+  without a PLC.
+
+**Requirements matrix, tested:**
+
+| Need | Tested on 2026-10-21 |
+|---|---|
+| P2CDS-622 as the target | missing: device loads via our extension, the Cortex-M3 code generator doesn't exist |
+| Field I/O modules | not tried (blocked by the code generator); descriptions load |
+| Modbus TCP client, native | works (compile) |
+| Modbus TCP server / server device | client-side remote server device works (compile); PLC-as-server device not tried |
+| Modbus RTU, native `Modbus_COM` | missing |
+| ModbusFB TCP and serial, SysCom | works (compile), libraries ship with CODESYS 4 |
+| MQTT 1.2.0.7 (Dreyer), PRO JSON | missing as shipped (source libraries); workaround: compiled library or `.fbslib` port. MQTT Client SL and JSON Utilities SL compile |
+| Dynamic memory | missing per application; workaround untested (device target setting) |
+| SNTP Service SL, SysTimeCore, SysTimeRtc | works (compile) |
+| Two cyclic tasks with priorities | works (compile) |
+| RETAIN / PERSISTENT | works (compile) |
+| `io_always_mapping` | present in the generated device model (`GDM.lock.json` "always updated"); not exercised |
+| Download, start, stop | available over RPC only; not run (no PLC used) |
+| Online read / watch | available over RPC (`Monitoring`); not run |
+| Online write / force | missing |
+| Encrypted PLC communication | unclear; UI and backend have TLS code; not tested |
 
 ### Phase 1, desk checks done without CODESYS 4 (2026-10-21)
 

@@ -1,0 +1,2422 @@
+{
+  "$id": "https://www.codesys.com/c4/schemas/TextEditor.prefs.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Text Editor",
+  "type": "object",
+  "properties": {
+    "accessibilitySupport": {
+      "title": "Accessibility Support",
+      "description": "Controls if the UI should run in a mode where it is optimized for screen readers.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "auto",
+          "title": "Auto",
+          "description": "Use platform APIs to detect when a Screen Reader is attached"
+        },
+        {
+          "const": "on",
+          "title": "On",
+          "description": "Optimize for usage with a Screen Reader"
+        },
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Assume a screen reader is not attached"
+        }
+      ],
+      "default": "auto"
+    },
+    "accessibilityPageSize": {
+      "title": "Accessibility Page Size",
+      "description": "Controls the number of lines in the editor that can be read out by a screen reader at once. When we detect a screen reader we automatically set the default to be 10. Warning: this has a performance implication for numbers larger than the default.",
+      "type": "integer",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "autoClosingBrackets": {
+      "title": "Auto Closing Brackets",
+      "description": "Controls whether the editor should automatically close brackets after the user adds an opening bracket.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always"
+        },
+        {
+          "const": "languageDefined",
+          "title": "Language-defined",
+          "description": "Use language configurations to determine when to autoclose brackets."
+        },
+        {
+          "const": "beforeWhitespace",
+          "title": "Before Whitespace",
+          "description": "Autoclose brackets only when the cursor is to the left of whitespace."
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        }
+      ],
+      "default": "languageDefined"
+    },
+    "autoClosingComments": {
+      "title": "Auto Closing Comments",
+      "description": "Controls whether the editor should automatically close comments after the user adds an opening comment.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always"
+        },
+        {
+          "const": "languageDefined",
+          "title": "Language-defined",
+          "description": "Use language configurations to determine when to autoclose comments."
+        },
+        {
+          "const": "beforeWhitespace",
+          "title": "Before Whitespace",
+          "description": "Autoclose comments only when the cursor is to the left of whitespace."
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        }
+      ],
+      "default": "languageDefined"
+    },
+    "autoClosingDelete": {
+      "title": "Auto Closing Delete",
+      "description": "Controls whether the editor should remove adjacent closing quotes or brackets when deleting.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always"
+        },
+        {
+          "const": "auto",
+          "title": "Auto",
+          "description": "Remove adjacent closing quotes or brackets only if they were automatically inserted."
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        }
+      ],
+      "default": "auto"
+    },
+    "autoClosingOvertype": {
+      "title": "Auto Closing Overtype",
+      "description": "Controls whether the editor should type over closing quotes or brackets.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always"
+        },
+        {
+          "const": "auto",
+          "title": "Auto",
+          "description": "Type over closing quotes or brackets only if they were automatically inserted."
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        }
+      ],
+      "default": "auto"
+    },
+    "autoClosingQuotes": {
+      "title": "Auto Closing Quotes",
+      "description": "Controls whether the editor should automatically close quotes after the user adds an opening quote.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always"
+        },
+        {
+          "const": "languageDefined",
+          "title": "Language-defined",
+          "description": "Use language configurations to determine when to autoclose quotes."
+        },
+        {
+          "const": "beforeWhitespace",
+          "title": "Before Whitespace",
+          "description": "Autoclose quotes only when the cursor is to the left of whitespace."
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        }
+      ],
+      "default": "languageDefined"
+    },
+    "autoIndent": {
+      "title": "Auto Indent",
+      "description": "Controls whether the editor should automatically adjust the indentation when users type, paste, move or indent lines.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "none",
+          "title": "None",
+          "description": "The editor will not insert indentation automatically."
+        },
+        {
+          "const": "advanced",
+          "title": "Advanced",
+          "description": "The editor will keep the current line's indentation, honor language defined brackets and invoke special onEnterRules defined by languages."
+        },
+        {
+          "const": "full",
+          "title": "Full",
+          "description": "The editor will keep the current line's indentation, honor language defined brackets, invoke special onEnterRules defined by languages, and honor indentationRules defined by languages."
+        },
+        {
+          "const": "brackets",
+          "title": "Brackets",
+          "description": "The editor will keep the current line's indentation and honor language defined brackets."
+        },
+        {
+          "const": "keep",
+          "title": "Keep",
+          "description": "The editor will keep the current line's indentation."
+        }
+      ],
+      "default": "full"
+    },
+    "autoSurround": {
+      "title": "Auto Surround",
+      "description": "Controls whether the editor should automatically surround selections when typing quotes or brackets.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "languageDefined",
+          "title": "Language-defined",
+          "description": "Use language configurations to determine when to automatically surround selections."
+        },
+        {
+          "const": "quotes",
+          "title": "Quotes",
+          "description": "Surround with quotes but not brackets."
+        },
+        {
+          "const": "brackets",
+          "title": "Brackets",
+          "description": "Surround with brackets but not quotes."
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        }
+      ],
+      "default": "languageDefined"
+    },
+    "bracketPairColorization": {
+      "title": "Bracket Pair Colorization",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether bracket pair colorization is enabled or not. Use [[Workbench: Color Customizations]] to override the bracket highlight colors.",
+          "type": "boolean",
+          "default": true
+        },
+        "independentColorPoolPerBracketType": {
+          "title": "Independent Color Pool Per Bracket Type",
+          "description": "Controls whether each bracket type has its own independent color pool.",
+          "type": "boolean"
+        }
+      }
+    },
+    "codeLens": {
+      "title": "Code Lens",
+      "description": "Controls whether the editor shows Code Lens.",
+      "type": "boolean",
+      "default": true
+    },
+    "codeLensFontFamily": {
+      "title": "Code Lens Font Family",
+      "description": "Controls the font family for Code Lens.",
+      "type": "string"
+    },
+    "codeLensFontSize": {
+      "title": "Code Lens Font Size",
+      "description": "Controls the font size in pixels for Code Lens. When set to 0, 90% of `#fontSize#` is used.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "colorDecorators": {
+      "title": "Color Decorators",
+      "description": "Controls whether the editor should render the inline color decorators and color picker.",
+      "type": "boolean",
+      "default": true
+    },
+    "colorDecoratorsActivatedOn": {
+      "title": "Color Decorators Activated On",
+      "description": "Controls the condition to make a color picker appear from a color decorator.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "clickAndHover",
+          "title": "Click and Hover",
+          "description": "Make the color picker appear both on click and hover of the color decorator"
+        },
+        {
+          "const": "click",
+          "title": "Click",
+          "description": "Make the color picker appear on click of the color decorator"
+        },
+        {
+          "const": "hover",
+          "title": "Hover",
+          "description": "Make the color picker appear on hover of the color decorator"
+        }
+      ],
+      "default": "clickAndHover"
+    },
+    "colorDecoratorsLimit": {
+      "title": "Color Decorators Limit",
+      "description": "Controls the max number of color decorators that can be rendered in an editor at once.",
+      "type": "integer",
+      "default": 500,
+      "minimum": 1,
+      "maximum": 1000000
+    },
+    "columnSelection": {
+      "title": "Column Selection",
+      "description": "Enable that the selection with the mouse and keys is doing column selection.",
+      "type": "boolean"
+    },
+    "comments": {
+      "title": "Comments",
+      "type": "object",
+      "properties": {
+        "ignoreEmptyLines": {
+          "title": "Ignore Empty Lines",
+          "description": "Controls if empty lines should be ignored with toggle, add or remove actions for line comments.",
+          "type": "boolean",
+          "default": true
+        },
+        "insertSpace": {
+          "title": "Insert Space",
+          "description": "Controls whether a space character is inserted when commenting.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "copyWithSyntaxHighlighting": {
+      "title": "Copy With Syntax Highlighting",
+      "description": "Controls whether syntax highlighting should be copied into the clipboard.",
+      "type": "boolean",
+      "default": true
+    },
+    "defaultColorDecorators": {
+      "title": "Default Color Decorators",
+      "description": "Controls whether inline color decorations should be shown using the default document color provider.",
+      "type": "boolean"
+    },
+    "definitionLinkOpensInPeek": {
+      "title": "Definition Link Opens In Peek",
+      "description": "Controls whether the Go to Definition mouse gesture always opens the peek widget.",
+      "type": "boolean"
+    },
+    "detectIndentation": {
+      "title": "Detect Indentation",
+      "description": "Controls whether `#tabSize#` and `#insertSpaces#` will be automatically detected when a file is opened based on the file contents.",
+      "type": "boolean",
+      "default": true
+    },
+    "dragAndDrop": {
+      "title": "Drag And Drop",
+      "description": "Controls whether the editor should allow moving selections via drag and drop.",
+      "type": "boolean",
+      "default": true
+    },
+    "dropIntoEditor": {
+      "title": "Drop Into Editor",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether you can drag and drop a file into a text editor by holding down the Shift key (instead of opening the file in an editor).",
+          "type": "boolean",
+          "default": true
+        },
+        "showDropSelector": {
+          "title": "Show Drop Selector",
+          "description": "Controls if a widget is shown when dropping files into the editor. This widget lets you control how the file is dropped.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "never",
+              "title": "Never",
+              "description": "Never show the drop selector widget. Instead the default drop provider is always used."
+            },
+            {
+              "const": "afterDrop",
+              "title": "After Drop",
+              "description": "Show the drop selector widget after a file is dropped into the editor."
+            }
+          ],
+          "default": "afterDrop"
+        }
+      }
+    },
+    "emptySelectionClipboard": {
+      "title": "Empty Selection Clipboard",
+      "description": "Controls whether copying without a selection copies the current line.",
+      "type": "boolean",
+      "default": true
+    },
+    "fastScrollSensitivity": {
+      "title": "Fast Scroll Sensitivity",
+      "description": "Scrolling speed multiplier when pressing `Alt`.",
+      "type": "integer",
+      "minimum": 1,
+      "default": 5
+    },
+    "folding": {
+      "title": "Folding",
+      "description": "Controls whether the editor has code folding enabled.",
+      "type": "boolean",
+      "default": true
+    },
+    "foldingHighlight": {
+      "title": "Folding Highlight",
+      "description": "Controls whether the editor should highlight folded ranges.",
+      "type": "boolean",
+      "default": true
+    },
+    "foldingMaximumRegions": {
+      "title": "Folding Maximum Regions",
+      "description": "The maximum number of foldable regions. Increasing this value may result in the editor becoming less responsive when the current source has a large number of foldable regions.",
+      "type": "integer",
+      "default": 5000,
+      "minimum": 10,
+      "maximum": 65000
+    },
+    "foldingStrategy": {
+      "title": "Folding Strategy",
+      "description": "Controls the strategy for computing folding ranges.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "auto",
+          "title": "Auto",
+          "description": "Use a language-specific folding strategy if available, else the indentation-based one."
+        },
+        {
+          "const": "indentation",
+          "title": "Indentation",
+          "description": "Use the indentation-based folding strategy."
+        }
+      ],
+      "default": "auto"
+    },
+    "glyphMargin": {
+      "title": "Glyph Margin",
+      "description": "Controls whether the editor should render the vertical glyph margin. Glyph margin is mostly used for debugging.",
+      "type": "boolean",
+      "default": true
+    },
+    "gotoLocation": {
+      "title": "Goto Location",
+      "type": "object",
+      "properties": {
+        "alternativeDeclarationCommand": {
+          "title": "Alternative Declaration Command",
+          "description": "Alternative command id that is being executed when the result of 'Go to Declaration' is the current location.",
+          "$ref": "#/$defs/editorCommand",
+          "default": "editor.action.goToReferences"
+        },
+        "alternativeDefinitionCommand": {
+          "title": "Alternative Definition Command",
+          "description": "Alternative command id that is being executed when the result of 'Go to Definition' is the current location.",
+          "$ref": "#/$defs/editorCommand",
+          "default": "editor.action.goToReferences"
+        },
+        "alternativeImplementationCommand": {
+          "title": "Alternative Implementation Command",
+          "description": "Alternative command id that is being executed when the result of 'Go to Implementation' is the current location.",
+          "$ref": "#/$defs/editorCommand"
+        },
+        "alternativeReferenceCommand": {
+          "title": "Alternative Reference Command",
+          "description": "Alternative command id that is being executed when the result of 'Go to Reference' is the current location.",
+          "$ref": "#/$defs/editorCommand"
+        },
+        "alternativeTypeDefinitionCommand": {
+          "title": "Alternative Type Definition Command",
+          "description": "Alternative command id that is being executed when the result of 'Go to Type Definition' is the current location.",
+          "$ref": "#/$defs/editorCommand",
+          "default": "editor.action.goToReferences"
+        },
+        "multipleDeclarations": {
+          "title": "Multiple Declarations",
+          "description": "Controls the behavior the 'Go to Declaration'-command when multiple target locations exist.",
+          "$ref": "#/$defs/multiple",
+          "default": "peek"
+        },
+        "multipleDefinitions": {
+          "title": "Multiple Definitions",
+          "description": "Controls the behavior the 'Go to Definition'-command when multiple target locations exist.",
+          "$ref": "#/$defs/multiple",
+          "default": "peek"
+        },
+        "multipleImplementations": {
+          "title": "Multiple Implementations",
+          "description": "Controls the behavior the 'Go to Implementations'-command when multiple target locations exist.",
+          "$ref": "#/$defs/multiple",
+          "default": "peek"
+        },
+        "multipleReferences": {
+          "title": "Multiple References",
+          "description": "Controls the behavior the 'Go to References'-command when multiple target locations exist.",
+          "$ref": "#/$defs/multiple",
+          "default": "peek"
+        },
+        "multipleTypeDefinitions": {
+          "title": "Multiple Type Definitions",
+          "description": "Controls the behavior the 'Go to Type Definition'-command when multiple target locations exist.",
+          "$ref": "#/$defs/multiple",
+          "default": "peek"
+        }
+      }
+    },
+    "guides": {
+      "title": "Guides",
+      "type": "object",
+      "properties": {
+        "bracketPairs": {
+          "title": "Bracket Pairs",
+          "description": "Controls whether bracket pair guides are enabled or not.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "true",
+              "title": "True",
+              "description": "Enables bracket pair guides."
+            },
+            {
+              "const": "false",
+              "title": "False",
+              "description": "Disables bracket pair guides."
+            },
+            {
+              "const": "active",
+              "title": "Active",
+              "description": "Enables bracket pair guides only for the active bracket pair."
+            }
+          ],
+          "default": "false"
+        },
+        "bracketPairsHorizontal": {
+          "title": "Bracket Pairs Horizontal",
+          "description": "Controls whether horizontal bracket pair guides are enabled or not.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "true",
+              "title": "True",
+              "description": "Enables horizontal guides as addition to vertical bracket pair guides."
+            },
+            {
+              "const": "false",
+              "title": "False",
+              "description": "Disables horizontal bracket pair guides."
+            },
+            {
+              "const": "active",
+              "title": "Active",
+              "description": "Enables horizontal guides only for the active bracket pair."
+            }
+          ],
+          "default": "active"
+        },
+        "highlightActiveBracketPair": {
+          "title": "Highlight Active Bracket Pair",
+          "description": "Controls whether the editor should highlight the active bracket pair.",
+          "type": "boolean",
+          "default": true
+        },
+        "highlightActiveIndentation": {
+          "title": "Highlight Active Indentation",
+          "description": "Controls whether the editor should highlight the active indent guide.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "true",
+              "title": "True",
+              "description": "Highlights the active indent guide."
+            },
+            {
+              "const": "false",
+              "title": "False",
+              "description": "Do not highlight the active indent guide."
+            },
+            {
+              "const": "always",
+              "title": "Always",
+              "description": "Highlights the active indent guide even if bracket guides are highlighted."
+            }
+          ],
+          "default": "true"
+        },
+        "indentation": {
+          "title": "Indentation",
+          "description": "Controls whether the editor should render indent guides.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "hideCursorInOverviewRuler": {
+      "title": "Hide Cursor In Overview Ruler",
+      "description": "Controls whether the cursor should be hidden in the overview ruler.",
+      "type": "boolean"
+    },
+    "hover": {
+      "title": "Hover",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether the hover is shown.",
+          "type": "boolean",
+          "default": true
+        },
+        "above": {
+          "title": "Above",
+          "description": "Prefer showing hovers above the line, if there's space.",
+          "type": "boolean",
+          "default": true
+        },
+        "delay": {
+          "title": "Delay",
+          "description": "Controls the delay in milliseconds after which the hover is shown.",
+          "type": "integer",
+          "default": 300,
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "hidingDelay": {
+          "title": "Hiding Delay",
+          "description": "Controls the delay in milliseconds after which the hover is hidden. Requires `#hover/sticky#` to be enabled.",
+          "type": "integer",
+          "default": 300,
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "sticky": {
+          "title": "Sticky",
+          "description": "Controls whether the hover should remain visible when mouse is moved over it.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "inlayHints": {
+      "title": "Inlay Hints",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Enables the inlay hints in the editor.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "off",
+              "title": "Off",
+              "description": "Inlay hints are disabled"
+            },
+            {
+              "const": "on",
+              "title": "On",
+              "description": "Inlay hints are enabled"
+            },
+            {
+              "const": "offUnlessPressed",
+              "title": "Off Unless Pressed",
+              "description": "Inlay hints are hidden by default and show when holding `Ctrl+Option` or `Ctrl+Alt`"
+            },
+            {
+              "const": "onUnlessPressed",
+              "title": "On Unless Pressed",
+              "description": "Inlay hints are showing by default and hide when holding `Ctrl+Option` or `Ctrl+Alt`"
+            }
+          ],
+          "default": "on"
+        },
+        "fontFamily": {
+          "title": "Font Family",
+          "description": "Controls font family of inlay hints in the editor. When set to empty, the `#fontFamily#` is used.",
+          "type": "string"
+        },
+        "fontSize": {
+          "title": "Font Size",
+          "description": "Controls font size of inlay hints in the editor. As default the `#fontSize#` is used when the configured value is less than 5 or greater than the editor font size.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "padding": {
+          "title": "Padding",
+          "description": "Enables the padding around the inlay hints in the editor.",
+          "type": "boolean"
+        }
+      }
+    },
+    "inlineCompletionsAccessibilityVerbose": {
+      "title": "Inline Completions Accessibility Verbose",
+      "description": "Controls whether the accessibility hint should be provided to screen reader users when an inline completion is shown.",
+      "type": "boolean"
+    },
+    "insertSpaces": {
+      "title": "Insert Spaces",
+      "description": "Insert spaces when pressing `Tab`. This setting is overridden based on the file contents when `#detectIndentation#` is on.",
+      "type": "boolean",
+      "default": true,
+      "x-commonlyUsed": true
+    },
+    "largeFileOptimizations": {
+      "title": "Large File Optimizations",
+      "description": "Special handling for large files to disable certain memory intensive features.",
+      "type": "boolean",
+      "default": true
+    },
+    "letterSpacing": {
+      "title": "Letter Spacing",
+      "description": "Controls the letter spacing in pixels.",
+      "type": "integer",
+      "minimum": -5,
+      "maximum": 20
+    },
+    "lightbulb": {
+      "title": "Lightbulb",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Enables the Code Action lightbulb in the editor.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "off",
+              "title": "Off"
+            },
+            {
+              "const": "onCode",
+              "title": "On Code"
+            },
+            {
+              "const": "on",
+              "title": "On"
+            }
+          ],
+          "default": "on"
+        }
+      }
+    },
+    "lineHeight": {
+      "title": "Line Height",
+      "description": "Controls the line height. Use 0 to automatically compute the line height from the font size. Values between 0 and 8 will be used as a multiplier with the font size. Values greater than or equal to 8 will be used as effective values.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 150
+    },
+    "lineNumbers": {
+      "title": "Line Numbers",
+      "description": "Controls the display of line numbers.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "on",
+          "title": "On",
+          "description": "Line numbers are rendered as absolute number."
+        },
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Line numbers are not rendered."
+        },
+        {
+          "const": "relative",
+          "title": "Relative",
+          "description": "Line numbers are rendered as distance in lines to cursor position."
+        },
+        {
+          "const": "interval",
+          "title": "Interval",
+          "description": "Line numbers are rendered every 10 lines."
+        }
+      ],
+      "default": "on"
+    },
+    "linkedEditing": {
+      "title": "Linked Editing",
+      "description": "Controls whether the editor has linked editing enabled. Depending on the language, related symbols such as HTML tags, are updated while editing.",
+      "type": "boolean"
+    },
+    "links": {
+      "title": "Links",
+      "description": "Control whether the editor should detect links and make them clickable.",
+      "type": "boolean",
+      "default": true
+    },
+    "matchBrackets": {
+      "title": "Match Brackets",
+      "description": "Highlight matching brackets.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always"
+        },
+        {
+          "const": "never",
+          "title": "Never"
+        },
+        {
+          "const": "near",
+          "title": "Near"
+        }
+      ],
+      "default": "always"
+    },
+    "maxTokenizationLineLength": {
+      "title": "Max Tokenization Line Length",
+      "description": "Lines above this length will not be tokenized for performance reasons.",
+      "type": "integer",
+      "default": 20000,
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "mouseWheelScrollSensitivity": {
+      "title": "Mouse Wheel Scroll Sensitivity",
+      "description": "A multiplier to be used on the `deltaX` and `deltaY` of mouse wheel scroll events.",
+      "type": "number",
+      "default": 1
+    },
+    "mouseWheelZoom": {
+      "title": "Mouse Wheel Zoom",
+      "description": "Zoom the font of the editor when using mouse wheel and holding `Ctrl`.",
+      "type": "boolean"
+    },
+    "multiCursorLimit": {
+      "title": "Multi Cursor Limit",
+      "description": "Controls the max number of cursors that can be in an active editor at once.",
+      "type": "integer",
+      "default": 10000,
+      "minimum": 1,
+      "maximum": 100000
+    },
+    "multiCursorMergeOverlapping": {
+      "title": "Multi Cursor Merge Overlapping",
+      "description": "Merge multiple cursors when they are overlapping.",
+      "type": "boolean",
+      "default": true
+    },
+    "multiCursorModifier": {
+      "title": "Multi Cursor Modifier",
+      "description": "The modifier to be used to add multiple cursors with the mouse. The Go to Definition and Open Link mouse gestures will adapt such that they do not conflict with the `#multicursorModifier#`.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "ctrlCmd",
+          "title": "Control / Command",
+          "description": "Maps to `Control` on Windows and Linux and to `Command` on macOS."
+        },
+        {
+          "const": "alt",
+          "title": "Alt / Option",
+          "description": "Maps to `Alt` on Windows and Linux and to `Option` on macOS."
+        }
+      ],
+      "default": "alt",
+      "x-commonlyUsed": true
+    },
+    "multiCursorPaste": {
+      "title": "Multi Cursor Paste",
+      "description": "Controls pasting when the line count of the pasted text matches the cursor count.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "spread",
+          "title": "Spread",
+          "description": "Each cursor pastes a single line of the text."
+        },
+        {
+          "const": "full",
+          "title": "Full",
+          "description": "Each cursor pastes the full text."
+        }
+      ],
+      "default": "spread"
+    },
+    "occurrencesHighlight": {
+      "title": "Occurrences Highlight",
+      "description": "Controls whether occurrences should be highlighted across open files.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Does not highlight occurrences."
+        },
+        {
+          "const": "singleFile",
+          "title": "Single File",
+          "description": "Highlights occurrences only in the current file."
+        },
+        {
+          "const": "multiFile",
+          "title": "Multi File",
+          "description": "Highlights occurrences across all valid open files."
+        }
+      ],
+      "default": "singleFile"
+    },
+    "overviewRulerBorder": {
+      "title": "Overview Ruler Border",
+      "description": "Controls whether a border should be drawn around the overview ruler.",
+      "type": "boolean",
+      "default": true
+    },
+    "padding": {
+      "title": "Padding",
+      "type": "object",
+      "properties": {
+        "bottom": {
+          "title": "Bottom",
+          "description": "Controls the amount of space between the bottom edge of the editor and the last line.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "top": {
+          "title": "Top",
+          "description": "Controls the amount of space between the top edge of the editor and the first line.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        }
+      }
+    },
+    "parameterHints": {
+      "title": "Parameter Hints",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Enables a pop-up that shows parameter documentation and type information as you type.",
+          "type": "boolean",
+          "default": true
+        },
+        "cycle": {
+          "title": "Cycle",
+          "description": "Controls whether the parameter hints menu cycles or closes when reaching the end of the list.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "pasteAs": {
+      "title": "Paste As",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether you can paste content in different ways.",
+          "type": "boolean",
+          "default": true
+        },
+        "showPasteSelector": {
+          "title": "Show Paste Selector",
+          "description": "Controls if a widget is shown when pasting content in to the editor. This widget lets you control how the file is pasted.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "never",
+              "title": "Never",
+              "description": "Never show the paste selector widget. Instead the default pasting behavior is always used."
+            },
+            {
+              "const": "afterPaste",
+              "title": "After Paste",
+              "description": "Show the paste selector widget after content is pasted into the editor."
+            }
+          ],
+          "default": "afterPaste"
+        }
+      }
+    },
+    "peekWidgetDefaultFocus": {
+      "title": "Peek Widget Default Focus",
+      "description": "Controls whether to focus the inline editor or the tree in the peek widget.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "tree",
+          "title": "Tree",
+          "description": "Focus the tree when opening peek"
+        },
+        {
+          "const": "editor",
+          "title": "Editor",
+          "description": "Focus the editor when opening peek"
+        }
+      ],
+      "default": "tree"
+    },
+    "renderControlCharacters": {
+      "title": "Render Control Characters",
+      "description": "Controls whether the editor should render control characters.",
+      "type": "boolean",
+      "default": true
+    },
+    "renderFinalNewline": {
+      "title": "Render Final Newline",
+      "description": "Render last line number when the file ends with a newline.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off"
+        },
+        {
+          "const": "on",
+          "title": "On"
+        },
+        {
+          "const": "dimmed",
+          "title": "Dimmed"
+        }
+      ],
+      "default": "on"
+    },
+    "renderLineHighlight": {
+      "title": "Render Line Highlight",
+      "description": "Controls how the editor should render the current line highlight.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "all",
+          "title": "All",
+          "description": "Highlights both the gutter and the current line."
+        },
+        {
+          "const": "line",
+          "title": "Line"
+        },
+        {
+          "const": "none",
+          "title": "None"
+        },
+        {
+          "const": "gutter",
+          "title": "Gutter"
+        }
+      ],
+      "default": "line"
+    },
+    "renderLineHighlightOnlyWhenFocus": {
+      "title": "Render Line Highlight Only When Focus",
+      "description": "Controls if the editor should render the current line highlight only when the editor is focused.",
+      "type": "boolean"
+    },
+    "renderWhitespace": {
+      "title": "Render Whitespace",
+      "description": "Controls how the editor should render whitespace characters.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "all",
+          "title": "All"
+        },
+        {
+          "const": "none",
+          "title": "None"
+        },
+        {
+          "const": "boundary",
+          "title": "Boundary",
+          "description": "Render whitespace characters except for single spaces between words."
+        },
+        {
+          "const": "selection",
+          "title": "Selection",
+          "description": "Render whitespace characters only on selected text."
+        },
+        {
+          "const": "trailing",
+          "title": "Trailing",
+          "description": "Render only trailing whitespace characters."
+        }
+      ],
+      "default": "selection",
+      "x-commonlyUsed": true
+    },
+    "roundedSelection": {
+      "title": "Rounded Selection",
+      "description": "Controls whether selections should have rounded corners.",
+      "type": "boolean",
+      "default": true
+    },
+    "rulers": {
+      "title": "Rulers",
+      "description": "Render vertical rulers after a certain number of monospace characters. Use multiple values for multiple rulers. No rulers are drawn if array is empty.",
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10000
+      }
+    },
+    "scrollbar": {
+      "title": "Scrollbar",
+      "type": "object",
+      "properties": {
+        "horizontal": {
+          "title": "Horizontal",
+          "description": "Controls the visibility of the horizontal scrollbar.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "auto",
+              "title": "Auto",
+              "description": "The horizontal scrollbar will be visible only when necessary."
+            },
+            {
+              "const": "visible",
+              "title": "Visible",
+              "description": "The horizontal scrollbar will always be visible."
+            },
+            {
+              "const": "hidden",
+              "title": "Hidden",
+              "description": "The horizontal scrollbar will always be hidden."
+            }
+          ],
+          "default": "auto"
+        },
+        "horizontalScrollbarSize": {
+          "title": "Horizontal Scrollbar Size",
+          "description": "The height of the horizontal scrollbar.",
+          "type": "integer",
+          "default": 12,
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "ignoreHorizontalScrollbarInContentHeight": {
+          "title": "Ignore Horizontal Scrollbar In Content Height",
+          "description": "When set, the horizontal scrollbar will not increase the size of the editor's content.",
+          "type": "boolean"
+        },
+        "scrollByPage": {
+          "title": "Scroll By Page",
+          "description": "Controls whether clicks scroll by page or jump to click position.",
+          "type": "boolean"
+        },
+        "vertical": {
+          "title": "Vertical",
+          "description": "Controls the visibility of the vertical scrollbar.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "auto",
+              "title": "Auto",
+              "description": "The vertical scrollbar will be visible only when necessary."
+            },
+            {
+              "const": "visible",
+              "title": "Visible",
+              "description": "The vertical scrollbar will always be visible."
+            },
+            {
+              "const": "hidden",
+              "title": "Hidden",
+              "description": "The vertical scrollbar will always be hidden."
+            }
+          ],
+          "default": "auto"
+        },
+        "verticalScrollbarSize": {
+          "title": "Vertical Scrollbar Size",
+          "description": "The width of the vertical scrollbar.",
+          "type": "integer",
+          "default": 14,
+          "minimum": 0,
+          "maximum": 1000
+        }
+      }
+    },
+    "scrollBeyondLastColumn": {
+      "title": "Scroll Beyond Last Column",
+      "description": "Controls the number of extra characters beyond which the editor will scroll horizontally.",
+      "type": "integer",
+      "default": 4,
+      "minimum": 0,
+      "maximum": 1073741824
+    },
+    "scrollBeyondLastLine": {
+      "title": "Scroll Beyond Last Line",
+      "description": "Controls whether the editor will scroll beyond the last line.",
+      "type": "boolean",
+      "default": true
+    },
+    "scrollPredominantAxis": {
+      "title": "Scroll Predominant Axis",
+      "description": "Scroll only along the predominant axis when scrolling both vertically and horizontally at the same time. Prevents horizontal drift when scrolling vertically on a trackpad.",
+      "type": "boolean",
+      "default": true
+    },
+    "selectionHighlight": {
+      "title": "Selection Highlight",
+      "description": "Controls whether the editor should highlight matches similar to the selection.",
+      "type": "boolean",
+      "default": true
+    },
+    "semanticHighlighting": {
+      "title": "Semantic Highlighting",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether the semantic highlighting is shown for the languages that support it.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "true",
+              "title": "True",
+              "description": "Semantic highlighting enabled for all color themes."
+            },
+            {
+              "const": "false",
+              "title": "False",
+              "description": "Semantic highlighting disabled for all color themes."
+            },
+            {
+              "const": "configuredByTheme",
+              "title": "Configured By Theme",
+              "description": "Semantic highlighting is configured by the current theme's `semanticHighlighting` setting."
+            }
+          ],
+          "default": "configuredByTheme"
+        }
+      }
+    },
+    "showDeprecated": {
+      "title": "Show Deprecated",
+      "description": "Controls strikethrough deprecated variables.",
+      "type": "boolean",
+      "default": true
+    },
+    "showFoldingControls": {
+      "title": "Show Folding Controls",
+      "description": "Controls when the folding controls on the gutter are shown.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "always",
+          "title": "Always",
+          "description": "Always show the folding controls."
+        },
+        {
+          "const": "never",
+          "title": "Never",
+          "description": "Never show the folding controls and reduce the gutter size."
+        },
+        {
+          "const": "mouseover",
+          "title": "Mouse over",
+          "description": "Only show the folding controls when the mouse is over the gutter."
+        }
+      ],
+      "default": "mouseover"
+    },
+    "showUnused": {
+      "title": "Show Unused",
+      "description": "Controls fading out of unused code.",
+      "type": "boolean",
+      "default": true
+    },
+    "smartSelect": {
+      "title": "Smart Select",
+      "type": "object",
+      "properties": {
+        "selectLeadingAndTrailingWhitespace": {
+          "title": "Select Leading And Trailing Whitespace",
+          "description": "Whether leading and trailing whitespace should always be selected.",
+          "type": "boolean",
+          "default": true
+        },
+        "selectSubwords": {
+          "title": "Select Subwords",
+          "description": "Whether subwords (like 'foo' in 'fooBar' or 'foo_bar') should be selected.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "smoothScrolling": {
+      "title": "Smooth Scrolling",
+      "description": "Controls whether the editor will scroll using an animation.",
+      "type": "boolean"
+    },
+    "stablePeek": {
+      "title": "Stable Peek",
+      "description": "Keep peek editors open even when double-clicking their content or when hitting `Escape`.",
+      "type": "boolean"
+    },
+    "stickyScroll": {
+      "title": "Sticky Scroll",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Shows the nested current scopes during the scroll at the top of the editor.",
+          "type": "boolean",
+          "default": true
+        },
+        "defaultModel": {
+          "title": "Default Model",
+          "description": "Defines the model to use for determining which lines to stick. If the outline model does not exist, it will fall back on the folding provider model which falls back on the indentation model. This order is respected in all three cases.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "outlineModel",
+              "title": "Outline Model"
+            },
+            {
+              "const": "foldingProviderModel",
+              "title": "Folding Provider Model"
+            },
+            {
+              "const": "indentationModel",
+              "title": "Indentation Model"
+            }
+          ],
+          "default": "outlineModel"
+        },
+        "maxLineCount": {
+          "title": "Max Line Count",
+          "description": "Defines the maximum number of sticky lines to show.",
+          "type": "integer",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "scrollWithEditor": {
+          "title": "Scroll With Editor",
+          "description": "Enable scrolling of Sticky Scroll with the editor's horizontal scrollbar.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "stickyTabStops": {
+      "title": "Sticky Tab Stops",
+      "description": "Emulate selection behavior of tab characters when using spaces for indentation. Selection will stick to tab stops.",
+      "type": "boolean"
+    },
+    "tabCompletion": {
+      "title": "Tab Completion",
+      "description": "Enables tab completions.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Disable tab completions."
+        },
+        {
+          "const": "on",
+          "title": "On",
+          "description": "Tab complete will insert the best matching suggestion when pressing tab."
+        },
+        {
+          "const": "onlySnippets",
+          "title": "Only Snippets",
+          "description": "Tab complete snippets when their prefix match. Works best when 'quickSuggestions' aren't enabled."
+        }
+      ],
+      "default": "off"
+    },
+    "tabFocusMode": {
+      "title": "Tab Focus Mode",
+      "description": "Controls whether the editor receives tabs or defers them to the workbench for navigation.",
+      "type": "boolean"
+    },
+    "tabSize": {
+      "title": "Tab Size",
+      "description": "The number of spaces a tab is equal to. This setting is overridden based on the file contents when `#detectIntentation#` is on.",
+      "type": "integer",
+      "default": 4,
+      "minimum": 1,
+      "maximum": 32,
+      "x-commonlyUsed": true
+    },
+    "trimAutoWhitespace": {
+      "title": "Trim Auto Whitespace",
+      "description": "Remove trailing auto inserted whitespace.",
+      "type": "boolean",
+      "default": true
+    },
+    "unfoldOnClickAfterEndOfLine": {
+      "title": "Unfold On Click After End Of Line",
+      "description": "Controls whether clicking on the empty content after a folded line will unfold the line.",
+      "type": "boolean"
+    },
+    "unicodeHighlight": {
+      "title": "Unicode Highlight",
+      "type": "object",
+      "properties": {
+        "allowedCharacters": {
+          "title": "Allowed Characters",
+          "description": "Defines allowed characters that are not being highlighted.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowedLocales": {
+          "title": "Allowed Locales",
+          "description": "Unicode characters that are common in allowed locales are not being highlighted.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ambiguousCharacters": {
+          "title": "Ambiguous Characters",
+          "description": "Controls whether characters are highlighted that can be confused with basic ASCII characters, except those that are common in current user locale.",
+          "type": "boolean",
+          "default": true
+        },
+        "includeComments": {
+          "title": "Include Comments",
+          "description": "Controls whether characters in comments should also be subject to Unicode highlighting.",
+          "$ref": "#/$defs/trueFalseUntrusted",
+          "default": "inUntrustedWorkspace"
+        },
+        "includeStrings": {
+          "title": "Include Strings",
+          "description": "Controls whether characters in strings should also be subject to Unicode highlighting.",
+          "$ref": "#/$defs/trueFalseUntrusted",
+          "default": "true"
+        },
+        "invisibleCharacters": {
+          "title": "Invisible Characters",
+          "description": "Controls whether characters that just reserve space or have no width at all are highlighted.",
+          "type": "boolean",
+          "default": true
+        },
+        "nonBasicASCII": {
+          "title": "Non Basic ASCII",
+          "description": "Controls whether all non-basic ASCII characters are highlighted. Only characters between U+0020 and U+007E, tab, line-feed and carriage-return are considered basic ASCII.",
+          "$ref": "#/$defs/trueFalseUntrusted",
+          "default": "inUntrustedWorkspace"
+        }
+      }
+    },
+    "unusualLineTerminators": {
+      "title": "Unusual Line Terminators",
+      "description": "Remove unusual line terminators that might cause problems.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Unusual line terminators are ignored."
+        },
+        {
+          "const": "auto",
+          "title": "Auto",
+          "description": "Unusual line terminators are automatically removed."
+        },
+        {
+          "const": "prompt",
+          "title": "Prompt",
+          "description": "Unusual line terminators prompt to be removed."
+        }
+      ],
+      "default": "prompt"
+    },
+    "useTabStops": {
+      "title": "Use Tab Stops",
+      "description": "Inserting and deleting whitespace follows tab stops.",
+      "type": "boolean",
+      "default": true
+    },
+    "wordBreak": {
+      "title": "Word Break",
+      "description": "Controls the word break rules used for Chinese/Japanese/Korean (CJK) text.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "normal",
+          "title": "Normal",
+          "description": "Use the default line break rule."
+        },
+        {
+          "const": "keepAll",
+          "title": "Keep All",
+          "description": "Word breaks should not be used for Chinese/Japanese/Korean (CJK) text. Non-CJK text behavior is the same as for normal."
+        }
+      ],
+      "default": "normal"
+    },
+    "wordSeparators": {
+      "title": "Word Separators",
+      "description": "Characters that will be used as word separators when doing word related navigations or operations.",
+      "type": "string",
+      "default": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?"
+    },
+    "wordWrap": {
+      "title": "Word Wrap",
+      "description": "Controls how lines should wrap.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Lines will never wrap."
+        },
+        {
+          "const": "on",
+          "title": "On",
+          "description": "Lines will wrap at the viewport width."
+        },
+        {
+          "const": "wordWrapColumn",
+          "title": "Word Wrap Column",
+          "description": "Lines will wrap at `#wordWrapColumn#`."
+        },
+        {
+          "const": "bounded",
+          "title": "Bounded",
+          "description": "Lines will wrap at the minimum of viewport and `#wordWrapColumn#`."
+        }
+      ],
+      "default": "off",
+      "x-commonlyUsed": true
+    },
+    "wordWrapColumn": {
+      "title": "Word Wrap Column",
+      "description": "Controls the wrapping column of the editor when `#wordWrap#` is `wordWrapColumn` or `bounded`.",
+      "type": "integer",
+      "default": 80,
+      "minimum": 1,
+      "maximum": 1073741824
+    },
+    "wrappingIndent": {
+      "title": "Wrapping Indent",
+      "description": "Controls the indentation of wrapped lines.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "none",
+          "title": "None",
+          "description": "No indentation. Wrapped lines begin at column 1."
+        },
+        {
+          "const": "same",
+          "title": "Same",
+          "description": "Wrapped lines get the same indentation as the parent."
+        },
+        {
+          "const": "indent",
+          "title": "Indent",
+          "description": "Wrapped lines get +1 indentation toward the parent."
+        },
+        {
+          "const": "deepIndent",
+          "title": "Deep Indent",
+          "description": "Wrapped lines get +2 indentation toward the parent."
+        }
+      ],
+      "default": "same"
+    },
+    "wrappingStrategy": {
+      "title": "Wrapping Strategy",
+      "description": "Controls the algorithm that computes wrapping points. Note that when in accessibility mode, advanced will be used for the best experience.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "simple",
+          "title": "Simple",
+          "description": "Assumes that all characters are of the same width. This is a fast algorithm that works correctly for monospace fonts and certain scripts (like Latin characters) where glyphs are of equal width."
+        },
+        {
+          "const": "advanced",
+          "title": "Advanced",
+          "description": "Delegates wrapping points computation to the browser. This is a slow algorithm, that might cause freezes for large files, but it works correctly in all cases."
+        }
+      ],
+      "default": "simple"
+    },
+    "cursorBlinking": {
+      "title": "Cursor Blinking",
+      "description": "Controls the cursor animation style.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "blink",
+          "title": "Blink"
+        },
+        {
+          "const": "smooth",
+          "title": "Smooth"
+        },
+        {
+          "const": "phase",
+          "title": "Phase"
+        },
+        {
+          "const": "expand",
+          "title": "Expand"
+        },
+        {
+          "const": "solid",
+          "title": "Solid"
+        }
+      ],
+      "default": "blink"
+    },
+    "cursorSmoothCaretAnimation": {
+      "title": "Cursor Smooth Caret Animation",
+      "description": "Controls whether the smooth caret animation should be enabled.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Smooth caret animation is disabled."
+        },
+        {
+          "const": "on",
+          "title": "On",
+          "description": "Smooth caret animation is always enabled."
+        },
+        {
+          "const": "explicit",
+          "title": "Explicit",
+          "description": "Smooth caret animation is enabled only when the user moves the cursor with an explicit gesture."
+        }
+      ],
+      "default": "off"
+    },
+    "cursorStyle": {
+      "title": "Cursor Style",
+      "description": "Controls the cursor style.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "line",
+          "title": "Line"
+        },
+        {
+          "const": "block",
+          "title": "Block"
+        },
+        {
+          "const": "underline",
+          "title": "Underline"
+        },
+        {
+          "const": "line-thin",
+          "title": "Line (Thin)"
+        },
+        {
+          "const": "block-outline",
+          "title": "Block (Outline)"
+        },
+        {
+          "const": "underline-thin",
+          "title": "Underline (Thin)"
+        }
+      ],
+      "default": "line",
+      "x-commonlyUsed": true
+    },
+    "cursorSurroundingLines": {
+      "title": "Cursor Surrounding Lines",
+      "description": "Controls the minimal number of visible leading lines (minimum 0) and trailing lines (minimum 1) surrounding the cursor. Known as 'scrollOff' or 'scrollOffset' in some other editors.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1073741824
+    },
+    "cursorSurroundingLinesStyle": {
+      "title": "Cursor Surrounding Lines Style",
+      "description": "Controls when `#cursorSurroundingLines#` should be enforced.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "default",
+          "title": "Default",
+          "description": "`#cursorSurroundingLines#` is enforced only when triggered via the keyboard or API."
+        },
+        {
+          "const": "all",
+          "title": "All",
+          "description": "`#cursorSurroundingLines#` is enforced always."
+        }
+      ],
+      "default": "default"
+    },
+    "cursorWidth": {
+      "title": "Cursor Width",
+      "description": "Controls the width of the cursor when `#cursorStyle#` is set to `line`.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1073741824
+    },
+    "find": {
+      "title": "Find",
+      "type": "object",
+      "properties": {
+        "addExtraSpaceOnTop": {
+          "title": "Add Extra Space On Top",
+          "description": "Controls whether the Find Widget should add extra lines on top of the editor. When true, you can scroll beyond the first line when the Find Widget is visible.",
+          "type": "boolean",
+          "default": true
+        },
+        "autoFindInSelection": {
+          "title": "Auto Find In Selection",
+          "description": "Controls the condition for turning on Find in Selection automatically.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "always",
+              "title": "Always",
+              "description": "Always turn on Find in Selection automatically."
+            },
+            {
+              "const": "never",
+              "title": "Never",
+              "description": "Never turn on Find in Selection automatically."
+            },
+            {
+              "const": "multiline",
+              "title": "Multiline",
+              "description": "Turn on Find in Selection automatically when multiple lines of content are selected."
+            }
+          ],
+          "default": "never"
+        },
+        "cursorMoveOnType": {
+          "title": "Cursor Move On Type",
+          "description": "Controls whether the cursor should jump to find matches while typing.",
+          "type": "boolean",
+          "default": true
+        },
+        "loop": {
+          "title": "Loop",
+          "description": "Controls whether the search automatically restarts from the beginning (or the end) when no further matches can be found.",
+          "type": "boolean",
+          "default": true
+        },
+        "seedSearchStringFromSelection": {
+          "title": "Seed Search String From Selection",
+          "description": "Controls whether the search string in the Find Widget is seeded from the editor selection.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "always",
+              "title": "Always",
+              "description": "Always seed search string from the editor selection, including word at cursor position."
+            },
+            {
+              "const": "never",
+              "title": "Never",
+              "description": "Never seed search string from the editor selection."
+            },
+            {
+              "const": "selection",
+              "title": "Selection",
+              "description": "Only seed search string from the editor selection."
+            }
+          ],
+          "default": "always"
+        }
+      }
+    },
+    "fontFamily": {
+      "title": "Font Family",
+      "description": "Controls the font family.",
+      "type": "string",
+      "default": "Consolas, 'Courier New', monospace",
+      "x-commonlyUsed": true
+    },
+    "fontLigatures": {
+      "title": "Font Ligatures",
+      "description": "Configures font ligatures or font features.",
+      "type": "boolean"
+    },
+    "fontSize": {
+      "title": "Font Size",
+      "description": "Controls the font size in pixels.",
+      "type": "integer",
+      "default": 14,
+      "minimum": 6,
+      "maximum": 100,
+      "x-commonlyUsed": true
+    },
+    "fontVariations": {
+      "title": "Font Variations",
+      "description": "Configures font variations.",
+      "type": "boolean"
+    },
+    "fontWeight": {
+      "title": "Font Weight",
+      "description": "Controls the font weight.",
+      "type": "string",
+      "enum": [
+        "normal",
+        "bold",
+        "100",
+        "200",
+        "300",
+        "400",
+        "500",
+        "600",
+        "700",
+        "800",
+        "900"
+      ],
+      "default": "normal"
+    },
+    "formatOnPaste": {
+      "title": "Format On Paste",
+      "description": "Controls whether the editor should automatically format the pasted content. A formatter must be available and the formatter should be able to format a range in a document.",
+      "type": "boolean"
+    },
+    "formatOnType": {
+      "title": "Format On Type",
+      "description": "Controls whether the editor should automatically format the line after typing.",
+      "type": "boolean"
+    },
+    "diffEditor": {
+      "title": "Diff Editor",
+      "type": "object",
+      "properties": {
+        "codeLens": {
+          "title": "Code Lens",
+          "description": "Controls whether the editor shows Code Lens.",
+          "type": "boolean"
+        },
+        "diffAlgorithm": {
+          "title": "Diff Algorithm",
+          "description": "",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "advanced",
+              "title": "Advanced"
+            },
+            {
+              "const": "legacy",
+              "title": "Legacy"
+            }
+          ],
+          "default": "advanced"
+        },
+        "hideUnchangedRegions": {
+          "title": "Hide Unchanged Regions",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enabled",
+              "description": "Controls whether the diff editor shows unchanged regions.",
+              "type": "boolean"
+            },
+            "contextLineCount": {
+              "title": "Context Line Count",
+              "description": "Controls how many lines are used as context when comparing unchanged regions.",
+              "type": "integer",
+              "default": 3,
+              "minimum": 0
+            },
+            "minimumLineCount": {
+              "title": "Minimum Line Count",
+              "description": "Controls how many lines are used as a minimum for unchanged regions.",
+              "type": "integer",
+              "default": 3,
+              "minimum": 0
+            },
+            "revealLineCount": {
+              "title": "Reveal Line Count",
+              "description": "Controls how many lines are used for unchanged regions.",
+              "type": "integer",
+              "default": 20,
+              "minimum": 0
+            }
+          }
+        },
+        "ignoreTrimWhitespace": {
+          "title": "Ignore Trim Whitespace",
+          "description": "When enabled, the diff editor ignores changes in leading or trailing whitespace.",
+          "type": "boolean",
+          "default": true
+        },
+        "maxComputationTime": {
+          "title": "Max Computation Time",
+          "description": "Timeout in milliseconds after which diff computation is cancelled. Use 0 for no timeout.",
+          "type": "integer",
+          "default": 5000,
+          "minimum": 0,
+          "maximum": 1073741824
+        },
+        "maxFileSize": {
+          "title": "Max File Size",
+          "description": "Maximum file size in MB for which to compute diffs. Use 0 for no limit.",
+          "type": "integer",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 1073741824
+        },
+        "renderIndicators": {
+          "title": "Render Indicators",
+          "description": "Controls whether the diff editor shows +/- indicators for added/removed changes.",
+          "type": "boolean",
+          "default": true
+        },
+        "renderMarginRevertIcon": {
+          "title": "Render Margin Revert Icon",
+          "description": "When enabled, the diff editor shows arrows in its glyph margin to revert changes.",
+          "type": "boolean",
+          "default": true
+        },
+        "renderSideBySide": {
+          "title": "Render Side By Side",
+          "description": "Controls whether the diff editor shows the diff side by side or inline.",
+          "type": "boolean",
+          "default": true
+        },
+        "renderSideBySideInlineBreakpoint": {
+          "title": "Render Side By Side Inline Breakpoint",
+          "description": "If the diff editor width is smaller than this value, the inline view is used.",
+          "type": "integer",
+          "default": 900,
+          "minimum": 0
+        },
+        "useInlineViewWhenSpaceIsLimited": {
+          "title": "Use Inline View When Space Is Limited",
+          "description": "If enabled and the editor width is too small, the inline view is used.",
+          "type": "boolean",
+          "default": true
+        },
+        "wordWrap": {
+          "title": "Word Wrap",
+          "description": "",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "off",
+              "title": "Off"
+            },
+            {
+              "const": "on",
+              "title": "On"
+            },
+            {
+              "const": "inherit",
+              "title": "Inherit"
+            }
+          ],
+          "default": "inherit"
+        }
+      }
+    },
+    "minimap": {
+      "title": "Minimap",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether the minimap is shown.",
+          "type": "boolean",
+          "default": true
+        },
+        "autohide": {
+          "title": "Autohide",
+          "description": "Controls whether the minimap is hidden automatically.",
+          "type": "boolean"
+        },
+        "maxColumn": {
+          "title": "Max Column",
+          "description": "Limit the width of the minimap to render at most a certain number of columns.",
+          "type": "integer",
+          "default": 120,
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "renderCharacters": {
+          "title": "Render Characters",
+          "description": "Render the actual characters on a line as opposed to color blocks.",
+          "type": "boolean",
+          "default": true
+        },
+        "scale": {
+          "title": "Scale",
+          "description": "Scale of content drawn in the minimap: 1, 2 or 3.",
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "default": 1
+        },
+        "showSlider": {
+          "title": "Show Slider",
+          "description": "Controls when the minimap slider is shown.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "always",
+              "title": "Always"
+            },
+            {
+              "const": "mouseover",
+              "title": "Mouse Over"
+            }
+          ],
+          "default": "mouseover"
+        },
+        "side": {
+          "title": "Side",
+          "description": "Controls the side where to render the minimap.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "right",
+              "title": "Right"
+            },
+            {
+              "const": "left",
+              "title": "Left"
+            }
+          ],
+          "default": "right"
+        },
+        "size": {
+          "title": "Size",
+          "description": "Controls the size of the minimap.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "proportional",
+              "title": "Proportional",
+              "description": "The minimap has the same size as the editor contents (and might scroll)."
+            },
+            {
+              "const": "fill",
+              "title": "Fill",
+              "description": "The minimap will stretch or shrink as necessary to fill the height of the editor (no scrolling)."
+            },
+            {
+              "const": "fit",
+              "title": "Fit",
+              "description": "The minimap will shrink as necessary to never be larger than the editor (no scrolling)."
+            }
+          ],
+          "default": "proportional"
+        }
+      }
+    },
+    "acceptSuggestionOnCommitCharacter": {
+      "title": "Accept Suggestion On Commit Character",
+      "description": "Controls whether suggestions should be accepted on commit characters. For example, in Structured Text, the semi-colon (`;`) can be a commit character that accepts a suggestion and types that character.",
+      "type": "boolean",
+      "default": true
+    },
+    "acceptSuggestionOnEnter": {
+      "title": "Accept Suggestion On Enter",
+      "description": "Controls whether suggestions should be accepted on `Enter`, in addition to `Tab`. Helps to avoid ambiguity between inserting new lines or accepting suggestions.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "on",
+          "title": "On"
+        },
+        {
+          "const": "smart",
+          "title": "Smart",
+          "description": "Only accept a suggestion with `Enter` when it makes a textual change."
+        },
+        {
+          "const": "off",
+          "title": "Off"
+        }
+      ],
+      "default": "on"
+    },
+    "inlineSuggest": {
+      "title": "Inline Suggest",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Controls whether to automatically show inline suggestions in the editor.",
+          "type": "boolean",
+          "default": true
+        },
+        "fontFamily": {
+          "title": "Font Family",
+          "description": "Controls the font family of the inline suggestions.",
+          "type": "string",
+          "default": "default"
+        },
+        "showToolbar": {
+          "title": "Show Toolbar",
+          "description": "Controls when to show the inline suggestion toolbar.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "always",
+              "title": "Always",
+              "description": "Show the inline suggestion toolbar whenever an inline suggestion is shown."
+            },
+            {
+              "const": "onHover",
+              "title": "On Hover",
+              "description": "Show the inline suggestion toolbar when hovering over an inline suggestion."
+            },
+            {
+              "const": "never",
+              "title": "Never",
+              "description": "Never show the inline suggestion toolbar."
+            }
+          ],
+          "default": "onHover"
+        },
+        "suppressSuggestions": {
+          "title": "Suppress Suggestions",
+          "description": "Controls how inline suggestions interact with the suggest widget. If enabled, the suggest widget is not shown automatically when inline suggestions are available.",
+          "type": "boolean"
+        }
+      }
+    },
+    "quickSuggestions": {
+      "title": "Quick Suggestions",
+      "description": "Controls whether suggestions should automatically show up while typing. This can be controlled for typing in comments, strings, and other code. Quick suggestion can be configured to show as ghost text or with the suggest widget. Also be aware of the `#suggestOnTriggerCharacters#`-setting which controls if suggestions are triggered by special characters.",
+      "type": "object",
+      "properties": {
+        "comments": {
+          "title": "Comments",
+          "$ref": "#/$defs/quickSuggestionBehavior",
+          "default": "off"
+        },
+        "strings": {
+          "title": "Strings",
+          "$ref": "#/$defs/quickSuggestionBehavior",
+          "default": "off"
+        },
+        "other": {
+          "title": "Other",
+          "$ref": "#/$defs/quickSuggestionBehavior",
+          "default": "on"
+        }
+      }
+    },
+    "quickSuggestionsDelay": {
+      "title": "Quick Suggestions Delay",
+      "description": "Controls the delay in milliseconds after which quick suggestions will show up.",
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "maximum": 1073741824
+    },
+    "screenReaderAnnounceInlineSuggestion": {
+      "title": "Screen Reader Announce Inline Suggestion",
+      "description": "Control whether inline suggestions are announced by a screen reader.",
+      "type": "boolean",
+      "default": true
+    },
+    "snippetSuggestions": {
+      "title": "Snippet Suggestions",
+      "description": "Controls whether snippets are shown with other suggestions and how they are sorted.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "top",
+          "title": "Top",
+          "description": "Show snippet suggestions on top of other suggestions."
+        },
+        {
+          "const": "bottom",
+          "title": "Bottom",
+          "description": "Show snippet suggestions below other suggestions."
+        },
+        {
+          "const": "inline",
+          "title": "Inline",
+          "description": "Show snippet suggestions with other suggestions."
+        },
+        {
+          "const": "none",
+          "title": "None",
+          "description": "Do not show snippet suggestions."
+        }
+      ],
+      "default": "inline"
+    },
+    "suggest": {
+      "title": "Suggest",
+      "type": "object",
+      "properties": {
+        "filterGraceful": {
+          "title": "Filter Graceful",
+          "description": "Controls whether filtering and sorting suggestions accounts for small typos.",
+          "type": "boolean",
+          "default": true
+        },
+        "insertMode": {
+          "title": "Insert Mode",
+          "description": "Controls whether words are overwritten when accepting completions. Note that this depends on extensions opting into this feature.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "insert",
+              "title": "Insert",
+              "description": "Insert suggestion without overwriting text right of the cursor."
+            },
+            {
+              "const": "replace",
+              "title": "Replace",
+              "description": "Insert suggestion and overwrite text right of the cursor."
+            }
+          ],
+          "default": "insert"
+        },
+        "localityBonus": {
+          "title": "Locality Bonus",
+          "description": "Controls whether sorting favors words that appear close to the cursor.",
+          "type": "boolean"
+        },
+        "matchOnWordStartOnly": {
+          "title": "Match On Word Start Only",
+          "description": "When enabled IntelliSense filtering requires that the first character matches on a word start. For example, `c` on `Console` or `WebContext` but _not_ on `description`. When disabled IntelliSense will show more results but still sorts them by match quality.",
+          "type": "boolean",
+          "default": true
+        },
+        "preview": {
+          "title": "Preview",
+          "description": "Controls whether to preview the suggestion outcome in the editor.",
+          "type": "boolean"
+        },
+        "selectionMode": {
+          "title": "Selection Mode",
+          "description": "Controls whether a suggestion is selected when the widget shows. Note that this only applies to automatically triggered suggestions (`#quickSuggestions#` and `#suggestOnTriggerCharacters#`) and that a suggestion is always selected when explicitly invoked, e.g via `Ctrl+Space`.",
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "always",
+              "title": "Always",
+              "description": "Always select a suggestion when automatically triggering IntelliSense."
+            },
+            {
+              "const": "never",
+              "title": "Never",
+              "description": "Never select a suggestion when automatically triggering IntelliSense."
+            },
+            {
+              "const": "whenTriggerCharacter",
+              "title": "When Trigger Character",
+              "description": "Select a suggestion only when triggering IntelliSense from a trigger character."
+            },
+            {
+              "const": "whenQuickSuggestion",
+              "title": "When Quick Suggestion",
+              "description": "Select a suggestion only when triggering IntelliSense as you type."
+            }
+          ],
+          "default": "always"
+        },
+        "shareSuggestSelections": {
+          "title": "Share Suggest Selections",
+          "description": "Controls whether remembered suggestion selections are shared between multiple workspaces and windows (needs `#suggestSelection#`).",
+          "type": "boolean"
+        },
+        "showIcons": {
+          "title": "Show Icons",
+          "description": "Controls whether to show or hide icons in suggestions.",
+          "type": "boolean",
+          "default": true
+        },
+        "showInlineDetails": {
+          "title": "Show Inline Details",
+          "description": "Controls whether suggest details show inline with the label or only in the details widget.",
+          "type": "boolean",
+          "default": true
+        },
+        "showStatusBar": {
+          "title": "Show Status Bar",
+          "description": "Controls the visibility of the status bar at the bottom of the suggest widget.",
+          "type": "boolean"
+        },
+        "snippetsPreventQuickSuggestions": {
+          "title": "Snippets Prevent Quick Suggestions",
+          "description": "Controls whether an active snippet prevents quick suggestions.",
+          "type": "boolean"
+        }
+      }
+    },
+    "suggestFontSize": {
+      "title": "Suggest Font Size",
+      "description": "Font size for the suggest widget. When set to `0`, the value of `#fontSize#` is used.",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "suggestLineHeight": {
+      "title": "Suggest Line Height",
+      "description": "Line height for the suggest widget. When set to `0`, the value of `#lineHeight#` is used.",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 150
+    },
+    "suggestOnTriggerCharacters": {
+      "title": "Suggest On Trigger Characters",
+      "description": "Controls whether suggestions should automatically show up when typing trigger characters.",
+      "type": "boolean",
+      "default": true
+    },
+    "suggestSelection": {
+      "title": "Suggest Selection",
+      "description": "Controls how suggestions are pre-selected when showing the suggest list.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "first",
+          "title": "First",
+          "description": "Always select the first suggestion."
+        },
+        {
+          "const": "recentlyUsed",
+          "title": "Recently Used",
+          "description": "Select recent suggestions unless further typing selects one, e.g. `console.| -> console.log` because `log` has been completed recently."
+        },
+        {
+          "const": "recentlyUsedByPrefix",
+          "title": "Recently Used By Prefix",
+          "description": "Select suggestions based on previous prefixes that have completed those suggestions, e.g. `co -> console` and `con -> const`."
+        }
+      ],
+      "default": "first"
+    },
+    "wordBasedSuggestions": {
+      "title": "Word Based Suggestions",
+      "description": "Controls whether completions should be computed based on words in the document and from which documents they are computed.",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Turn off Word Based Suggestions."
+        },
+        {
+          "const": "currentDocument",
+          "title": "Current Document",
+          "description": "Only suggest words from the active document."
+        },
+        {
+          "const": "matchingDocuments",
+          "title": "Matching Documents",
+          "description": "Suggest words from all open documents of the same language."
+        },
+        {
+          "const": "allDocuments",
+          "title": "All Documents",
+          "description": "Suggest words from all open documents."
+        }
+      ],
+      "default": "matchingDocuments"
+    }
+  },
+  "$defs": {
+    "editorCommand": {
+      "type": "string",
+      "enum": [
+        "",
+        "editor.action.referenceSearch.trigger",
+        "editor.action.goToReferences",
+        "editor.action.peekImplementation",
+        "editor.action.goToImplementation",
+        "editor.action.peekTypeDefinition",
+        "editor.action.goToTypeDefinition",
+        "editor.action.peekDeclaration",
+        "editor.action.revealDeclaration",
+        "editor.action.peekDefinition",
+        "editor.action.revealDefinitionAside",
+        "editor.action.revealDefinition"
+      ]
+    },
+    "multiple": {
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "peek",
+          "title": "Peek",
+          "description": "Show Peek view of the results"
+        },
+        {
+          "const": "gotoAndPeek",
+          "title": "Goto and Peek",
+          "description": "Go to the primary result and show a Peek view"
+        },
+        {
+          "const": "goto",
+          "title": "Goto",
+          "description": "Go to the primary result and enable Peek-less navigation to others"
+        }
+      ]
+    },
+    "trueFalseUntrusted": {
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "true",
+          "title": "True"
+        },
+        {
+          "const": "false",
+          "title": "False"
+        },
+        {
+          "const": "inUntrustedWorkspace",
+          "title": "In Untrusted Workspace"
+        }
+      ]
+    },
+    "quickSuggestionBehavior": {
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "on",
+          "title": "On",
+          "description": "Quick suggestions show inside the suggest widget"
+        },
+        {
+          "const": "inline",
+          "title": "Inline",
+          "description": "Quick suggestions show as ghost text"
+        },
+        {
+          "const": "off",
+          "title": "Off",
+          "description": "Quick suggestions are disabled"
+        }
+      ]
+    }
+  }
+}
