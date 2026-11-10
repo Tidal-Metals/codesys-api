@@ -114,8 +114,9 @@ TRUE before judging them.
   length, trigger, cycle, error handling) and an I/O parameter whose ID carries the family and register offset
   (`0xSS44OOOO`, e.g. `0x01442001` for 16#2001). Setting only the config leaves the two disagreeing, and the
   server stops polling that slave with no error flag (`byModbusError` stays `UNDEFINED`). Lengths: bench,
-  2026-10-20. Offsets: field DEH PLC, 2026-11-10. The channel PATCH refuses `readLength`/`writeLength` but still
-  accepts `readOffset`/`writeOffset`/`accessType`; don't use it for those. Change them in the IDE's channel
+  2026-10-20. Offsets: field DEH PLC, 2026-11-10. The channel PATCH refuses all five shape fields, and the bulk
+  PUT/PATCH refuses a request whose shape differs from the channel's (`shapeChanges` lists them; nothing is
+  written). A script of your own has no such guard. Change them in the IDE's channel
   dialog (it rebuilds the I/O parameter), recreate the server, or clone a working sibling slave by native export
   (`export_native`, edit the name and parameter 9100, `import_native`; the clone lands last under the master
   and shifts later slaves' `%IW` addresses). Cycle time, response timeout (9101) and error handling are safe in

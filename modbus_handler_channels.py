@@ -316,12 +316,15 @@ class ModbusChannelMixin:
 
         if not kwargs:
             return {"success": False, "error": "No fields to update"}
-        resized = [key for key in ("readLength", "writeLength") if key in kwargs]
-        if resized:
-            # Changing only the config leaves the channel's I/O image at the old size; on the bench (2026-10-20)
-            # the server then stopped polling with no error flag.
-            return {"success": False, "error": "Changing %s needs the channel rebuilt: recreate it (POST "
-                    ".../channels/bulk with replace, or modbus_device_driver_runner.py)" % " and ".join(resized)}
+        reshaped = [key for key in ("accessType", "readOffset", "readLength", "writeOffset", "writeLength")
+                    if key in kwargs]
+        if reshaped:
+            # The channel's I/O parameter ID carries its offset and its size follows the length, so changing only
+            # the config leaves the two disagreeing and the slave is never polled, with no error flag
+            # (lengths: bench 2026-10-20; offsets: field DEH PLC 2026-11-10).
+            return {"success": False, "error": "Changing %s needs the channel rebuilt: use the IDE channel "
+                    "dialog, or recreate it (POST .../channels/bulk with replace, or "
+                    "modbus_device_driver_runner.py)" % ", ".join(reshaped)}
 
         script = modbus_scripts.update_channel(
             device_name=groups["device"],

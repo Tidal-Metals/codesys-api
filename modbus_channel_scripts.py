@@ -86,39 +86,67 @@ _by_name = {}
 for _ch in _channels_def:
     _by_name[_ch["name"]] = _ch
 
-_updated = []
+# Function code, offsets and lengths are the channel's shape. The I/O parameter's ID carries the offset, so
+# changing them here leaves config and I/O disagreeing and the slave is never polled. Refuse the whole
+# request if any shape field differs; only trigger, cycle time and error handling are written.
+_shape_fields = [(0, "accessType"), (1, "readOffset"), (2, "readLength"), (3, "writeOffset"), (4, "writeLength")]
+
+def _shape_number(_value):
+    _text = str(_value).strip().replace("_", "")
+    try:
+        if _text.upper().startswith("16#"):
+            return int(_text[3:], 16)
+        return int(_text)
+    except:
+        return _text
+
+_targets = []
+_shape_changes = []
 for _conn in _target.connectors:
     for _p in _conn.host_parameters:
         _pname = str(_p.name)
         if _pname in _by_name and int(_p.id) not in @@DEVICE_PARAM_IDS@@ and str(_p.value).startswith("{"):
             _ch = _by_name[_pname]
-            _p[0].value = str(_ch["accessType"])
-            _p[1].value = str(_ch["readOffset"])
-            _p[2].value = str(_ch["readLength"])
-            _p[3].value = str(_ch["writeOffset"])
-            _p[4].value = str(_ch["writeLength"])
-            _p[5].value = str(_ch["trigger"])
-            _p[6].value = str(_ch["cycleTime"])
-            _p[7].value = str(_ch["errorHandling"])
-            _updated.append(_pname)
+            for _idx, _key in _shape_fields:
+                if _shape_number(_p[_idx].value) != _shape_number(_ch[_key]):
+                    _shape_changes.append({"channel": _pname, "field": _key,
+                                           "current": str(_p[_idx].value), "requested": str(_ch[_key])})
+            _targets.append(_p)
 
-_updated_set = {}
-for _name in _updated:
-    _updated_set[_name] = True
+if _shape_changes:
+    result = {
+        "success": False,
+        "device": @@DEVICE_NAME@@,
+        "error": "Changing a channel's function code, offset or length needs the channel rebuilt: use the "
+                 "IDE channel dialog or recreate the channel. Nothing was changed.",
+        "shapeChanges": _shape_changes
+    }
+else:
+    _updated = []
+    for _p in _targets:
+        _ch = _by_name[str(_p.name)]
+        _p[5].value = str(_ch["trigger"])
+        _p[6].value = str(_ch["cycleTime"])
+        _p[7].value = str(_ch["errorHandling"])
+        _updated.append(str(_p.name))
 
-_missing = []
-for _ch in _channels_def:
-    if _ch["name"] not in _updated_set:
-        _missing.append(_ch["name"])
+    _updated_set = {}
+    for _name in _updated:
+        _updated_set[_name] = True
 
-result = {
-    "success": len(_missing) == 0,
-    "device": @@DEVICE_NAME@@,
-    "updated": _updated,
-    "missing": _missing,
-    "updatedCount": len(_updated),
-    "missingCount": len(_missing)
-}
+    _missing = []
+    for _ch in _channels_def:
+        if _ch["name"] not in _updated_set:
+            _missing.append(_ch["name"])
+
+    result = {
+        "success": len(_missing) == 0,
+        "device": @@DEVICE_NAME@@,
+        "updated": _updated,
+        "missing": _missing,
+        "updatedCount": len(_updated),
+        "missingCount": len(_missing)
+    }
 """.replace("@@CHANNELS@@", literal([normalize_channel(channel) for channel in channels]))
    .replace("@@DEVICE_PARAM_IDS@@", DEVICE_PARAM_IDS)
    .replace("@@DEVICE_NAME@@", literal(device_name)),
