@@ -1,0 +1,5 @@
+== close session project
+== compile demo against the build
+== open and deploy
+== task interval 50 ms
+done: deployed qos_mixed_50ms (no tests)

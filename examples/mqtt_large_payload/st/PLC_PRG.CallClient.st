@@ -3,7 +3,7 @@
 // ClientBudgetUs. Called at the start of the scan, or at its end with IsClientCalledLast.
 IsSendInFlight := LargePublisher.sendActive OR ConcatPublisher.sendActive OR TagValuePublisher.sendActive
 	OR ScaleTest.Publisher.sendActive OR EdgeTest.Publisher.sendActive OR EdgeTest.EchoPublisher.sendActive
-	OR SplitTest.IsRoundActive;
+	OR SplitTest.IsRoundActive OR MixedTest.IsSendInFlight;
 StepStartUs := NowUs();
 ClientCall := 0;
 REPEAT

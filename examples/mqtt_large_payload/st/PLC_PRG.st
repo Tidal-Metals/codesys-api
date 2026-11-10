@@ -316,6 +316,8 @@ ScaleTest();
 EdgeTest();
 // The same data as one message or many (idle unless SplitTest.IsEnabled; split_test.py drives it).
 SplitTest();
+// Mixed-rate load: 75 % of the tags once a second, 25 % ten times a second (idle unless MixedTest.IsEnabled; mixed_rate_test.py).
+MixedTest();
 // BCNF's own MQTT code with its two client connections (idle unless BcnfComms.IsEnabled; bcnf_test.py drives it).
 BcnfComms();
 // Rewritten by online_change_test.py to make online changes (does nothing else).

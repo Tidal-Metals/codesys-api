@@ -27,7 +27,7 @@ The fork's tests are in "Library tests" below; their results are summarised in t
 | `measure_performance.py` | Sweeps `ValueCount` online and reads the PLC's timing counters |
 | `verify_payloads.py` | Subscribes on the HQ broker and checks every value of every message |
 | `results/` | JSON from the runs on 2026-10-19 (`performance_real_*`, `performance_int_qos0` and `verify_production_sweep` are the production benchmarks); `results/ab/` the 1.2.0.7 vs 1.3.0.0 A/B, `results/exp/<label>/` every fork experiment and test |
-| `report/` | Generators and templates for the Doc Shelf reports (`make_report.py`, `make_throughput_doc.py`, `make_split_doc.py`: message size vs count) |
+| `report/` | Generators and templates for the Doc Shelf reports (`make_report.py`, `make_throughput_doc.py`, `make_split_doc.py`: message size vs count, `make_mixed_doc.py`: QoS 0 vs 1 at mixed rates) |
 
 ## Library tests
 
@@ -43,6 +43,7 @@ is never stored in the repo.
 | `edge_test.py`, `st/edge/` | Every payload size around the send and receive buffer boundaries, byte-exact |
 | `measure_latency.py` | Command to acknowledgement round trip (`EdgeTest` echo) |
 | `split_test.py`, `show_split.py`, `st/split/` | The same 26 KB as 1 to 1,625 messages at QoS 0, 1 and 2 |
+| `mixed_rate_test.py`, `show_mixed.py`, `st/mixed/` | QoS 0 vs 1 under a mixed-rate load: 75 % of the 2,000 tags once a second, the 500 REALs ten times a second, full values; counts the periods the PLC could not keep up with (results in `results/exp/qos_mixed/`) |
 | `qos_test.py`, `show_qos.py` | Every subscribe x publish QoS, paced and back to back, with loss and duplicate counts (HQ broker) |
 | `qos_broker_test.py`, `qos_fake_broker.py` | QoS corner cases mochi does not produce, played by a scripted broker on the VM |
 | `acl_test.py`, `acl_bridge_user.py` | A broker that refuses topics (dev bridge ACLs): `MQTTPublish.Rejected` |

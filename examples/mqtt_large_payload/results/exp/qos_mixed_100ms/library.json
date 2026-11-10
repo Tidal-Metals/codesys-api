@@ -1,0 +1,9 @@
+{
+ "label": "qos_mixed_100ms",
+ "commit": "3db31ee",
+ "diff": "",
+ "taskMs": 100,
+ "tasks": [
+  "MainTask=100 ms"
+ ]
+}

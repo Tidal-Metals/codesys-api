@@ -32,17 +32,20 @@ FUNCTIONS = [("AppendText", "BOOL", "AppendText"), ("NowUs", "ULINT", "NowUs"),
 PROGRAMS = [("BcnfStringPublicationCopy", "bcnf_style/BcnfStringPublicationCopy"),
             ("ScaleTest", "scale/ScaleTest"), ("ClockSync", "clock/ClockSync"), ("EdgeTest", "edge/EdgeTest"),
             ("SplitTest", "split/SplitTest"), ("BcnfComms", "bcnf_comms/BcnfComms"),
-            ("OnlineChangeProbe", "probe/OnlineChangeProbe"), ("UrlProbe", "probe/UrlProbe")]
+            ("OnlineChangeProbe", "probe/OnlineChangeProbe"), ("UrlProbe", "probe/UrlProbe"),
+            ("MixedTest", "mixed/MixedTest")]
 # MQTT library edge-case test (edge_test.py): its subscription callback
 FUNCTION_BLOCKS = [("FB_EdgeReceiver", "edge/FB_EdgeReceiver"),
                    ("BenchFirstSubscription", "bcnf_comms/BenchFirstSubscription"),
-                   ("BenchFirstPublish", "bcnf_comms/BenchFirstPublish")]
+                   ("BenchFirstPublish", "bcnf_comms/BenchFirstPublish"),
+                   ("FB_MixedStream", "mixed/FB_MixedStream")]  # mixed-rate test, one instance per stream
 METHODS = [("FB_EdgeReceiver", "PublishReceived", "BOOL", "edge/FB_EdgeReceiver.PublishReceived")]
 ACTIONS = [("PLC_PRG", "BuildLine", "PLC_PRG.BuildLine"), ("PLC_PRG", "CallClient", "PLC_PRG.CallClient"),
            ("BcnfStringPublicationCopy", "BuildTagValue", "bcnf_style/BcnfStringPublicationCopy.BuildTagValue"),
            ("ScaleTest", "UpdateValues", "scale/ScaleTest.UpdateValues"),
            ("ScaleTest", "BuildTag", "scale/ScaleTest.BuildTag"),
-           ("ScaleTest", "DetectChanges", "scale/ScaleTest.DetectChanges")]
+           ("ScaleTest", "DetectChanges", "scale/ScaleTest.DetectChanges"),
+           ("FB_MixedStream", "ServicePool", "mixed/FB_MixedStream.ServicePool")]
 
 
 def read_source(source_dir, name):
