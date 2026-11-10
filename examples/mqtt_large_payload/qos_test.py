@@ -8,6 +8,8 @@ messages ('00000001...') to raw_data_demo/edge_in, paced and then as a burst; Ed
 in-order messages, duplicates and gaps (losses), and the script watches for client disconnects. The
 delivered QoS is the lower of the two. Outgoing: EdgeTest publishes small messages at QoS 0, 1 and 2 and
 this script, subscribed at QoS 2, checks every one arrives once, in order.
+--mqtt5 runs the same matrix over MQTT 5 against the private MQTTug of mqtt5_test.py (library 1.4.0.0): the PLC is
+switched there and back to MQTT 3.1.1 on HQ afterwards, and this script's client speaks MQTT 5 with the observer token.
 """
 import argparse
 import json
@@ -114,15 +116,27 @@ def main() -> int:
     parser.add_argument("--count", type=int, default=60)
     parser.add_argument("--burst", type=int, default=40, help="messages sent back to back")
     parser.add_argument("--out")
+    parser.add_argument("--mqtt5", action="store_true", help="MQTT 5 on the private MQTTug (see mqtt5_test.py)")
     args = parser.parse_args()
     received = []
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="qos-test-%d" % os.getpid())
+    if args.mqtt5:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import mqtt5_test as m5  # noqa: E402
+        if m5.reconnect(m5.plc_url(m5.token("plc.token")), "5") is None:
+            sys.exit("the PLC did not connect over MQTT 5")
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="observer-qos-test-%d" % os.getpid(),
+                             protocol=mqtt.MQTTv5)
+        client.username_pw_set("token", m5.token("observer.token"))
+        host, port = m5.BROKER_HOST, m5.BROKER_PORT
+    else:
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="qos-test-%d" % os.getpid())
+        host, port = BROKER, 1883
     client.on_connect = lambda c, u, f, r, p=None: c.subscribe("raw_data_demo/edge", qos=2)
     client.on_message = lambda c, u, m: received.append(bytes(m.payload))
     client.max_inflight_messages_set(100)
-    client.connect(BROKER, 1883, keepalive=30)
+    client.connect(host, port, keepalive=30)
     client.loop_start()
-    report = {"incoming": [], "outgoing": []}
+    report = {"protocol": 5 if args.mqtt5 else 4, "incoming": [], "outgoing": []}
     try:
         write([("EdgeTest.IsEchoEnabled", "FALSE"), ("ScaleTest.IsEnabled", "FALSE")])
         for sub_qos in (0, 1, 2):
@@ -137,6 +151,8 @@ def main() -> int:
         write([("EdgeTest.IsQos1", "FALSE"), ("EdgeTest.IsQos2", "FALSE"), ("EdgeTest.SubscribeQoS", "1")])
         client.loop_stop()
         client.disconnect()
+        if args.mqtt5:
+            report["restored"] = m5.reconnect(m5.HQ_URL, "4") is not None
     for row in report["incoming"]:
         row["ok"] = row["inOrder"] == row["sent"] and row["duplicates"] == 0 and row["gaps"] == 0 and row["reconnects"] == 0
     for row in report["outgoing"]:

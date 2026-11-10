@@ -1,0 +1,30 @@
+{
+ "started": "2026-11-10 16:01:30",
+ "cases": {
+  "connect": {
+   "ok": true,
+   "state": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_INFO.Broker.TopicAliasMaximum": "64",
+    "client.MQTT_INFO.Broker.ReceiveMaximum": "1024",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.MQTT_INFO.Broker.HasServerKeepAlive": "FALSE",
+    "client.MQTT_INFO.ReasonString": "''",
+    "client.MQTT_INFO.Broker.MaximumPacketSize": "16777216",
+    "client.MQTT_INFO.Broker.MaximumQoS": "2",
+    "client.MQTT_INFO.DisconnectReasonCode": "142",
+    "client.IsSendPending": "FALSE",
+    "client.counts.CountPeerCloses": "4",
+    "client.MQTT_INFO.Broker.IsSharedSubscriptionAvailable": "TRUE",
+    "client.counts.CountConnectAttempt": "166",
+    "client.MQTT_INFO.Broker.IsRetainAvailable": "TRUE"
+   }
+  },
+  "send": {
+   "ok": true,
+   "sent": 45,
+   "bad": []
+  }
+ }
+}

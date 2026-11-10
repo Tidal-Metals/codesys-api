@@ -1,0 +1,14 @@
+{
+ "started": "2026-11-10 14:56:09",
+ "cases": {
+  "connect": {
+   "ok": false,
+   "exception": "RuntimeError({'error': \"'MQTT_VERSION#MQTT.MQTT_VERSION.V5' is not a valid Integer.\", 'execution_failed': True, 'request_id': 'b1e6acf8-009e-4c59-b45f-12482a6ccadc', 'traceback': 'Traceback (most recent call last):\\n  File \"C:\\\\Users\\\\KevinTritz\\\\projects\\\\codesys-api\\\\PERSISTENT_SESSION.py\", line 741, in execute_script\\n    exec(script_code, globals_dict)\\n  File \"<string>\", line 2, in <module>\\n  File \"<string>\", line 4, in <module>\\nSystemError: \\'MQTT_VERSION#MQTT.MQTT_VERSION.V5\\' is not a valid Integer.\\n', 'success': False})"
+  },
+  "telemetry": {
+   "ok": false,
+   "messages": 0,
+   "lengths": []
+  }
+ }
+}

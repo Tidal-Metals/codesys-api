@@ -1,0 +1,364 @@
+{
+ "label": "broker=mqttug protocol=5 earlyStop=True",
+ "started": "2026-11-10 16:41:19",
+ "clientSetup": [
+  [
+   "PLC_PRG.ClientCallsPerScan",
+   "32"
+  ],
+  [
+   "PLC_PRG.ClientBudgetUs",
+   "4000"
+  ],
+  [
+   "PLC_PRG.IsSecondClientCallEnabled",
+   "TRUE"
+  ],
+  [
+   "PLC_PRG.SecondCallBudgetUs",
+   "2000"
+  ],
+  [
+   "PLC_PRG.IsClientCalledLast",
+   "FALSE"
+  ]
+ ],
+ "taskMs": 50,
+ "rows": [
+  {
+   "layout": "consolidated",
+   "qos": 0,
+   "seconds": 92.6,
+   "tagsPerMessage": {
+    "S": 1500,
+    "F": 500
+   },
+   "publishers": {
+    "S": 1,
+    "F": 1
+   },
+   "pcClockOffsetMs": 110.2,
+   "plc": {
+    "S": {
+     "periodsDue": 93,
+     "roundsStarted": 93,
+     "roundsDone": 93,
+     "skipped": 0,
+     "skippedOffline": 0,
+     "keptUpPercent": 100.0,
+     "timeouts": 0,
+     "overflows": 0,
+     "bytesPerRound": 17836,
+     "messagesPerRound": 1,
+     "buildMs": 7.2,
+     "maxBuildMs": 8.14,
+     "sendMs": 45.7,
+     "maxSendMs": 46.2,
+     "sendScans": 1.0,
+     "maxSendScans": 1,
+     "maxLateMs": 30.0
+    },
+    "F": {
+     "periodsDue": 926,
+     "roundsStarted": 926,
+     "roundsDone": 926,
+     "skipped": 0,
+     "skippedOffline": 0,
+     "keptUpPercent": 100.0,
+     "timeouts": 0,
+     "overflows": 0,
+     "bytesPerRound": 8041,
+     "messagesPerRound": 1,
+     "buildMs": 7.38,
+     "maxBuildMs": 8.8,
+     "sendMs": 42.4,
+     "maxSendMs": 50.6,
+     "sendScans": 1.0,
+     "maxSendScans": 1,
+     "maxLateMs": 30.7
+    },
+    "scan": {
+     "scans": 1848,
+     "cycleMs": 6.35,
+     "maxCycleMs": 19.46,
+     "clientMs": 1.79,
+     "maxClientMs": 4.26,
+     "clientCallsPerScan": 1.07,
+     "intervalMs": [
+      49.4,
+      50.7
+     ],
+     "taskLoadPercent": 12.67
+    },
+    "reconnects": 0,
+    "connected": true
+   },
+   "broker": {
+    "S": {
+     "roundsExpected": 93,
+     "roundsComplete": 93,
+     "partsMissing": 0,
+     "partsDuplicated": 0,
+     "partsBad": 0,
+     "valuesChecked": 139500,
+     "messageAgeMs": {
+      "min": 73.2,
+      "p50": 74.0,
+      "p90": 74.7,
+      "p99": 75.4,
+      "max": 75.4,
+      "mean": 74.1
+     },
+     "roundAgeMs": {
+      "min": 73.2,
+      "p50": 74.0,
+      "p90": 74.7,
+      "p99": 75.4,
+      "max": 75.4,
+      "mean": 74.1
+     },
+     "roundGapMs": {
+      "min": 951.3,
+      "p50": 1001.6,
+      "p90": 1002.1,
+      "p99": 1002.7,
+      "max": 1002.7,
+      "mean": 1000.0
+     },
+     "gapsOver1_5Periods": 0
+    },
+    "F": {
+     "roundsExpected": 926,
+     "roundsComplete": 926,
+     "partsMissing": 0,
+     "partsDuplicated": 0,
+     "partsBad": 0,
+     "valuesChecked": 463000,
+     "messageAgeMs": {
+      "min": 32.2,
+      "p50": 33.3,
+      "p90": 67.7,
+      "p99": 69.4,
+      "max": 71.4,
+      "mean": 36.9
+     },
+     "roundAgeMs": {
+      "min": 32.2,
+      "p50": 33.3,
+      "p90": 67.7,
+      "p99": 69.4,
+      "max": 71.4,
+      "mean": 36.9
+     },
+     "roundGapMs": {
+      "min": 49.1,
+      "p50": 100.2,
+      "p90": 105.3,
+      "p99": 143.4,
+      "max": 144.1,
+      "mean": 100.0
+     },
+     "gapsOver1_5Periods": 0
+    },
+    "otherMessages": 0,
+    "badExamples": []
+   },
+   "samples": [
+    {
+     "t": 31.7,
+     "PLC_PRG.IsBrokerConnected": "TRUE",
+     "Slow.RoundsDone": 31,
+     "Fast.Skipped": 0,
+     "Fast.RoundsDone": 313,
+     "Slow.Skipped": 0
+    },
+    {
+     "t": 63.4,
+     "PLC_PRG.IsBrokerConnected": "TRUE",
+     "Slow.RoundsDone": 63,
+     "Fast.Skipped": 0,
+     "Fast.RoundsDone": 630,
+     "Slow.Skipped": 0
+    },
+    {
+     "t": 91.7,
+     "PLC_PRG.IsBrokerConnected": "TRUE",
+     "Slow.RoundsDone": 91,
+     "Fast.Skipped": 0,
+     "Fast.RoundsDone": 913,
+     "Slow.Skipped": 0
+    }
+   ],
+   "ok": true,
+   "keptUp": true
+  },
+  {
+   "layout": "consolidated",
+   "qos": 1,
+   "seconds": 92.7,
+   "tagsPerMessage": {
+    "S": 1500,
+    "F": 500
+   },
+   "publishers": {
+    "S": 1,
+    "F": 1
+   },
+   "pcClockOffsetMs": 109.5,
+   "plc": {
+    "S": {
+     "periodsDue": 93,
+     "roundsStarted": 93,
+     "roundsDone": 93,
+     "skipped": 0,
+     "skippedOffline": 0,
+     "keptUpPercent": 100.0,
+     "timeouts": 0,
+     "overflows": 0,
+     "bytesPerRound": 17834,
+     "messagesPerRound": 1,
+     "buildMs": 7.21,
+     "maxBuildMs": 7.83,
+     "sendMs": 46.3,
+     "maxSendMs": 47.1,
+     "sendScans": 1.0,
+     "maxSendScans": 1,
+     "maxLateMs": 28.8
+    },
+    "F": {
+     "periodsDue": 927,
+     "roundsStarted": 927,
+     "roundsDone": 927,
+     "skipped": 0,
+     "skippedOffline": 0,
+     "keptUpPercent": 100.0,
+     "timeouts": 0,
+     "overflows": 0,
+     "bytesPerRound": 8050,
+     "messagesPerRound": 1,
+     "buildMs": 7.4,
+     "maxBuildMs": 8.55,
+     "sendMs": 42.6,
+     "maxSendMs": 85.9,
+     "sendScans": 1.0,
+     "maxSendScans": 2,
+     "maxLateMs": 30.1
+    },
+    "scan": {
+     "scans": 1851,
+     "cycleMs": 6.46,
+     "maxCycleMs": 19.25,
+     "clientMs": 1.88,
+     "maxClientMs": 4.28,
+     "clientCallsPerScan": 1.12,
+     "intervalMs": [
+      49.5,
+      50.9
+     ],
+     "taskLoadPercent": 12.89
+    },
+    "reconnects": 0,
+    "connected": true
+   },
+   "broker": {
+    "S": {
+     "roundsExpected": 93,
+     "roundsComplete": 93,
+     "partsMissing": 0,
+     "partsDuplicated": 0,
+     "partsBad": 0,
+     "valuesChecked": 139500,
+     "messageAgeMs": {
+      "min": 73.6,
+      "p50": 74.3,
+      "p90": 74.8,
+      "p99": 75.0,
+      "max": 75.0,
+      "mean": 74.3
+     },
+     "roundAgeMs": {
+      "min": 73.6,
+      "p50": 74.3,
+      "p90": 74.8,
+      "p99": 75.0,
+      "max": 75.0,
+      "mean": 74.3
+     },
+     "roundGapMs": {
+      "min": 951.0,
+      "p50": 1001.6,
+      "p90": 1002.0,
+      "p99": 1002.8,
+      "max": 1002.8,
+      "mean": 1000.0
+     },
+     "gapsOver1_5Periods": 0
+    },
+    "F": {
+     "roundsExpected": 927,
+     "roundsComplete": 927,
+     "partsMissing": 0,
+     "partsDuplicated": 0,
+     "partsBad": 0,
+     "valuesChecked": 463500,
+     "messageAgeMs": {
+      "min": 32.6,
+      "p50": 33.6,
+      "p90": 47.3,
+      "p99": 69.8,
+      "max": 70.8,
+      "mean": 37.2
+     },
+     "roundAgeMs": {
+      "min": 32.6,
+      "p50": 33.6,
+      "p90": 47.3,
+      "p99": 69.8,
+      "max": 70.8,
+      "mean": 37.2
+     },
+     "roundGapMs": {
+      "min": 49.9,
+      "p50": 100.1,
+      "p90": 107.1,
+      "p99": 143.6,
+      "max": 149.2,
+      "mean": 100.0
+     },
+     "gapsOver1_5Periods": 0
+    },
+    "otherMessages": 0,
+    "badExamples": []
+   },
+   "samples": [
+    {
+     "t": 31.7,
+     "PLC_PRG.IsBrokerConnected": "TRUE",
+     "Slow.RoundsDone": 31,
+     "Fast.Skipped": 0,
+     "Fast.RoundsDone": 313,
+     "Slow.Skipped": 0
+    },
+    {
+     "t": 63.4,
+     "PLC_PRG.IsBrokerConnected": "TRUE",
+     "Slow.RoundsDone": 63,
+     "Fast.Skipped": 0,
+     "Fast.RoundsDone": 630,
+     "Slow.Skipped": 0
+    },
+    {
+     "t": 91.9,
+     "PLC_PRG.IsBrokerConnected": "TRUE",
+     "Slow.RoundsDone": 92,
+     "Fast.Skipped": 0,
+     "Fast.RoundsDone": 915,
+     "Slow.Skipped": 0
+    }
+   ],
+   "ok": true,
+   "keptUp": true
+  }
+ ],
+ "success": true
+}
