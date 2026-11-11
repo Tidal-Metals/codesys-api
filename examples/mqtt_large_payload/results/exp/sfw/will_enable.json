@@ -1,0 +1,142 @@
+{
+ "started": "2026-11-11 17:41:41",
+ "cases": {
+  "v5_birth": {
+   "connect": {
+    "CountConnectAttempt": "2",
+    "IsBrokerConnected": "TRUE",
+    "ConnectReasonCode": "0",
+    "DisconnectReasonCode": "0"
+   },
+   "after_enable_false": {
+    "offline_after_s": 0.0,
+    "status": [
+     [
+      "offline",
+      false
+     ]
+    ],
+    "plc": {
+     "CountConnectAttempt": "2",
+     "IsBrokerConnected": "FALSE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "after_enable_true": {
+    "online_after_s": 0.3,
+    "status": [
+     [
+      "online",
+      false
+     ]
+    ],
+    "reconnected": {
+     "CountConnectAttempt": "3",
+     "IsBrokerConnected": "TRUE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "ok": true
+  },
+  "v5_no_birth": {
+   "connect": {
+    "CountConnectAttempt": "4",
+    "IsBrokerConnected": "TRUE",
+    "ConnectReasonCode": "0",
+    "DisconnectReasonCode": "0"
+   },
+   "after_enable_false": {
+    "offline_after_s": null,
+    "status": [],
+    "plc": {
+     "CountConnectAttempt": "4",
+     "IsBrokerConnected": "FALSE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "after_enable_true": {
+    "online_after_s": null,
+    "status": [],
+    "reconnected": {
+     "CountConnectAttempt": "5",
+     "IsBrokerConnected": "TRUE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "ok": true
+  },
+  "v311_birth": {
+   "connect": {
+    "CountConnectAttempt": "6",
+    "IsBrokerConnected": "TRUE",
+    "ConnectReasonCode": "0",
+    "DisconnectReasonCode": "0"
+   },
+   "after_enable_false": {
+    "offline_after_s": 0.0,
+    "status": [
+     [
+      "offline",
+      false
+     ]
+    ],
+    "plc": {
+     "CountConnectAttempt": "6",
+     "IsBrokerConnected": "FALSE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "after_enable_true": {
+    "online_after_s": 0.2,
+    "status": [
+     [
+      "online",
+      false
+     ]
+    ],
+    "reconnected": {
+     "CountConnectAttempt": "7",
+     "IsBrokerConnected": "TRUE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "ok": true
+  },
+  "v311_no_birth": {
+   "connect": {
+    "CountConnectAttempt": "8",
+    "IsBrokerConnected": "TRUE",
+    "ConnectReasonCode": "0",
+    "DisconnectReasonCode": "0"
+   },
+   "after_enable_false": {
+    "offline_after_s": null,
+    "status": [],
+    "plc": {
+     "CountConnectAttempt": "8",
+     "IsBrokerConnected": "FALSE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "after_enable_true": {
+    "online_after_s": null,
+    "status": [],
+    "reconnected": {
+     "CountConnectAttempt": "9",
+     "IsBrokerConnected": "TRUE",
+     "ConnectReasonCode": "0",
+     "DisconnectReasonCode": "0"
+    }
+   },
+   "ok": true
+  }
+ },
+ "ok": true
+}
