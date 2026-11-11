@@ -1,0 +1,441 @@
+{
+ "started": "2026-11-11 18:13:33",
+ "config": {
+  "IsReady": "TRUE",
+  "Capacity": 4096,
+  "ConfigError": "STORE_FORWARD_ERROR.NONE"
+ },
+ "persistence": "off",
+ "stop": "clean",
+ "broker_stop": "broker stopped (SIGTERM, pid 2327929)",
+ "first": 4866,
+ "last": 6197,
+ "pushed": 1332,
+ "marks": {
+  "marigraf_stop": 5059,
+  "broker_stop": 5393,
+  "broker_start": 5545,
+  "marigraf_start": 5902,
+  "push_stop": 6189
+ },
+ "plc_reconnected_s": 1.1,
+ "plc_drained": true,
+ "marigraf": {
+  "missing_ranges": [
+   [
+    5679,
+    5679
+   ],
+   [
+    5065,
+    5676
+   ]
+  ],
+  "dup_seq": 0,
+  "rows": 719,
+  "distinct": 719,
+  "min": 4866,
+  "max": 6197,
+  "missing": 613
+ },
+ "lost": [
+  [
+   5679,
+   5679,
+   "after_broker_start",
+   1
+  ],
+  [
+   5065,
+   5676,
+   "after_marigraf_stop",
+   612
+  ]
+ ],
+ "lost_total": 613,
+ "plc": {
+  "InvalidCount": 0,
+  "LiveHandOffScans": 817,
+  "InFlightCount": 0,
+  "NextSequence": 6198,
+  "CheckFailCount": 0,
+  "LastRefuseReason": 0,
+  "CheckCount": 0,
+  "IsBrokerConnected": "TRUE",
+  "PushFailCount": 0,
+  "DroppedCount": 3134,
+  "MaxPushUs": 498,
+  "QueuedCount": 0,
+  "MaxCycleUs": 23145,
+  "IsReady": "TRUE",
+  "QuickCloseCount": 0,
+  "LiveDeferredCount": 0,
+  "MaxScanClientUs": 3608,
+  "MaxBlockUs": 671,
+  "DeliveredCount": 3063,
+  "IsHeld": "FALSE",
+  "NoSubscriberCount": 17,
+  "NotAcceptedCount": 0,
+  "Capacity": 4096,
+  "RefusedCount": 0,
+  "MqttLink.clientFB.counts.CountConnectAttempt": 174,
+  "IsSettingClamped": "FALSE",
+  "HasWork": "FALSE",
+  "OldestAgeMs": 0,
+  "PushedCount": 6197,
+  "ConfigError": "STORE_FORWARD_ERROR.NONE"
+ },
+ "timeline": [
+  [
+   2.6,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2031,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   7.1,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2076,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   11.6,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2120,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   16.1,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2165,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   22.2,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2227,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   27.0,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2274,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   31.4,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 1,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2319,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   35.9,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2363,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   40.3,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2408,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   44.8,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2452,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   49.5,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2499,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   55.7,
+   {
+    "IsBrokerConnected": "FALSE",
+    "QueuedCount": 9,
+    "OldestAgeMs": 1602,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   60.2,
+   {
+    "IsBrokerConnected": "FALSE",
+    "QueuedCount": 53,
+    "OldestAgeMs": 6060,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   64.9,
+   {
+    "IsBrokerConnected": "FALSE",
+    "QueuedCount": 100,
+    "OldestAgeMs": 10769,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 0,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   72.8,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 180,
+    "OldestAgeMs": 18684,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 1,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   77.4,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 226,
+    "OldestAgeMs": 23392,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 3,
+    "DroppedCount": 2856,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   82.4,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 243,
+    "OldestAgeMs": 24292,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 6,
+    "DroppedCount": 2900,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   86.9,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 243,
+    "OldestAgeMs": 24243,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 9,
+    "DroppedCount": 2946,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   91.4,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 243,
+    "OldestAgeMs": 24193,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 12,
+    "DroppedCount": 2991,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   96.1,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 243,
+    "OldestAgeMs": 24291,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 12,
+    "DroppedCount": 3038,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   100.5,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 243,
+    "OldestAgeMs": 24239,
+    "IsHeld": "TRUE",
+    "DeliveredCount": 2543,
+    "NoSubscriberCount": 14,
+    "DroppedCount": 3083,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   108.5,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 178,
+    "OldestAgeMs": 17228,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2671,
+    "NoSubscriberCount": 17,
+    "DroppedCount": 3134,
+    "InFlightCount": 2
+   }
+  ],
+  [
+   113.0,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 6,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2857,
+    "NoSubscriberCount": 17,
+    "DroppedCount": 3134,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   117.5,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2901,
+    "NoSubscriberCount": 17,
+    "DroppedCount": 3134,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   120.0,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2928,
+    "NoSubscriberCount": 17,
+    "DroppedCount": 3134,
+    "InFlightCount": 1
+   }
+  ],
+  [
+   124.5,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 2972,
+    "NoSubscriberCount": 17,
+    "DroppedCount": 3134,
+    "InFlightCount": 0
+   }
+  ],
+  [
+   129.2,
+   {
+    "IsBrokerConnected": "TRUE",
+    "QueuedCount": 0,
+    "OldestAgeMs": 0,
+    "IsHeld": "FALSE",
+    "DeliveredCount": 3019,
+    "NoSubscriberCount": 17,
+    "DroppedCount": 3134,
+    "InFlightCount": 1
+   }
+  ]
+ ]
+}
