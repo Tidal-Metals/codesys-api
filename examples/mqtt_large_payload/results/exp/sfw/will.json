@@ -1,0 +1,83 @@
+{
+ "started": "2026-11-11 15:44:13",
+ "cases": {
+  "1_default_will_token_without_rule": {
+   "CountConnectAttempt": "2",
+   "IsBrokerConnected": "FALSE",
+   "ConnectReasonCode": "135",
+   "DisconnectReasonCode": "0"
+  },
+  "2_will_off": {
+   "CountConnectAttempt": "4",
+   "IsBrokerConnected": "TRUE",
+   "ConnectReasonCode": "0",
+   "DisconnectReasonCode": "0"
+  },
+  "2_takeover_will_off": {
+   "connack": "Success",
+   "status": [],
+   "reconnected": {
+    "CountConnectAttempt": "5",
+    "IsBrokerConnected": "TRUE",
+    "ConnectReasonCode": "0",
+    "DisconnectReasonCode": "142"
+   }
+  },
+  "3_contract_connect": {
+   "CountConnectAttempt": "6",
+   "IsBrokerConnected": "TRUE",
+   "ConnectReasonCode": "0",
+   "DisconnectReasonCode": "142"
+  },
+  "3_status_after_connect": [
+   [
+    "online",
+    false
+   ]
+  ],
+  "3_retained_after_connect": [
+   [
+    "online",
+    true
+   ]
+  ],
+  "3_takeover": {
+   "connack": "Success"
+  },
+  "3_status_after_takeover": [
+   [
+    "offline",
+    false
+   ],
+   [
+    "online",
+    false
+   ]
+  ],
+  "3_reconnected": {
+   "CountConnectAttempt": "7",
+   "IsBrokerConnected": "TRUE",
+   "ConnectReasonCode": "0",
+   "DisconnectReasonCode": "142"
+  },
+  "3_status_after_reconnect": [],
+  "3_retained_after_reconnect": [
+   [
+    "online",
+    true
+   ]
+  ],
+  "4_hq_v311_will_off": {
+   "CountConnectAttempt": "8",
+   "IsBrokerConnected": "TRUE",
+   "ConnectReasonCode": "0",
+   "DisconnectReasonCode": "142"
+  },
+  "4_hq_v311_default_will": {
+   "CountConnectAttempt": "9",
+   "IsBrokerConnected": "TRUE",
+   "ConnectReasonCode": "0",
+   "DisconnectReasonCode": "142"
+  }
+ }
+}

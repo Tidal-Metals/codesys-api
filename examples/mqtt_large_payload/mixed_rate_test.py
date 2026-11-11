@@ -9,6 +9,12 @@ Each layout (consolidated: one message per stream; grouped: 100 or 25 tags per m
 The PLC counts the periods it had to skip because the previous round was still in flight; a subscriber here checks
 every value of every message and measures the age of each message at the broker (PLC UTC stamp vs this PC's clock
 corrected by SNTP against the same server the PLC syncs to).
+
+--push runs the same layouts on MixedPushTest instead (rows with "mode": "push", always QoS 1): the same messages, each
+handed to one shared MQTT.MqttStoreForward with Push. It needs the MQTT 5 demo copy (library 1.4.0.0) patched by
+patch_demo_store_forward.py. Such a stream never skips a period for a round still in flight (the block buffers it), so
+look at the message age, the block's queue and drops (row "sfw") and the rounds held at once (maxRoundsActive):
+    python examples/mqtt_large_payload/mixed_rate_test.py --push --layouts consolidated --seconds 90 --out ...
 """
 import argparse
 import json
@@ -32,7 +38,9 @@ from verify_scale import name, value_problem  # noqa: E402
 BROKER = "192.168.50.240"
 NTP_SERVER = "192.168.50.240"
 TOPIC = "raw_data_demo/mixed/+"
-M = "MixedTest"
+M = "MixedTest"  # the PLC program; main() sets PUSH_PROGRAM with --push
+PUSH_PROGRAM = "MixedPushTest"
+IS_PUSH = False
 STREAMS = {"S": {"fb": "Slow", "first": 1, "last": 1500, "periodMs": 1000},
            "F": {"fb": "Fast", "first": 1501, "last": 2000, "periodMs": 100}}
 # tags per message (slow, fast) and publishers (slow, fast)
@@ -44,13 +52,23 @@ CLIENT_SETUP = [("PLC_PRG.ClientCallsPerScan", "32"), ("PLC_PRG.ClientBudgetUs",
                 ("PLC_PRG.IsClientCalledLast", "FALSE")]
 QUIET = [("ScaleTest.IsEnabled", "FALSE"), ("EdgeTest.IsEnabled", "FALSE"), ("SplitTest.IsEnabled", "FALSE"),
          ("BcnfComms.IsEnabled", "FALSE"), ("PLC_PRG.PublishPeriod", "T#1H"), ("PLC_PRG.IsTagValueEnabled", "FALSE")]
-RESTORE = [(M + ".IsEnabled", "FALSE"), ("PLC_PRG.PublishPeriod", "T#1S"), ("PLC_PRG.ClientCallsPerScan", "1"),
-           ("PLC_PRG.ClientBudgetUs", "5000")]
+# written after M.IsEnabled FALSE at the end of main()
+RESTORE = [("PLC_PRG.PublishPeriod", "T#1S"), ("PLC_PRG.ClientCallsPerScan", "1"), ("PLC_PRG.ClientBudgetUs", "5000")]
+# push mode: the publisher-pool test and the other store-and-forward block stay off
+PUSH_QUIET = [("MixedTest.IsEnabled", "FALSE"), ("StoreForwardTest.IsEnabled", "FALSE")]
 STREAM_FIELDS = ["Round", "RoundsStarted", "RoundsDone", "Skipped", "SkippedOffline", "PartsDone", "TimeoutCount",
                  "OverflowCount", "LastBytes", "LastParts", "MaxBuildUs", "SumBuildUs", "MaxSendUs", "SumSendUs",
                  "MaxSendScans", "SumSendScans", "MaxLateUs", "IsRoundActive"]
 TEST_FIELDS = ["ScanCount", "SumCycleUs", "MaxCycleUs", "SumScanClientUs", "MaxScanClientUs", "MaxIntervalUs",
                "MinIntervalUs", "SumClientCalls"]
+# push mode only: FB_MixedPushStream's extra fields, and MixedPushTest's block figures
+PUSH_STREAM_FIELDS = ["SumPushUs", "MaxPushUs", "MaxRoundsActive", "UntrackedCount"]
+# the block's counters since download (differences per cell) -> result names
+SFW_COUNTERS = {"PushedCount": "pushed", "DeliveredCount": "delivered", "DroppedCount": "dropped",
+                "RefusedCount": "refused", "DiscardedCount": "discarded", "LiveDeferredCount": "liveDeferred",
+                "NotAcceptedCount": "notAccepted", "InvalidCount": "invalid"}
+SFW_FIELDS = list(SFW_COUNTERS) + ["Capacity", "ConfiguredSlotBytes", "MaxQueuedCount", "MaxInFlightCount",
+                                   "MaxOldestAgeMs", "MaxBlockUs", "SumBlockUs", "LiveHandOffScans", "HasWork"]
 CONNECTS = "PLC_PRG.MqttLink.clientFB.counts.CountConnectAttempt"
 
 WRITE = """
@@ -84,24 +102,31 @@ def read(names) -> dict:
 
 
 def plc_state() -> dict:
-    names = ["%s.%s.%s" % (M, s["fb"], f) for s in STREAMS.values() for f in STREAM_FIELDS]
+    stream_fields = STREAM_FIELDS + (PUSH_STREAM_FIELDS if IS_PUSH else [])
+    names = ["%s.%s.%s" % (M, s["fb"], f) for s in STREAMS.values() for f in stream_fields]
     names += ["%s.%s" % (M, f) for f in TEST_FIELDS] + ["PLC_PRG.IsBrokerConnected", CONNECTS]
+    if IS_PUSH:
+        names += ["%s.%s" % (M, f) for f in SFW_FIELDS]
     values = read(names)
-    state = {key: {f: values["%s.%s.%s" % (M, s["fb"], f)] for f in STREAM_FIELDS} for key, s in STREAMS.items()}
+    state = {key: {f: values["%s.%s.%s" % (M, s["fb"], f)] for f in stream_fields} for key, s in STREAMS.items()}
     state["test"] = {f: values["%s.%s" % (M, f)] for f in TEST_FIELDS}
     state["connected"] = values["PLC_PRG.IsBrokerConnected"] == "TRUE"
     state["connectAttempts"] = values[CONNECTS]
+    if IS_PUSH:
+        state["sfw"] = {f: values["%s.%s" % (M, f)] for f in SFW_FIELDS}
     return state
 
 
 def wait_idle(seconds: float = 30) -> None:
     names = ["%s.%s.IsRoundActive" % (M, s["fb"]) for s in STREAMS.values()]
+    if IS_PUSH:
+        names.append(M + ".HasWork")  # Configure (ConfigureRequest) needs the block empty
     end = time.time() + seconds
     while time.time() < end:
         if all(v == "FALSE" for v in read(names).values()):
             return
         time.sleep(0.3)
-    raise RuntimeError("MixedTest still has rounds in flight after %d s" % seconds)
+    raise RuntimeError("%s still has rounds in flight after %d s" % (M, seconds))
 
 
 def sntp_offset_ms(server: str = NTP_SERVER) -> float:
@@ -266,18 +291,54 @@ def summarize_plc(before: dict, after: dict, seconds: float) -> dict:
                    "taskLoadPercent": round(100.0 * t["SumCycleUs"] / 1e6 / seconds, 2)}
     out["reconnects"] = after["connectAttempts"] - before["connectAttempts"]
     out["connected"] = after["connected"]
+    if IS_PUSH:
+        summarize_push(out, before, after)
     return out
+
+
+def summarize_push(out: dict, before: dict, after: dict) -> None:
+    """MixedPushTest's extras: per stream the Push time and rounds held at once, and the shared block's figures."""
+    for stream in STREAMS:
+        a = after[stream]
+        started = a["RoundsStarted"]
+        out[stream].update({
+            "pushMs": round(a["SumPushUs"] / started / 1000, 2) if started else None,
+            "maxPushMs": round(a["MaxPushUs"] / 1000, 2),
+            "maxRoundsActive": a["MaxRoundsActive"], "untracked": a["UntrackedCount"]})
+    b, a = before["sfw"], after["sfw"]
+    scans = after["test"]["ScanCount"] or 1
+    sfw = {key: a[field] - b[field] for field, key in SFW_COUNTERS.items()}
+    sfw.update({"capacity": a["Capacity"], "slotBytes": a["ConfiguredSlotBytes"], "maxQueued": a["MaxQueuedCount"],
+                "maxInFlight": a["MaxInFlightCount"], "maxOldestAgeMs": a["MaxOldestAgeMs"],
+                "blockMs": round(a["SumBlockUs"] / scans / 1000, 3), "maxBlockMs": round(a["MaxBlockUs"] / 1000, 2),
+                "liveHandOffScans": a["LiveHandOffScans"], "hasWorkAfter": a["HasWork"] == "TRUE"})
+    out["sfw"] = sfw
+
+
+def configure_push(args, spec: dict) -> None:
+    """Layout and lanes for MixedPushTest, and the block configured again for them (slot size follows the layout)."""
+    write([(M + ".SlowTagsPerMessage", str(spec["tags"][0])), (M + ".FastTagsPerMessage", str(spec["tags"][1])),
+           (M + ".LiveLanes", str(args.lanes[0])), (M + ".BacklogLanes", str(args.lanes[1])),
+           (M + ".ConfigureRequest", "TRUE"), (M + ".ResetStats", "TRUE"), ("PLC_PRG.ResetStats", "TRUE")])
+    time.sleep(1)
+    state = read([M + ".IsConfigured", M + ".LastConfigureError", M + ".Capacity", M + ".ConfiguredSlotBytes"])
+    if state[M + ".IsConfigured"] != "TRUE":
+        raise RuntimeError("MqttStoreForward.Configure refused: %s" % state)
+    print("   block: %s" % json.dumps(state), flush=True)
 
 
 def run_cell(checker: Checker, args, layout: str, qos: int) -> dict:
     spec = LAYOUTS[layout]
     write([(M + ".IsEnabled", "FALSE")])
     wait_idle()
-    write([(M + ".QoSLevel", str(qos)),
-           (M + ".SlowTagsPerMessage", str(spec["tags"][0])), (M + ".FastTagsPerMessage", str(spec["tags"][1])),
-           (M + ".SlowPublishers", str(spec["publishers"][0])), (M + ".FastPublishers", str(spec["publishers"][1])),
-           (M + ".ResetStats", "TRUE"), ("PLC_PRG.ResetStats", "TRUE")])
-    time.sleep(1)
+    if IS_PUSH:
+        configure_push(args, spec)
+    else:
+        write([(M + ".QoSLevel", str(qos)),
+               (M + ".SlowTagsPerMessage", str(spec["tags"][0])), (M + ".FastTagsPerMessage", str(spec["tags"][1])),
+               (M + ".SlowPublishers", str(spec["publishers"][0])), (M + ".FastPublishers", str(spec["publishers"][1])),
+               (M + ".ResetStats", "TRUE"), ("PLC_PRG.ResetStats", "TRUE")])
+        time.sleep(1)
     before = plc_state()
     offset_ms = sntp_offset_ms()
     checker.take()
@@ -287,6 +348,8 @@ def run_cell(checker: Checker, args, layout: str, qos: int) -> dict:
     while time.time() - started < args.seconds:
         time.sleep(min(args.sample_s, max(0.0, args.seconds - (time.time() - started))))
         names = ["%s.%s.%s" % (M, s["fb"], f) for s in STREAMS.values() for f in ("RoundsDone", "Skipped")]
+        if IS_PUSH:
+            names += [M + ".QueuedCount", M + ".DroppedCount"]
         values = read(names + ["PLC_PRG.IsBrokerConnected"])
         sample = {"t": round(time.time() - started, 1), **{k.replace(M + ".", ""): v for k, v in values.items()}}
         samples.append(sample)
@@ -306,6 +369,12 @@ def run_cell(checker: Checker, args, layout: str, qos: int) -> dict:
     row["ok"] = all(plc[s]["timeouts"] == 0 and plc[s]["overflows"] == 0 and broker[s]["partsMissing"] == 0
                     and broker[s]["partsDuplicated"] == 0 and broker[s]["partsBad"] == 0 for s in STREAMS)
     row["keptUp"] = all(plc[s]["skipped"] == 0 and plc[s]["skippedOffline"] == 0 for s in STREAMS)
+    if IS_PUSH:
+        row = {"mode": "push", **row, "lanes": {"live": args.lanes[0], "backlog": args.lanes[1]}}
+        del row["publishers"]
+        # nothing dropped or refused; a growing backlog shows in the ages and plc.sfw.maxQueued, not here
+        row["ok"] = row["ok"] and plc["sfw"]["dropped"] == 0 and plc["sfw"]["refused"] == 0
+        row["keptUp"] = row["keptUp"] and plc["sfw"]["dropped"] == 0
     return row
 
 
@@ -317,18 +386,28 @@ def main() -> int:
     parser.add_argument("--sample-s", type=float, default=30)
     parser.add_argument("--budget-us", type=int, default=4000, help="client time per scan while a message is in flight")
     parser.add_argument("--label", default="", help="free text stored with the results, e.g. the task interval")
+    parser.add_argument("--push", action="store_true",
+                        help="MixedPushTest (MqttStoreForward, QoS 1) instead of MixedTest; --qos is ignored")
+    parser.add_argument("--lanes", type=int, nargs=2, default=[2, 4], metavar=("LIVE", "BACKLOG"),
+                        help="with --push: the block's LiveLanes and BacklogLanes")
     parser.add_argument("--out")
     args = parser.parse_args()
+    global M, IS_PUSH
+    if args.push:
+        M, IS_PUSH = PUSH_PROGRAM, True
+        args.qos = [1]
     out = Path(args.out) if args.out else None
     setup = [(path, str(args.budget_us) if path == "PLC_PRG.ClientBudgetUs" else value) for path, value in CLIENT_SETUP]
     checker = Checker()
     report = {"label": args.label, "started": time.strftime("%Y-%m-%d %H:%M:%S"), "clientSetup": setup,
               "taskMs": read(["PLC_PRG.IntervalUs"])["PLC_PRG.IntervalUs"] // 1000, "rows": []}
-    write(QUIET + setup)
+    if IS_PUSH:
+        report = {"mode": "push", **report}
+    write(QUIET + (PUSH_QUIET if IS_PUSH else []) + setup)
     try:
         for layout in args.layouts:
             for qos in args.qos:
-                print("== %s QoS %d" % (layout, qos), flush=True)
+                print("== %s %s" % (layout, "push (QoS 1)" if IS_PUSH else "QoS %d" % qos), flush=True)
                 row = run_cell(checker, args, layout, qos)
                 report["rows"].append(row)
                 print(json.dumps({k: v for k, v in row.items() if k != "samples"}), flush=True)
@@ -336,7 +415,7 @@ def main() -> int:
                     out.parent.mkdir(parents=True, exist_ok=True)
                     out.write_text(json.dumps(report, indent=1), encoding="utf-8")
     finally:
-        write(RESTORE)
+        write([(M + ".IsEnabled", "FALSE")] + RESTORE)
         checker.client.loop_stop()
         checker.client.disconnect()
     report["success"] = all(r["ok"] for r in report["rows"])

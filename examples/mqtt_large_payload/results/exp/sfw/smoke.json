@@ -1,0 +1,85 @@
+{
+ "started": "2026-11-11 11:36:36",
+ "loop": [
+  [
+   "PLC_PRG.ClientCallsPerScan",
+   "32"
+  ],
+  [
+   "PLC_PRG.ClientBudgetUs",
+   "4000"
+  ],
+  [
+   "PLC_PRG.IsSecondClientCallEnabled",
+   "TRUE"
+  ],
+  [
+   "PLC_PRG.SecondCallBudgetUs",
+   "2000"
+  ],
+  [
+   "PLC_PRG.IsEarlyStopEnabled",
+   "TRUE"
+  ]
+ ],
+ "cases": [
+  {
+   "case": "steady",
+   "plc": {
+    "InvalidCount": 0,
+    "LiveHandOffScans": 104,
+    "InFlightCount": 0,
+    "NextSequence": 105,
+    "CheckFailCount": 0,
+    "LastRefuseReason": 0,
+    "CheckCount": 0,
+    "IsBrokerConnected": "TRUE",
+    "PushFailCount": 0,
+    "DroppedCount": 0,
+    "MaxPushUs": 381,
+    "QueuedCount": 0,
+    "MaxCycleUs": 22989,
+    "IsReady": "TRUE",
+    "QuickCloseCount": 0,
+    "LiveDeferredCount": 0,
+    "MaxScanClientUs": 3779,
+    "MaxBlockUs": 471,
+    "DeliveredCount": 104,
+    "IsHeld": "FALSE",
+    "NoSubscriberCount": 0,
+    "NotAcceptedCount": 0,
+    "Capacity": 1982,
+    "RefusedCount": 0,
+    "MqttLink.clientFB.counts.CountConnectAttempt": 44,
+    "IsSettingClamped": "FALSE",
+    "HasWork": "FALSE",
+    "OldestAgeMs": 0,
+    "PushedCount": 104,
+    "ConfigError": "STORE_FORWARD_ERROR.NONE"
+   },
+   "drained": true,
+   "observer": {
+    "received": 104,
+    "distinct": 104,
+    "duplicates": 0,
+    "missing": 0,
+    "missing_first": [],
+    "first": 1,
+    "last": 104
+   },
+   "age_ms": {
+    "n": 104,
+    "p50": -9769.0,
+    "p95": -9768.3,
+    "max": -9763.6,
+    "min": -9769.9
+   },
+   "marigraf": "rows 104 distinct 104 min 1 max 104\nmissing_count 0"
+  }
+ ],
+ "config": {
+  "IsReady": "TRUE",
+  "Capacity": 1982,
+  "ConfigError": "STORE_FORWARD_ERROR.NONE"
+ }
+}

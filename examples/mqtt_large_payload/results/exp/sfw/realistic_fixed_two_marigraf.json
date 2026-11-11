@@ -1,0 +1,456 @@
+{
+ "started": "2026-11-11 13:45:38",
+ "loop": [
+  [
+   "PLC_PRG.ClientCallsPerScan",
+   "32"
+  ],
+  [
+   "PLC_PRG.ClientBudgetUs",
+   "4000"
+  ],
+  [
+   "PLC_PRG.IsSecondClientCallEnabled",
+   "TRUE"
+  ],
+  [
+   "PLC_PRG.SecondCallBudgetUs",
+   "2000"
+  ],
+  [
+   "PLC_PRG.IsEarlyStopEnabled",
+   "TRUE"
+  ]
+ ],
+ "cases": [
+  {
+   "case": "realistic_marigraf",
+   "mode": "two_blocks",
+   "outage_s": 30,
+   "config": {
+    "LastFastConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "FastSlotBytes": 5120,
+    "IsConfigured": "TRUE",
+    "SlowSlotBytes": 26624,
+    "SlowStorageBytes": 865072,
+    "IsTwoBlocksConfigured": "TRUE",
+    "FastStorageBytes": 1756368,
+    "LastSlowConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "blocks": {
+     "slow": {
+      "ConfigError": "STORE_FORWARD_ERROR.NONE",
+      "IsReady": "TRUE",
+      "Capacity": 32
+     },
+     "fast": {
+      "ConfigError": "STORE_FORWARD_ERROR.NONE",
+      "Capacity": 338,
+      "IsReady": "TRUE"
+     }
+    }
+   },
+   "adaptive_outputs": false,
+   "plc_reconnected_s": 2.6,
+   "drain_s": 42.5,
+   "queue_peak": {
+    "slow": 32,
+    "fast": 338
+   },
+   "drained": true,
+   "plc_blocks": {
+    "slow": {
+     "LastConfigureError": "STORE_FORWARD_ERROR.NONE",
+     "LastRefuseReason": 0,
+     "InvalidCount": 0,
+     "LiveDeferredCount": 0,
+     "DroppedCount": 375,
+     "IsSettingClamped": "FALSE",
+     "RefusedCount": 0,
+     "NotAcceptedCount": 0,
+     "InFlightCount": 0,
+     "DeliveredCount": 736,
+     "QuickCloseCount": 0,
+     "NoSubscriberCount": 11,
+     "QueuedCount": 0,
+     "IsReady": "TRUE",
+     "IsHeld": "FALSE",
+     "ConfigError": "STORE_FORWARD_ERROR.NONE",
+     "PushedCount": 1111,
+     "Capacity": 32,
+     "HasWork": "FALSE",
+     "OldestAgeMs": 0
+    },
+    "fast": {
+     "LiveDeferredCount": 0,
+     "LastRefuseReason": 0,
+     "RefusedCount": 0,
+     "NotAcceptedCount": 0,
+     "InFlightCount": 0,
+     "ConfigError": "STORE_FORWARD_ERROR.NONE",
+     "PushedCount": 2018,
+     "DeliveredCount": 1659,
+     "IsHeld": "FALSE",
+     "QueuedCount": 0,
+     "DroppedCount": 359,
+     "Capacity": 338,
+     "IsReady": "TRUE",
+     "HasWork": "FALSE",
+     "LastConfigureError": "STORE_FORWARD_ERROR.NONE",
+     "NoSubscriberCount": 18,
+     "IsSettingClamped": "FALSE",
+     "QuickCloseCount": 1,
+     "OldestAgeMs": 0,
+     "InvalidCount": 0
+    }
+   },
+   "plc": {
+    "FastPushFailCount": 0,
+    "MaxSlowPushUs": 2672,
+    "FastSlotBytes": 5120,
+    "MaxFastPushUs": 1117,
+    "FastStorageBytes": 1756368,
+    "IsBrokerConnected": "TRUE",
+    "SlowNextSeq": 287,
+    "LiveHandOffScans": 500,
+    "MaxCycleUs": 25730,
+    "LastSlowConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "MaxScanClientUs": 8862,
+    "MaxSlowBlockUs": 410,
+    "IsConfigured": "TRUE",
+    "ConfigureCount": 3,
+    "SlowPushFailCount": 0,
+    "SlowStorageBytes": 865072,
+    "MqttLink.clientFB.counts.CountConnectAttempt": 43,
+    "LastFastConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "SlowSlotBytes": 26624,
+    "FastNextSeq": 2844,
+    "SlowSkippedCount": 0,
+    "FastSkippedCount": 0,
+    "HasWork": "FALSE",
+    "IsTwoBlocksConfigured": "TRUE",
+    "MaxFastBlockUs": 604
+   },
+   "timeline": [
+    [
+     0.3,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 340,
+       "OldestAgeMs": 749,
+       "QueuedCount": 1,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 0,
+       "InFlightCount": 0,
+       "IsHeld": "FALSE",
+       "QueuedCount": 21,
+       "OldestAgeMs": 2406,
+       "DroppedCount": 25
+      }
+     }
+    ],
+    [
+     8.7,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 340,
+       "OldestAgeMs": 9064,
+       "QueuedCount": 9,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 0,
+       "InFlightCount": 0,
+       "IsHeld": "FALSE",
+       "QueuedCount": 104,
+       "OldestAgeMs": 10718,
+       "DroppedCount": 25
+      }
+     }
+    ],
+    [
+     17.0,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 340,
+       "OldestAgeMs": 17379,
+       "QueuedCount": 18,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 0,
+       "InFlightCount": 0,
+       "IsHeld": "FALSE",
+       "QueuedCount": 187,
+       "OldestAgeMs": 19083,
+       "DroppedCount": 25
+      }
+     }
+    ],
+    [
+     25.3,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 340,
+       "OldestAgeMs": 25743,
+       "QueuedCount": 26,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 0,
+       "InFlightCount": 0,
+       "IsHeld": "FALSE",
+       "QueuedCount": 271,
+       "OldestAgeMs": 27400,
+       "DroppedCount": 25
+      }
+     }
+    ],
+    [
+     40.9,
+     {
+      "slow": {
+       "NoSubscriberCount": 1,
+       "IsHeld": "TRUE",
+       "DroppedCount": 347,
+       "OldestAgeMs": 31003,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 3,
+       "InFlightCount": 0,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33659,
+       "DroppedCount": 87
+      }
+     }
+    ],
+    [
+     45.4,
+     {
+      "slow": {
+       "NoSubscriberCount": 3,
+       "IsHeld": "TRUE",
+       "DroppedCount": 351,
+       "OldestAgeMs": 31453,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 6,
+       "InFlightCount": 0,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33707,
+       "DroppedCount": 131
+      }
+     }
+    ],
+    [
+     49.8,
+     {
+      "slow": {
+       "NoSubscriberCount": 5,
+       "IsHeld": "TRUE",
+       "DroppedCount": 356,
+       "OldestAgeMs": 31954,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 9,
+       "InFlightCount": 0,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33761,
+       "DroppedCount": 175
+      }
+     }
+    ],
+    [
+     54.1,
+     {
+      "slow": {
+       "NoSubscriberCount": 7,
+       "IsHeld": "TRUE",
+       "DroppedCount": 360,
+       "OldestAgeMs": 31155,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 12,
+       "InFlightCount": 0,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33712,
+       "DroppedCount": 218
+      }
+     }
+    ],
+    [
+     58.3,
+     {
+      "slow": {
+       "NoSubscriberCount": 7,
+       "IsHeld": "TRUE",
+       "DroppedCount": 364,
+       "OldestAgeMs": 31353,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 15,
+       "InFlightCount": 3,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33728,
+       "DroppedCount": 260
+      }
+     }
+    ],
+    [
+     62.9,
+     {
+      "slow": {
+       "NoSubscriberCount": 9,
+       "IsHeld": "TRUE",
+       "DroppedCount": 369,
+       "OldestAgeMs": 31053,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 18,
+       "InFlightCount": 0,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33759,
+       "DroppedCount": 307
+      }
+     }
+    ],
+    [
+     67.2,
+     {
+      "slow": {
+       "NoSubscriberCount": 11,
+       "IsHeld": "TRUE",
+       "DroppedCount": 373,
+       "OldestAgeMs": 31252,
+       "QueuedCount": 32,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 18,
+       "InFlightCount": 0,
+       "IsHeld": "TRUE",
+       "QueuedCount": 338,
+       "OldestAgeMs": 33657,
+       "DroppedCount": 350
+      }
+     }
+    ],
+    [
+     71.4,
+     {
+      "slow": {
+       "NoSubscriberCount": 11,
+       "IsHeld": "FALSE",
+       "DroppedCount": 375,
+       "OldestAgeMs": 0,
+       "QueuedCount": 3,
+       "InFlightCount": 1
+      },
+      "fast": {
+       "NoSubscriberCount": 18,
+       "InFlightCount": 2,
+       "IsHeld": "FALSE",
+       "QueuedCount": 298,
+       "OldestAgeMs": 31654,
+       "DroppedCount": 359
+      }
+     }
+    ],
+    [
+     75.8,
+     {
+      "slow": {
+       "NoSubscriberCount": 11,
+       "IsHeld": "FALSE",
+       "DroppedCount": 375,
+       "OldestAgeMs": 0,
+       "QueuedCount": 0,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 18,
+       "InFlightCount": 3,
+       "IsHeld": "FALSE",
+       "QueuedCount": 150,
+       "OldestAgeMs": 21286,
+       "DroppedCount": 359
+      }
+     }
+    ],
+    [
+     80.2,
+     {
+      "slow": {
+       "NoSubscriberCount": 11,
+       "IsHeld": "FALSE",
+       "DroppedCount": 375,
+       "OldestAgeMs": 0,
+       "QueuedCount": 0,
+       "InFlightCount": 0
+      },
+      "fast": {
+       "NoSubscriberCount": 18,
+       "InFlightCount": 0,
+       "IsHeld": "FALSE",
+       "QueuedCount": 0,
+       "OldestAgeMs": 0,
+       "DroppedCount": 359
+      }
+     }
+    ]
+   ],
+   "times": {
+    "stop": 1794422779.5443785,
+    "restart": 1794422814.6052504,
+    "reconnect": 1794422817.2240663,
+    "drain_end": 1794422859.729385
+   },
+   "streams": {
+    "slow": {
+     "pushed": 117,
+     "first": 170,
+     "last": 286,
+     "marigraf": "rows 82 distinct 82 min 170 max 286\nmissing_count 35      \nmissing 191 to 225"
+    },
+    "fast": {
+     "pushed": 1162,
+     "first": 1682,
+     "last": 2843,
+     "marigraf": "rows 828 distinct 828 min 1682 max 2843\nmissing_count 334      \nmissing 1888 to 2221"
+    }
+   }
+  }
+ ],
+ "config": {
+  "IsReady": "TRUE",
+  "Capacity": 123,
+  "ConfigError": "STORE_FORWARD_ERROR.NONE"
+ }
+}

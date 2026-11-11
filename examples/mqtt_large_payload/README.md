@@ -57,6 +57,22 @@ is never stored in the repo.
 | `online_change_test.py`, `library_online_change_test.py`, `st/probe/OnlineChangeProbe.st` | Online changes, resets, and an online change of the library itself, with traffic |
 | `url_test.py`, `dns_test.py`, `st/probe/UrlProbe.st` | Broker URL parsing; a broker by host name |
 
+### Library 1.4.0.0 (MQTT 5, `MqttStoreForward`)
+
+These run on the MQTT 5 demo copy (`codesys_projects/mqtt_large_payload_demo_mqtt5`). `tmp/mqtt5_bench/redeploy.sh`
+builds the fork's `mqtt5` worktree into it (or `FORK=<dir>` for another source), patches it and deploys it. Tokens
+live in the gitignored `tmp/mqtt5_bench/`.
+
+| Path | Purpose |
+|---|---|
+| `mqtt5_test.py`, `mqtt5_history.py` | MQTT 5 against a private MQTTug on `:1886`: connect, sends, receives, refusals (0x87, 0x86), takeover |
+| `qos_test.py --mqtt5` | The QoS matrix on MQTT 5 |
+| `mixed_rate_mqtt5.py`, `show_mixed_mqtt5.py` | `mixed_rate_test.py` on a chosen broker and protocol, with and without the client loop's early stop (`patch_demo_early_stop.py`) |
+| `patch_demo_store_forward.py` | IDE script: adds `StoreForwardTest`, `MixedPushTest` and `RealisticSfwTest` (`st/sfw/`) to the copy, with the call pattern `MqttStoreForward` needs |
+| `sfw_test.py` | Store-and-forward end to end, against a temporary MQTTug, Marigraf and Postgres on the dev VM (`~/tmp/sfw-bench/bin` starts and stops them). Cases: steady, outage, outage_marigraf, overflow, large, refused, v311, realistic and realistic_marigraf (26 KB at 1 Hz + 5 KB at 10 Hz, `--two-blocks`/`--one-block`) |
+| `show_realistic.py` | Side-by-side table of realistic runs |
+| `mixed_rate_test.py --push` | The mixed-rate benchmark through `MqttStoreForward` (`MixedPushTest`) |
+
 ## Run it
 
 The demo project lives at `../codesys_projects/mqtt_large_payload_demo/`. To rebuild it from the

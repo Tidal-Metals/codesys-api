@@ -54,6 +54,11 @@ compiles and runs.
     `done`; an oversized message forces a full refresh, and so does a reconnect. A tag that isn't GOOD is
     published as `NaN`, never through an integer conversion. Each remote source
     sends a heartbeat, so a quiet source isn't mistaken for a stale one.
+    Connection liveness is separate from that heartbeat. A PLC announces itself on `status/<group>/<node_id>`:
+    retained `online` as a birth, `offline` as its will, both at QoS 1. This follows the cross-service contract in
+    `scada-greenfield-rewrite/docs/41-device-liveness-contract.md`. With MQTT library 1.4.0.0, set `MQTT_IN_OUT`'s
+    `BuildWillTopicAndMessage := FALSE`, `ClientWillTopic`, `ClientWillMessage := 'offline'`,
+    `WillQoS := MQTT.QoS.AtLeastOnce` and `BirthMessage := 'online'` before the first client call.
 13. **One core, full downloads.** The two tasks run on the same CPU core (or the queues use the runtime's
     atomics). Any change to the generated table is a full download: queued commands and history refer to rows
     by index.
@@ -205,7 +210,14 @@ Each of these cost time on this bench; none is obvious from the code.
 Measured 2026-10-19 with `check_compile.py` (it reports the compiler's memory statistics) and the MQTT scale
 tests in `examples/mqtt_large_payload/results/scale/`.
 
-- **Memory isn't the limit.** The code and data area grows to 50 MiB; retain is 800 KB and persistent 200 KB.
+- **Memory isn't the limit for tags, but the device has less than the compiler allows.** The compiler's code and
+  data area grows to 50 MiB, but the device refused a full download with "Not enough memory on device" on
+  2026-11-11. That download was about 10.6 MB (two 4 MiB test buffers) replacing a running application of the same
+  size. The same 10.6 MB application had loaded over a 6.4 MB one. Later the device refused even a 6 MB
+  application with nothing loaded, after many downloads in one session. A power cycle cleared it, and the same
+  build then loaded. So the runtime's memory seems to fragment over repeated downloads. Power-cycle the PLC before
+  concluding a build is too big, and keep large buffers (for example `MqttStoreForward` storage) to a few MB until
+  the real limit is measured. Retain is 800 KB and persistent 200 KB.
   The skeleton costs about 260 B per tag: 134 B of tables, 44 B of worst-case payload, and the rest
   initializer code. 10,000 tags use 3.3 MB, the current BCNF program 0.8 MB.
 - **MQTT send rate is the limit.** The library sends about 1.85 KB per client call, so throughput follows the

@@ -1,0 +1,342 @@
+{
+ "started": "2026-11-11 13:53:29",
+ "loop": [
+  [
+   "PLC_PRG.ClientCallsPerScan",
+   "32"
+  ],
+  [
+   "PLC_PRG.ClientBudgetUs",
+   "4000"
+  ],
+  [
+   "PLC_PRG.IsSecondClientCallEnabled",
+   "TRUE"
+  ],
+  [
+   "PLC_PRG.SecondCallBudgetUs",
+   "2000"
+  ],
+  [
+   "PLC_PRG.IsEarlyStopEnabled",
+   "TRUE"
+  ]
+ ],
+ "cases": [
+  {
+   "case": "realistic_marigraf",
+   "mode": "one_block",
+   "outage_s": 30,
+   "config": {
+    "LastFastConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "FastSlotBytes": 0,
+    "IsConfigured": "TRUE",
+    "SlowSlotBytes": 26624,
+    "SlowStorageBytes": 2621440,
+    "IsTwoBlocksConfigured": "FALSE",
+    "FastStorageBytes": 0,
+    "LastSlowConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "blocks": {
+     "slow": {
+      "ConfigError": "STORE_FORWARD_ERROR.NONE",
+      "Capacity": 4096,
+      "IsReady": "TRUE"
+     }
+    }
+   },
+   "adaptive_outputs": false,
+   "plc_reconnected_s": 1.1,
+   "drain_s": 33.6,
+   "queue_peak": {
+    "slow": 350
+   },
+   "drained": true,
+   "plc_blocks": {
+    "slow": {
+     "ConfigError": "STORE_FORWARD_ERROR.NONE",
+     "QuickCloseCount": 0,
+     "DroppedCount": 421,
+     "NoSubscriberCount": 18,
+     "IsHeld": "FALSE",
+     "IsReady": "TRUE",
+     "DeliveredCount": 1728,
+     "OldestAgeMs": 0,
+     "PushedCount": 2149,
+     "QueuedCount": 0,
+     "LastRefuseReason": 0,
+     "LastConfigureError": "STORE_FORWARD_ERROR.NONE",
+     "IsSettingClamped": "FALSE",
+     "InvalidCount": 0,
+     "HasWork": "FALSE",
+     "LiveDeferredCount": 0,
+     "NotAcceptedCount": 0,
+     "InFlightCount": 0,
+     "Capacity": 4096,
+     "RefusedCount": 0
+    }
+   },
+   "plc": {
+    "FastPushFailCount": 0,
+    "MaxSlowPushUs": 2395,
+    "FastSlotBytes": 0,
+    "MaxFastPushUs": 1073,
+    "FastStorageBytes": 0,
+    "IsBrokerConnected": "TRUE",
+    "SlowNextSeq": 197,
+    "LiveHandOffScans": 466,
+    "MaxCycleUs": 26380,
+    "LastSlowConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "MaxScanClientUs": 8479,
+    "MaxSlowBlockUs": 855,
+    "IsConfigured": "TRUE",
+    "ConfigureCount": 2,
+    "SlowPushFailCount": 0,
+    "SlowStorageBytes": 2621440,
+    "MqttLink.clientFB.counts.CountConnectAttempt": 29,
+    "LastFastConfigureError": "STORE_FORWARD_ERROR.NONE",
+    "SlowSlotBytes": 26624,
+    "FastNextSeq": 1954,
+    "SlowSkippedCount": 0,
+    "FastSkippedCount": 0,
+    "HasWork": "FALSE",
+    "IsTwoBlocksConfigured": "FALSE",
+    "MaxFastBlockUs": 319
+   },
+   "timeline": [
+    [
+     0.3,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 87,
+       "OldestAgeMs": 1151,
+       "QueuedCount": 9,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     7.5,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 87,
+       "OldestAgeMs": 8467,
+       "QueuedCount": 89,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     14.7,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 87,
+       "OldestAgeMs": 15576,
+       "QueuedCount": 168,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     21.8,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 87,
+       "OldestAgeMs": 22690,
+       "QueuedCount": 246,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     28.9,
+     {
+      "slow": {
+       "NoSubscriberCount": 0,
+       "IsHeld": "FALSE",
+       "DroppedCount": 87,
+       "OldestAgeMs": 29752,
+       "QueuedCount": 323,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     40.4,
+     {
+      "slow": {
+       "NoSubscriberCount": 4,
+       "IsHeld": "TRUE",
+       "DroppedCount": 171,
+       "OldestAgeMs": 31605,
+       "QueuedCount": 346,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     43.6,
+     {
+      "slow": {
+       "NoSubscriberCount": 8,
+       "IsHeld": "TRUE",
+       "DroppedCount": 210,
+       "OldestAgeMs": 31875,
+       "QueuedCount": 346,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     46.8,
+     {
+      "slow": {
+       "NoSubscriberCount": 8,
+       "IsHeld": "TRUE",
+       "DroppedCount": 245,
+       "OldestAgeMs": 31357,
+       "QueuedCount": 348,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     50.0,
+     {
+      "slow": {
+       "NoSubscriberCount": 12,
+       "IsHeld": "TRUE",
+       "DroppedCount": 280,
+       "OldestAgeMs": 31309,
+       "QueuedCount": 350,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     53.2,
+     {
+      "slow": {
+       "NoSubscriberCount": 17,
+       "IsHeld": "TRUE",
+       "DroppedCount": 311,
+       "OldestAgeMs": 31709,
+       "QueuedCount": 341,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     56.3,
+     {
+      "slow": {
+       "NoSubscriberCount": 17,
+       "IsHeld": "TRUE",
+       "DroppedCount": 346,
+       "OldestAgeMs": 31606,
+       "QueuedCount": 346,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     59.4,
+     {
+      "slow": {
+       "NoSubscriberCount": 18,
+       "IsHeld": "TRUE",
+       "DroppedCount": 379,
+       "OldestAgeMs": 31605,
+       "QueuedCount": 346,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     62.4,
+     {
+      "slow": {
+       "NoSubscriberCount": 18,
+       "IsHeld": "TRUE",
+       "DroppedCount": 412,
+       "OldestAgeMs": 31572,
+       "QueuedCount": 346,
+       "InFlightCount": 0
+      }
+     }
+    ],
+    [
+     65.6,
+     {
+      "slow": {
+       "NoSubscriberCount": 18,
+       "IsHeld": "FALSE",
+       "DroppedCount": 421,
+       "OldestAgeMs": 24592,
+       "QueuedCount": 256,
+       "InFlightCount": 3
+      }
+     }
+    ],
+    [
+     68.8,
+     {
+      "slow": {
+       "NoSubscriberCount": 18,
+       "IsHeld": "FALSE",
+       "DroppedCount": 421,
+       "OldestAgeMs": 15977,
+       "QueuedCount": 125,
+       "InFlightCount": 5
+      }
+     }
+    ],
+    [
+     71.9,
+     {
+      "slow": {
+       "NoSubscriberCount": 18,
+       "IsHeld": "FALSE",
+       "DroppedCount": 421,
+       "OldestAgeMs": 0,
+       "QueuedCount": 0,
+       "InFlightCount": 2
+      }
+     }
+    ]
+   ],
+   "times": {
+    "stop": 1794423252.1315217,
+    "restart": 1794423289.370436,
+    "reconnect": 1794423290.4804964,
+    "drain_end": 1794423324.036781
+   },
+   "streams": {
+    "slow": {
+     "pushed": 108,
+     "first": 89,
+     "last": 196,
+     "marigraf": "rows 78 distinct 78 min 89 max 196\nmissing_count 30      \nmissing 110 to 139"
+    },
+    "fast": {
+     "pushed": 1078,
+     "first": 876,
+     "last": 1953,
+     "marigraf": "rows 774 distinct 774 min 876 max 1953\nmissing_count 304      \nmissing 1081 to 1384"
+    }
+   }
+  }
+ ],
+ "config": {
+  "IsReady": "TRUE",
+  "Capacity": 4096,
+  "ConfigError": "STORE_FORWARD_ERROR.NONE"
+ }
+}

@@ -7,6 +7,8 @@ Everything after -- goes to mixed_rate_test.py unchanged. --broker hq: 192.168.5
 as mixed_rate_test.py measures it); mqttug: the private MQTTug of mqtt5_test.py, where the PLC and this subscriber use
 its tokens. --early-stop needs the demo copy patched by examples/mqtt_large_payload/patch_demo_early_stop.py (PLC_PRG.IsEarlyStopEnabled).
 Needs library 1.4.0.0 on the PLC. Afterwards the PLC is back on MQTT 3.1.1 at HQ with the early stop off.
+The MqttStoreForward variant passes through as well (-- --push ...; needs patch_demo_store_forward.py, whose early stop
+is on IsUnsentPending while MixedPushTest is enabled).
 """
 import argparse
 import sys

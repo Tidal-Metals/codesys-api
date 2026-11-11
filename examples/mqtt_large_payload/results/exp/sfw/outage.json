@@ -1,0 +1,801 @@
+{
+ "started": "2026-11-11 11:37:50",
+ "loop": [
+  [
+   "PLC_PRG.ClientCallsPerScan",
+   "32"
+  ],
+  [
+   "PLC_PRG.ClientBudgetUs",
+   "4000"
+  ],
+  [
+   "PLC_PRG.IsSecondClientCallEnabled",
+   "TRUE"
+  ],
+  [
+   "PLC_PRG.SecondCallBudgetUs",
+   "2000"
+  ],
+  [
+   "PLC_PRG.IsEarlyStopEnabled",
+   "TRUE"
+  ]
+ ],
+ "cases": [
+  {
+   "case": "outage",
+   "outage_s": 120.0,
+   "plc_reconnected_s": 1.1,
+   "drain_s": 18.6,
+   "queue_peak": 541,
+   "plc": {
+    "InvalidCount": 0,
+    "LiveHandOffScans": 279,
+    "InFlightCount": 0,
+    "NextSequence": 1013,
+    "CheckFailCount": 0,
+    "LastRefuseReason": 0,
+    "CheckCount": 0,
+    "IsBrokerConnected": "TRUE",
+    "PushFailCount": 0,
+    "DroppedCount": 0,
+    "MaxPushUs": 615,
+    "QueuedCount": 0,
+    "MaxCycleUs": 22970,
+    "IsReady": "TRUE",
+    "QuickCloseCount": 0,
+    "LiveDeferredCount": 0,
+    "MaxScanClientUs": 3053,
+    "MaxBlockUs": 548,
+    "DeliveredCount": 1012,
+    "IsHeld": "FALSE",
+    "NoSubscriberCount": 0,
+    "NotAcceptedCount": 0,
+    "Capacity": 1982,
+    "RefusedCount": 0,
+    "MqttLink.clientFB.counts.CountConnectAttempt": 86,
+    "IsSettingClamped": "FALSE",
+    "HasWork": "FALSE",
+    "OldestAgeMs": 0,
+    "PushedCount": 1012,
+    "ConfigError": "STORE_FORWARD_ERROR.NONE"
+   },
+   "drained": true,
+   "timeline": [
+    [
+     0.3,
+     {
+      "QueuedCount": 3,
+      "OldestAgeMs": 951,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     6.8,
+     {
+      "QueuedCount": 35,
+      "OldestAgeMs": 7413,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     13.3,
+     {
+      "QueuedCount": 68,
+      "OldestAgeMs": 13974,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     19.9,
+     {
+      "QueuedCount": 101,
+      "OldestAgeMs": 20635,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     26.6,
+     {
+      "QueuedCount": 134,
+      "OldestAgeMs": 27297,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     33.2,
+     {
+      "QueuedCount": 166,
+      "OldestAgeMs": 34009,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     39.9,
+     {
+      "QueuedCount": 199,
+      "OldestAgeMs": 40671,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     46.6,
+     {
+      "QueuedCount": 233,
+      "OldestAgeMs": 47383,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     53.3,
+     {
+      "QueuedCount": 266,
+      "OldestAgeMs": 53993,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     60.0,
+     {
+      "QueuedCount": 298,
+      "OldestAgeMs": 60705,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     66.6,
+     {
+      "QueuedCount": 332,
+      "OldestAgeMs": 67366,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     73.3,
+     {
+      "QueuedCount": 364,
+      "OldestAgeMs": 74029,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     79.9,
+     {
+      "QueuedCount": 397,
+      "OldestAgeMs": 80690,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     86.6,
+     {
+      "QueuedCount": 430,
+      "OldestAgeMs": 87352,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     93.3,
+     {
+      "QueuedCount": 463,
+      "OldestAgeMs": 94015,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     99.9,
+     {
+      "QueuedCount": 497,
+      "OldestAgeMs": 100677,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     106.7,
+     {
+      "QueuedCount": 530,
+      "OldestAgeMs": 107339,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     113.3,
+     {
+      "QueuedCount": 563,
+      "OldestAgeMs": 114000,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     120.0,
+     {
+      "QueuedCount": 596,
+      "OldestAgeMs": 120713,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     130.9,
+     {
+      "QueuedCount": 541,
+      "OldestAgeMs": 106339,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 3
+     }
+    ],
+    [
+     133.6,
+     {
+      "QueuedCount": 435,
+      "OldestAgeMs": 87654,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     136.5,
+     {
+      "QueuedCount": 327,
+      "OldestAgeMs": 68622,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     139.3,
+     {
+      "QueuedCount": 221,
+      "OldestAgeMs": 49888,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     142.1,
+     {
+      "QueuedCount": 113,
+      "OldestAgeMs": 31003,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     144.9,
+     {
+      "QueuedCount": 9,
+      "OldestAgeMs": 0,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 1
+     }
+    ],
+    [
+     147.6,
+     {
+      "QueuedCount": 0,
+      "OldestAgeMs": 0,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 0,
+      "InFlightCount": 0
+     }
+    ]
+   ],
+   "marigraf": "rows 189 distinct 189 min 18 max 206\nmissing_count 0",
+   "observer": {
+    "received": 908,
+    "distinct": 908,
+    "duplicates": 0,
+    "missing": 0,
+    "missing_first": [],
+    "first": 105,
+    "last": 1012
+   },
+   "age_ms_before": {
+    "n": 100,
+    "p50": -9768.9,
+    "p95": -9768.3,
+    "max": -9765.6,
+    "min": -9769.6
+   },
+   "age_ms_live_during_drain": {
+    "n": 91,
+    "p50": -9767.8,
+    "p95": 12868.9,
+    "max": 13720.4,
+    "min": -9769.2
+   },
+   "age_ms_after": {
+    "n": 126,
+    "p50": -9768.4,
+    "p95": -9766.4,
+    "max": -9753.2,
+    "min": -9769.2
+   }
+  },
+  {
+   "case": "outage_marigraf",
+   "outage_s": 120.0,
+   "plc_reconnected_s": 3.5,
+   "drain_s": 69.6,
+   "queue_peak": 836,
+   "plc": {
+    "InvalidCount": 0,
+    "LiveHandOffScans": 306,
+    "InFlightCount": 0,
+    "NextSequence": 2158,
+    "CheckFailCount": 0,
+    "LastRefuseReason": 0,
+    "CheckCount": 0,
+    "IsBrokerConnected": "TRUE",
+    "PushFailCount": 0,
+    "DroppedCount": 0,
+    "MaxPushUs": 679,
+    "QueuedCount": 0,
+    "MaxCycleUs": 23442,
+    "IsReady": "TRUE",
+    "QuickCloseCount": 0,
+    "LiveDeferredCount": 0,
+    "MaxScanClientUs": 3692,
+    "MaxBlockUs": 750,
+    "DeliveredCount": 2157,
+    "IsHeld": "FALSE",
+    "NoSubscriberCount": 19,
+    "NotAcceptedCount": 0,
+    "Capacity": 1982,
+    "RefusedCount": 0,
+    "MqttLink.clientFB.counts.CountConnectAttempt": 125,
+    "IsSettingClamped": "FALSE",
+    "HasWork": "FALSE",
+    "OldestAgeMs": 0,
+    "PushedCount": 2157,
+    "ConfigError": "STORE_FORWARD_ERROR.NONE"
+   },
+   "drained": true,
+   "timeline": [
+    [
+     0.3,
+     {
+      "QueuedCount": 3,
+      "OldestAgeMs": 1002,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     6.9,
+     {
+      "QueuedCount": 37,
+      "OldestAgeMs": 7664,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     13.6,
+     {
+      "QueuedCount": 71,
+      "OldestAgeMs": 14527,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     20.4,
+     {
+      "QueuedCount": 104,
+      "OldestAgeMs": 21190,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     27.1,
+     {
+      "QueuedCount": 137,
+      "OldestAgeMs": 27852,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     33.8,
+     {
+      "QueuedCount": 171,
+      "OldestAgeMs": 34613,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     40.5,
+     {
+      "QueuedCount": 204,
+      "OldestAgeMs": 41275,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     47.2,
+     {
+      "QueuedCount": 239,
+      "OldestAgeMs": 48338,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     54.3,
+     {
+      "QueuedCount": 272,
+      "OldestAgeMs": 55049,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     61.0,
+     {
+      "QueuedCount": 305,
+      "OldestAgeMs": 61760,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     67.8,
+     {
+      "QueuedCount": 339,
+      "OldestAgeMs": 68672,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     74.6,
+     {
+      "QueuedCount": 372,
+      "OldestAgeMs": 75335,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     81.3,
+     {
+      "QueuedCount": 405,
+      "OldestAgeMs": 81996,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     87.9,
+     {
+      "QueuedCount": 438,
+      "OldestAgeMs": 88608,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     94.5,
+     {
+      "QueuedCount": 471,
+      "OldestAgeMs": 95271,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     101.2,
+     {
+      "QueuedCount": 503,
+      "OldestAgeMs": 101732,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     107.6,
+     {
+      "QueuedCount": 536,
+      "OldestAgeMs": 108393,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     114.3,
+     {
+      "QueuedCount": 569,
+      "OldestAgeMs": 115055,
+      "InFlightCount": 0,
+      "DroppedCount": 0
+     }
+    ],
+    [
+     127.7,
+     {
+      "QueuedCount": 626,
+      "OldestAgeMs": 126975,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 2,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     130.4,
+     {
+      "QueuedCount": 639,
+      "OldestAgeMs": 129331,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 5,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     133.2,
+     {
+      "QueuedCount": 653,
+      "OldestAgeMs": 132135,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 5,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     136.0,
+     {
+      "QueuedCount": 667,
+      "OldestAgeMs": 135089,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 7,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     138.9,
+     {
+      "QueuedCount": 682,
+      "OldestAgeMs": 138094,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 7,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     142.0,
+     {
+      "QueuedCount": 697,
+      "OldestAgeMs": 141249,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 9,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     144.8,
+     {
+      "QueuedCount": 711,
+      "OldestAgeMs": 144023,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 9,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     147.5,
+     {
+      "QueuedCount": 724,
+      "OldestAgeMs": 146409,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 11,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     150.7,
+     {
+      "QueuedCount": 738,
+      "OldestAgeMs": 149764,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 13,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     153.4,
+     {
+      "QueuedCount": 753,
+      "OldestAgeMs": 152519,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 13,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     156.2,
+     {
+      "QueuedCount": 767,
+      "OldestAgeMs": 155524,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 15,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     159.0,
+     {
+      "QueuedCount": 781,
+      "OldestAgeMs": 158279,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 15,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     161.8,
+     {
+      "QueuedCount": 795,
+      "OldestAgeMs": 160633,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 17,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     164.6,
+     {
+      "QueuedCount": 809,
+      "OldestAgeMs": 163457,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 17,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     167.4,
+     {
+      "QueuedCount": 823,
+      "OldestAgeMs": 166443,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     170.1,
+     {
+      "QueuedCount": 836,
+      "OldestAgeMs": 169447,
+      "IsHeld": "TRUE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 0
+     }
+    ],
+    [
+     172.9,
+     {
+      "QueuedCount": 762,
+      "OldestAgeMs": 150361,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 3
+     }
+    ],
+    [
+     175.7,
+     {
+      "QueuedCount": 656,
+      "OldestAgeMs": 132178,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     178.5,
+     {
+      "QueuedCount": 548,
+      "OldestAgeMs": 113145,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     181.2,
+     {
+      "QueuedCount": 444,
+      "OldestAgeMs": 94814,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     184.1,
+     {
+      "QueuedCount": 336,
+      "OldestAgeMs": 75931,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     186.9,
+     {
+      "QueuedCount": 230,
+      "OldestAgeMs": 57050,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 3
+     }
+    ],
+    [
+     189.7,
+     {
+      "QueuedCount": 126,
+      "OldestAgeMs": 38418,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     192.6,
+     {
+      "QueuedCount": 10,
+      "OldestAgeMs": 0,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 2
+     }
+    ],
+    [
+     195.4,
+     {
+      "QueuedCount": 0,
+      "OldestAgeMs": 0,
+      "IsHeld": "FALSE",
+      "NoSubscriberCount": 19,
+      "InFlightCount": 0
+     }
+    ]
+   ],
+   "marigraf": "rows 1145 distinct 1145 min 1013 max 2157\nmissing_count 0"
+  }
+ ],
+ "config": {
+  "IsReady": "TRUE",
+  "Capacity": 1982,
+  "ConfigError": "STORE_FORWARD_ERROR.NONE"
+ }
+}
