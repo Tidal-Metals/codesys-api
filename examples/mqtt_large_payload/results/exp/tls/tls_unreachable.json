@@ -1,0 +1,67 @@
+{
+ "started": "2026-11-12 17:19:01",
+ "cases": [
+  {
+   "case": "free address on the PLC's subnet",
+   "target": "192.168.50.251:8883",
+   "tls": true,
+   "window_s": 162,
+   "online_reads_ok": 7,
+   "online_reads_failed": 0,
+   "attempts": 12,
+   "max_scan_gap_ms": 14002.0,
+   "max_cycle_ms": 14001.6,
+   "max_client_ms": 13998.7,
+   "last_blocking_connect_ms": 13998,
+   "c_status": "0",
+   "connected": "FALSE"
+  },
+  {
+   "case": "routed address that drops packets",
+   "target": "10.255.255.1:8883",
+   "tls": true,
+   "window_s": 67,
+   "online_reads_ok": 9,
+   "online_reads_failed": 0,
+   "attempts": 16,
+   "max_scan_gap_ms": 50.7,
+   "max_cycle_ms": 10.3,
+   "max_client_ms": 9.1,
+   "last_blocking_connect_ms": 0,
+   "c_status": "0",
+   "connected": "FALSE"
+  },
+  {
+   "case": "baseline: plain TCP to the dropping address",
+   "target": "10.255.255.1:1883",
+   "tls": false,
+   "window_s": 67,
+   "online_reads_ok": 9,
+   "online_reads_failed": 0,
+   "attempts": 20,
+   "max_scan_gap_ms": 50.7,
+   "max_cycle_ms": 8.0,
+   "max_client_ms": 7.3,
+   "last_blocking_connect_ms": 1,
+   "c_status": "0",
+   "connected": "FALSE"
+  },
+  {
+   "case": "TLS to a plain MQTT port (HQ mochi)",
+   "target": "192.168.50.240:1883",
+   "tls": true,
+   "window_s": 64,
+   "online_reads_ok": 5,
+   "online_reads_failed": 0,
+   "attempts": 1,
+   "max_scan_gap_ms": 50.2,
+   "max_cycle_ms": 1.0,
+   "max_client_ms": 0.5,
+   "last_blocking_connect_ms": 0,
+   "c_status": "0",
+   "connected": "FALSE"
+  }
+ ],
+ "restore_attempts": 1,
+ "restored": false
+}

@@ -1,0 +1,122 @@
+{
+ "started": "2026-11-12 21:44:56",
+ "steps": [
+  {
+   "step": "shift",
+   "connected_before": true,
+   "before": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.VerifierAddress": "35232304",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794537896402468",
+    "client.counts.CountConnectAttempt": "2",
+    "client.MQTT_CONTROL.IPC.TlsRelocationCloses": "0",
+    "client.MQTT_CONTROL.IPC.VerifierAddressAtContext": "35232304",
+    "at": "before"
+   },
+   "change": {
+    "success": true,
+    "loginSeconds": 4.6,
+    "error": null,
+    "state": "run"
+   },
+   "just_after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.VerifierAddress": "35232304",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794537913882380",
+    "client.counts.CountConnectAttempt": "2",
+    "client.MQTT_CONTROL.IPC.TlsRelocationCloses": "0",
+    "client.MQTT_CONTROL.IPC.VerifierAddressAtContext": "35232304",
+    "at": "just after"
+   },
+   "reconnected_verified": true,
+   "after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.VerifierAddress": "35232304",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794537923747735",
+    "client.counts.CountConnectAttempt": "2",
+    "client.MQTT_CONTROL.IPC.TlsRelocationCloses": "0",
+    "client.MQTT_CONTROL.IPC.VerifierAddressAtContext": "35232304",
+    "at": "after"
+   },
+   "scanning": true,
+   "reconnects": 0
+  },
+  {
+   "step": "code",
+   "connected_before": true,
+   "before": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.VerifierAddress": "35232304",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794537935925094",
+    "client.counts.CountConnectAttempt": "3",
+    "client.MQTT_CONTROL.IPC.TlsRelocationCloses": "0",
+    "client.MQTT_CONTROL.IPC.VerifierAddressAtContext": "35232304",
+    "at": "before"
+   },
+   "change": {
+    "success": true,
+    "loginSeconds": 3.7,
+    "error": null,
+    "state": "run"
+   },
+   "just_after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.VerifierAddress": "35232304",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794537951449417",
+    "client.counts.CountConnectAttempt": "3",
+    "client.MQTT_CONTROL.IPC.TlsRelocationCloses": "0",
+    "client.MQTT_CONTROL.IPC.VerifierAddressAtContext": "35232304",
+    "at": "just after"
+   },
+   "reconnected_verified": true,
+   "after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.VerifierAddress": "35232304",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794537961566606",
+    "client.counts.CountConnectAttempt": "3",
+    "client.MQTT_CONTROL.IPC.TlsRelocationCloses": "0",
+    "client.MQTT_CONTROL.IPC.VerifierAddressAtContext": "35232304",
+    "at": "after"
+   },
+   "scanning": true,
+   "reconnects": 0
+  }
+ ],
+ "restored": true
+}

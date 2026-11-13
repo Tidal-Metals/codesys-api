@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\qos_test.py", line 149, in main
+    report["outgoing"].append(outgoing(qos, 30, received))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\qos_test.py", line 101, in outgoing
+    write([("EdgeTest.SendSequence", str(seq))])
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\qos_test.py", line 53, in write
+    raise RuntimeError(result)
+RuntimeError: {'success': False, 'error': 'Script execution timed out after 60.06 seconds', 'timeout': True}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\qos_test.py", line 170, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\qos_test.py", line 151, in main
+    write([("EdgeTest.IsQos1", "FALSE"), ("EdgeTest.IsQos2", "FALSE"), ("EdgeTest.SubscribeQoS", "1")])
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KevinTritz\projects\codesys-api\examples\mqtt_large_payload\qos_test.py", line 53, in write
+    raise RuntimeError(result)
+RuntimeError: {'success': False, 'error': 'Script execution timed out after 60.76 seconds', 'timeout': True}

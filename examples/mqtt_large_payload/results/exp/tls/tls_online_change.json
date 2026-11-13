@@ -1,0 +1,152 @@
+{
+ "started": "2026-11-12 21:22:29",
+ "steps": [
+  {
+   "step": "layout",
+   "connected_before": true,
+   "before": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536550357114",
+    "client.counts.CountConnectAttempt": "243",
+    "at": "before"
+   },
+   "change": {
+    "success": true,
+    "loginSeconds": 32.1,
+    "error": null,
+    "state": "run"
+   },
+   "just_after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536603240971",
+    "client.counts.CountConnectAttempt": "243",
+    "at": "just after"
+   },
+   "reconnected_verified": true,
+   "after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536612657841",
+    "client.counts.CountConnectAttempt": "243",
+    "at": "after"
+   },
+   "scanning": true,
+   "reconnects": 0
+  },
+  {
+   "step": "code",
+   "connected_before": true,
+   "before": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536626036846",
+    "client.counts.CountConnectAttempt": "244",
+    "at": "before"
+   },
+   "change": {
+    "success": true,
+    "loginSeconds": 3.1,
+    "error": null,
+    "state": "run"
+   },
+   "just_after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536641762422",
+    "client.counts.CountConnectAttempt": "244",
+    "at": "just after"
+   },
+   "reconnected_verified": true,
+   "after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536651428173",
+    "client.counts.CountConnectAttempt": "244",
+    "at": "after"
+   },
+   "scanning": true,
+   "reconnects": 0
+  },
+  {
+   "step": "pending",
+   "before": {
+    "client.MQTT_INFO.IsTlsVerified": "FALSE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "FALSE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "52",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536661545411",
+    "client.counts.CountConnectAttempt": "246",
+    "at": "before"
+   },
+   "change": {
+    "success": true,
+    "loginSeconds": 3.7,
+    "error": null,
+    "state": "run"
+   },
+   "just_after": {
+    "client.MQTT_INFO.IsTlsVerified": "FALSE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "FALSE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "52",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536675769821",
+    "client.counts.CountConnectAttempt": "248",
+    "at": "just after"
+   },
+   "reconnected_verified": true,
+   "after": {
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "IsBrokerConnected": "TRUE",
+    "client.counts.CountPeerCloses": "0",
+    "client.MQTT_CONTROL.IPC.state": "250",
+    "client.ERROR_T": "0",
+    "CycleStartUs": "1794536686294681",
+    "client.counts.CountConnectAttempt": "249",
+    "at": "after"
+   },
+   "scanning": true,
+   "reconnects": 3
+  }
+ ],
+ "restored": true
+}

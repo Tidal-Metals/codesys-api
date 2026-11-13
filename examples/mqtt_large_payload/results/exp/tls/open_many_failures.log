@@ -1,0 +1,5 @@
+attempts 49 after 77 s {"NOT_TRUSTED": 11, "WRONG_HOST": 10}
+attempts 101 after 159 s {"NOT_TRUSTED": 17, "WRONG_HOST": 18}
+attempts 153 after 246 s {"NOT_TRUSTED": 19, "WRONG_HOST": 24, "0": 1}
+{"started": "2026-11-12 21:16:40", "failed_attempts": 202, "seconds": 329, "statuses_seen": {"NOT_TRUSTED": 22, "WRONG_HOST": 27, "0": 1}, "after_failures": {"client.ERROR_C": "0", "IsBrokerConnected": "FALSE", "MqttLink.dynMemUsage": "57744", "client.ERROR_T": "2", "client.counts.CountConnectAttempt": "239"}, "trusted_connect_after": true, "final": {"client.ERROR_C": "0", "IsBrokerConnected": "TRUE", "MqttLink.dynMemUsage": "57744", "client.ERROR_T": "0", "client.counts.CountConnectAttempt": "241"}}
+restored to HQ 3.1.1: True

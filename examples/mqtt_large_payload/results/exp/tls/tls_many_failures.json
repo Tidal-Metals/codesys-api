@@ -1,0 +1,33 @@
+{
+ "started": "2026-11-12 21:16:40",
+ "before": {
+  "client.ERROR_C": "0",
+  "IsBrokerConnected": "TRUE",
+  "MqttLink.dynMemUsage": "57744",
+  "client.ERROR_T": "0",
+  "client.counts.CountConnectAttempt": "35"
+ },
+ "failed_attempts": 202,
+ "seconds": 329,
+ "statuses_seen": {
+  "NOT_TRUSTED": 22,
+  "WRONG_HOST": 27,
+  "0": 1
+ },
+ "after_failures": {
+  "client.ERROR_C": "0",
+  "IsBrokerConnected": "FALSE",
+  "MqttLink.dynMemUsage": "57744",
+  "client.ERROR_T": "2",
+  "client.counts.CountConnectAttempt": "239"
+ },
+ "trusted_connect_after": true,
+ "final": {
+  "client.ERROR_C": "0",
+  "IsBrokerConnected": "TRUE",
+  "MqttLink.dynMemUsage": "57744",
+  "client.ERROR_T": "0",
+  "client.counts.CountConnectAttempt": "241"
+ },
+ "restored": true
+}

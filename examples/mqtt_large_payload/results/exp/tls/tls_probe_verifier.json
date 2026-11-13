@@ -1,0 +1,668 @@
+{
+ "started": "2026-11-12 18:50:05",
+ "cases": [
+  {
+   "case": "trusted",
+   "description": "CA-signed broker, CA trusted",
+   "target": "192.168.50.108:8886",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 1,
+    "AltIps[1]": "0",
+    "IsHostMatched": "TRUE",
+    "AltTypes[2]": "-1",
+    "LastContentResult": "0",
+    "AltDns[0]": "bench-broker.local",
+    "AltTypes[3]": "-1",
+    "LastAltNameCount": "2",
+    "AltDns[1]": "",
+    "AltTypes[0]": "7",
+    "AltIps[3]": "0",
+    "AltTypes[1]": "2",
+    "AltIps[2]": "0",
+    "LastVerifyResult": "0",
+    "AltIps[0]": "1815259328",
+    "LastReturn": "0"
+   },
+   "connect_results": [
+    [
+     518,
+     4
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "received": [
+    32,
+    2,
+    0,
+    5
+   ],
+   "main_task_max_gap_ms": 50.7,
+   "probe_task_max_scan_ms": 210.7,
+   "Attempt": "1",
+   "Outcome": "CONNACK received",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "5",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "0",
+   "MaxConnectCallUs": "210669",
+   "TotalConnectCallUs": "221233",
+   "HandshakeMs": "278",
+   "SendResult": "0",
+   "SentBytes": "22",
+   "RecvCalls": "1",
+   "RecvResult": "0",
+   "RecvBytes": "4",
+   "MaxIoCallUs": "856",
+   "ShutdownResult": "1553",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "3725"
+  },
+  {
+   "case": "trusted_nocallback",
+   "description": "CA-signed broker, no callback",
+   "target": "192.168.50.108:8886",
+   "verifyMode": 2,
+   "settings": {
+    "IsVerifierUsed": "FALSE"
+   },
+   "finished": true,
+   "callback": {
+    "calls": 0
+   },
+   "connect_results": [
+    [
+     518,
+     3
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "received": [
+    32,
+    2,
+    0,
+    5
+   ],
+   "main_task_max_gap_ms": 50.8,
+   "probe_task_max_scan_ms": 0.0,
+   "Attempt": "2",
+   "Outcome": "CONNACK received",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "4",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "0",
+   "MaxConnectCallUs": "229897",
+   "TotalConnectCallUs": "239069",
+   "HandshakeMs": "289",
+   "SendResult": "0",
+   "SentBytes": "22",
+   "RecvCalls": "1",
+   "RecvResult": "0",
+   "RecvBytes": "4",
+   "MaxIoCallUs": "1271",
+   "ShutdownResult": "1553",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "3850"
+  },
+  {
+   "case": "untrusted",
+   "description": "self-signed broker, verify peer",
+   "target": "192.168.50.108:8887",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 1,
+    "AltIps[1]": "2603788480",
+    "IsHostMatched": "TRUE",
+    "AltTypes[2]": "-1",
+    "LastContentResult": "0",
+    "AltDns[0]": "",
+    "AltTypes[3]": "-1",
+    "LastAltNameCount": "2",
+    "AltDns[1]": "",
+    "AltTypes[0]": "7",
+    "AltIps[3]": "0",
+    "AltTypes[1]": "7",
+    "AltIps[2]": "0",
+    "LastVerifyResult": "1809",
+    "AltIps[0]": "1815259328",
+    "LastReturn": "1809"
+   },
+   "connect_results": [
+    [
+     518,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.5,
+   "probe_task_max_scan_ms": 19.9,
+   "Attempt": "3",
+   "Outcome": "connect failed",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "3",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "1",
+   "MaxConnectCallUs": "19892",
+   "TotalConnectCallUs": "23487",
+   "HandshakeMs": "89",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "1",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "1367"
+  },
+  {
+   "case": "untrusted_none",
+   "description": "self-signed broker, verify none",
+   "target": "192.168.50.108:8887",
+   "verifyMode": 1,
+   "settings": {
+    "IsVerifierUsed": "FALSE"
+   },
+   "finished": true,
+   "callback": {
+    "calls": 0
+   },
+   "connect_results": [
+    [
+     518,
+     3
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "received": [
+    32,
+    2,
+    0,
+    5
+   ],
+   "main_task_max_gap_ms": 50.5,
+   "probe_task_max_scan_ms": 0.0,
+   "Attempt": "4",
+   "Outcome": "CONNACK received",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "4",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "0",
+   "MaxConnectCallUs": "99947",
+   "TotalConnectCallUs": "108242",
+   "HandshakeMs": "159",
+   "SendResult": "0",
+   "SentBytes": "22",
+   "RecvCalls": "1",
+   "RecvResult": "0",
+   "RecvBytes": "4",
+   "MaxIoCallUs": "744",
+   "ShutdownResult": "1553",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "2721"
+  },
+  {
+   "case": "wronghost",
+   "description": "CA-signed for another IP, host check",
+   "target": "192.168.50.108:8888",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 1,
+    "AltIps[1]": "0",
+    "IsHostMatched": "FALSE",
+    "AltTypes[2]": "-1",
+    "LastContentResult": "0",
+    "AltDns[0]": "",
+    "AltTypes[3]": "-1",
+    "LastAltNameCount": "1",
+    "AltDns[1]": "",
+    "AltTypes[0]": "7",
+    "AltIps[3]": "0",
+    "AltTypes[1]": "-1",
+    "AltIps[2]": "0",
+    "LastVerifyResult": "0",
+    "AltIps[0]": "1664264384",
+    "LastReturn": "1"
+   },
+   "connect_results": [
+    [
+     518,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.8,
+   "probe_task_max_scan_ms": 148.6,
+   "Attempt": "5",
+   "Outcome": "connect failed",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "3",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "1",
+   "MaxConnectCallUs": "148565",
+   "TotalConnectCallUs": "152548",
+   "HandshakeMs": "202",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "1",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "1339"
+  },
+  {
+   "case": "wronghost_nocheck",
+   "description": "CA-signed for another IP, host check off",
+   "target": "192.168.50.108:8888",
+   "verifyMode": 2,
+   "settings": {
+    "IsHostCheckEnabled": "FALSE"
+   },
+   "finished": true,
+   "callback": {
+    "calls": 1,
+    "AltIps[1]": "0",
+    "IsHostMatched": "FALSE",
+    "AltTypes[2]": "-1",
+    "LastContentResult": "0",
+    "AltDns[0]": "",
+    "AltTypes[3]": "-1",
+    "LastAltNameCount": "1",
+    "AltDns[1]": "",
+    "AltTypes[0]": "7",
+    "AltIps[3]": "0",
+    "AltTypes[1]": "-1",
+    "AltIps[2]": "0",
+    "LastVerifyResult": "0",
+    "AltIps[0]": "1664264384",
+    "LastReturn": "0"
+   },
+   "connect_results": [
+    [
+     518,
+     4
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "received": [
+    32,
+    2,
+    0,
+    5
+   ],
+   "main_task_max_gap_ms": 50.6,
+   "probe_task_max_scan_ms": 0.1,
+   "Attempt": "6",
+   "Outcome": "CONNACK received",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "5",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "0",
+   "MaxConnectCallUs": "212785",
+   "TotalConnectCallUs": "220962",
+   "HandshakeMs": "291",
+   "SendResult": "0",
+   "SentBytes": "22",
+   "RecvCalls": "1",
+   "RecvResult": "0",
+   "RecvBytes": "4",
+   "MaxIoCallUs": "604",
+   "ShutdownResult": "1553",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "3898"
+  },
+  {
+   "case": "trusted_dns",
+   "description": "CA-signed broker, matched by DNS name only",
+   "target": "192.168.50.108:8886",
+   "verifyMode": 2,
+   "settings": {
+    "IsIpExpected": "FALSE",
+    "ExpectedDns": "'bench-broker.local'"
+   },
+   "finished": true,
+   "callback": {
+    "calls": 1,
+    "AltIps[1]": "0",
+    "IsHostMatched": "TRUE",
+    "AltTypes[2]": "-1",
+    "LastContentResult": "0",
+    "AltDns[0]": "bench-broker.local",
+    "AltTypes[3]": "-1",
+    "LastAltNameCount": "2",
+    "AltDns[1]": "",
+    "AltTypes[0]": "7",
+    "AltIps[3]": "0",
+    "AltTypes[1]": "2",
+    "AltIps[2]": "0",
+    "LastVerifyResult": "0",
+    "AltIps[0]": "1815259328",
+    "LastReturn": "0"
+   },
+   "connect_results": [
+    [
+     518,
+     4
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "received": [
+    32,
+    2,
+    0,
+    5
+   ],
+   "main_task_max_gap_ms": 50.6,
+   "probe_task_max_scan_ms": 0.0,
+   "Attempt": "7",
+   "Outcome": "CONNACK received",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "5",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "0",
+   "MaxConnectCallUs": "211269",
+   "TotalConnectCallUs": "221141",
+   "HandshakeMs": "290",
+   "SendResult": "0",
+   "SentBytes": "22",
+   "RecvCalls": "1",
+   "RecvResult": "0",
+   "RecvBytes": "4",
+   "MaxIoCallUs": "739",
+   "ShutdownResult": "1553",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "4387"
+  },
+  {
+   "case": "trusted_dns_wrong",
+   "description": "CA-signed broker, expected DNS name not in SAN",
+   "target": "192.168.50.108:8886",
+   "verifyMode": 2,
+   "settings": {
+    "IsIpExpected": "FALSE",
+    "ExpectedDns": "'other-broker.local'"
+   },
+   "finished": true,
+   "callback": {
+    "calls": 1,
+    "AltIps[1]": "0",
+    "IsHostMatched": "FALSE",
+    "AltTypes[2]": "-1",
+    "LastContentResult": "0",
+    "AltDns[0]": "bench-broker.local",
+    "AltTypes[3]": "-1",
+    "LastAltNameCount": "2",
+    "AltDns[1]": "",
+    "AltTypes[0]": "7",
+    "AltIps[3]": "0",
+    "AltTypes[1]": "2",
+    "AltIps[2]": "0",
+    "LastVerifyResult": "0",
+    "AltIps[0]": "1815259328",
+    "LastReturn": "1"
+   },
+   "connect_results": [
+    [
+     518,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.5,
+   "probe_task_max_scan_ms": 137.8,
+   "Attempt": "8",
+   "Outcome": "connect failed",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "3",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "1",
+   "MaxConnectCallUs": "137789",
+   "TotalConnectCallUs": "141546",
+   "HandshakeMs": "190",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "1",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "1364"
+  },
+  {
+   "case": "refused",
+   "description": "host up, port closed",
+   "target": "192.168.50.240:8883",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 0
+   },
+   "connect_results": [
+    [
+     518,
+     1
+    ],
+    [
+     524,
+     1
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.7,
+   "probe_task_max_scan_ms": 0.0,
+   "Attempt": "9",
+   "Outcome": "connect failed",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "2",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "524",
+   "MaxConnectCallUs": "508",
+   "TotalConnectCallUs": "857",
+   "HandshakeMs": "32",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "0",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "936"
+  },
+  {
+   "case": "unanswered",
+   "description": "free address on the PLC's subnet",
+   "target": "192.168.50.251:8883",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 0
+   },
+   "connect_results": [
+    [
+     518,
+     294
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.6,
+   "probe_task_max_scan_ms": 0.1,
+   "Attempt": "10",
+   "Outcome": "connect timeout",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "294",
+   "ConnectResultCount": "1",
+   "LastConnectResult": "518",
+   "MaxConnectCallUs": "705",
+   "TotalConnectCallUs": "46122",
+   "HandshakeMs": "6003",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "0",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "849"
+  },
+  {
+   "case": "plain_mqttug",
+   "description": "plain MQTT port, MQTTug",
+   "target": "192.168.50.108:1886",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 0
+   },
+   "connect_results": [
+    [
+     518,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.6,
+   "probe_task_max_scan_ms": 7.0,
+   "Attempt": "11",
+   "Outcome": "connect failed",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "3",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "1",
+   "MaxConnectCallUs": "3584",
+   "TotalConnectCallUs": "4165",
+   "HandshakeMs": "53",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "0",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "1647"
+  },
+  {
+   "case": "plain_mochi",
+   "description": "plain MQTT port, mochi at HQ",
+   "target": "192.168.50.240:1883",
+   "verifyMode": 2,
+   "settings": {},
+   "finished": true,
+   "callback": {
+    "calls": 0
+   },
+   "connect_results": [
+    [
+     518,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "received": [],
+   "main_task_max_gap_ms": 50.5,
+   "probe_task_max_scan_ms": 7.0,
+   "Attempt": "12",
+   "Outcome": "connect failed",
+   "ContextResult": "0",
+   "CreateResult": "0",
+   "IoctlResult": "0",
+   "ConnectCalls": "3",
+   "ConnectResultCount": "2",
+   "LastConnectResult": "1",
+   "MaxConnectCallUs": "3837",
+   "TotalConnectCallUs": "5143",
+   "HandshakeMs": "53",
+   "SendResult": "0",
+   "SentBytes": "0",
+   "RecvCalls": "0",
+   "RecvResult": "0",
+   "RecvBytes": "0",
+   "MaxIoCallUs": "0",
+   "ShutdownResult": "0",
+   "CloseResult": "0",
+   "FreeResult": "0",
+   "CloseUs": "1576"
+  }
+ ]
+}

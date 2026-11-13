@@ -368,6 +368,12 @@ against NE2 unit 2.
   installed. UI Automation finds this dialog under the IDE's main window (process id from `/bench`, a child window
   named `CODESYS`), and invoking its `OK` button completes the logout. Requests queued behind it then run.
 - After a PLC power cycle, wait until ETH1 answers ping and port 11740 accepts, then log out and in.
+- A task stuck inside a system call (2026-11-12: the MQTT library's old blocking TLS connect, hung on a port that
+  didn't speak TLS) freezes the program, while the application still reports `run` (the demo has no watchdog) and
+  online reads still answer. To spot it, read `PLC_PRG.CycleStartUs` twice: it doesn't move. `POST
+  /plc/app/stop` times out, because a stop waits for the cycle to end. A warm reset with `force_kill` recovers it
+  without a power cycle: `on.reset(ResetOption.Warm, True)`, then `on.start()` (`python tools/plc/reset_and_start.py`;
+  `cold` as argument for a cold reset; the P2CDS-622 supports killing a task mid-cycle). Variables return to initial values.
 - The PLC's clock runs on UTC from the NTP server at 192.168.50.240 since 2026-10-20. Before, it
   held local time and was 84 s off. It drifts about 30 ms an hour. Stepping the clock 4 hours
   while the application ran stopped the application on an exception (operating state 4129) and

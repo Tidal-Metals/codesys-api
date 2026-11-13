@@ -1,0 +1,177 @@
+{
+ "started": "2026-11-12 20:15:42",
+ "cases": {
+  "connect": {
+   "ok": true,
+   "state": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_INFO.Broker.TopicAliasMaximum": "64",
+    "client.MQTT_INFO.Broker.ReceiveMaximum": "1024",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.MQTT_INFO.Broker.HasServerKeepAlive": "FALSE",
+    "client.MQTT_INFO.ReasonString": "''",
+    "client.MQTT_INFO.Broker.MaximumPacketSize": "16777216",
+    "client.MQTT_INFO.Broker.MaximumQoS": "2",
+    "client.MQTT_INFO.DisconnectReasonCode": "0",
+    "client.IsSendPending": "FALSE",
+    "client.counts.CountPeerCloses": "15",
+    "client.MQTT_INFO.Broker.IsSharedSubscriptionAvailable": "TRUE",
+    "client.counts.CountConnectAttempt": "29",
+    "client.MQTT_INFO.Broker.IsRetainAvailable": "TRUE"
+   }
+  },
+  "telemetry": {
+   "ok": true,
+   "messages": 5,
+   "lengths": [
+    8900
+   ]
+  },
+  "send": {
+   "ok": true,
+   "sent": 45,
+   "bad": []
+  },
+  "receive": {
+   "ok": true,
+   "received": 48,
+   "bad": []
+  },
+  "publish_refused": {
+   "ok": true,
+   "cases": [
+    {
+     "qos": 1,
+     "ok": true,
+     "after": {
+      "EdgeTest.RejectedCount": "1",
+      "client.MQTT_INFO.ConnectReasonCode": "0",
+      "client.MQTT_INFO.Broker.TopicAliasMaximum": "64",
+      "client.MQTT_INFO.Broker.ReceiveMaximum": "1024",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.MQTT_INFO.Broker.HasServerKeepAlive": "FALSE",
+      "client.MQTT_INFO.ReasonString": "''",
+      "client.MQTT_INFO.Broker.MaximumPacketSize": "16777216",
+      "EdgeTest.Publisher.ReasonCode": "135",
+      "client.MQTT_INFO.Broker.MaximumQoS": "2",
+      "client.MQTT_INFO.DisconnectReasonCode": "0",
+      "client.IsSendPending": "FALSE",
+      "client.counts.CountPeerCloses": "15",
+      "client.MQTT_INFO.Broker.IsSharedSubscriptionAvailable": "TRUE",
+      "client.counts.CountConnectAttempt": "29",
+      "client.MQTT_INFO.Broker.IsRetainAvailable": "TRUE"
+     }
+    },
+    {
+     "qos": 2,
+     "ok": true,
+     "after": {
+      "EdgeTest.RejectedCount": "2",
+      "client.MQTT_INFO.ConnectReasonCode": "0",
+      "client.MQTT_INFO.Broker.TopicAliasMaximum": "64",
+      "client.MQTT_INFO.Broker.ReceiveMaximum": "1024",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.MQTT_INFO.Broker.HasServerKeepAlive": "FALSE",
+      "client.MQTT_INFO.ReasonString": "''",
+      "client.MQTT_INFO.Broker.MaximumPacketSize": "16777216",
+      "EdgeTest.Publisher.ReasonCode": "135",
+      "client.MQTT_INFO.Broker.MaximumQoS": "2",
+      "client.MQTT_INFO.DisconnectReasonCode": "0",
+      "client.IsSendPending": "FALSE",
+      "client.counts.CountPeerCloses": "15",
+      "client.MQTT_INFO.Broker.IsSharedSubscriptionAvailable": "TRUE",
+      "client.counts.CountConnectAttempt": "29",
+      "client.MQTT_INFO.Broker.IsRetainAvailable": "TRUE"
+     }
+    }
+   ],
+   "followUp": {
+    "size": 100,
+    "qos": 1,
+    "done": true,
+    "received": 1,
+    "exact": 1,
+    "receivedQos": [
+     1
+    ]
+   }
+  },
+  "subscribe_refused": {
+   "ok": true,
+   "refused": {
+    "EdgeTest.Subscriber.ReasonCode": "135",
+    "EdgeTest.Subscriber.busy": "FALSE",
+    "PLC_PRG.IsBrokerConnected": "TRUE",
+    "EdgeTest.Subscriber.SubscribeFail": "TRUE"
+   },
+   "resubscribed": {
+    "EdgeTest.Subscriber.ReasonCode": "1",
+    "EdgeTest.Subscriber.SubscribeDone": "TRUE"
+   }
+  },
+  "takeover": {
+   "ok": true,
+   "after": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_INFO.Broker.TopicAliasMaximum": "64",
+    "client.MQTT_INFO.Broker.ReceiveMaximum": "1024",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.MQTT_INFO.Broker.HasServerKeepAlive": "FALSE",
+    "client.MQTT_INFO.ReasonString": "''",
+    "client.MQTT_INFO.Broker.MaximumPacketSize": "16777216",
+    "client.MQTT_INFO.Broker.MaximumQoS": "2",
+    "client.MQTT_INFO.DisconnectReasonCode": "142",
+    "client.IsSendPending": "FALSE",
+    "client.counts.CountPeerCloses": "16",
+    "client.MQTT_INFO.Broker.IsSharedSubscriptionAvailable": "TRUE",
+    "client.counts.CountConnectAttempt": "30",
+    "client.MQTT_INFO.Broker.IsRetainAvailable": "TRUE"
+   }
+  },
+  "connect_refused": {
+   "ok": true,
+   "refused": {
+    "client.MQTT_INFO.ConnectReasonCode": "134",
+    "client.MQTT_INFO.Broker.TopicAliasMaximum": "0",
+    "client.MQTT_INFO.Broker.ReceiveMaximum": "65535",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "FALSE",
+    "client.MQTT_INFO.Broker.HasServerKeepAlive": "FALSE",
+    "client.MQTT_INFO.ReasonString": "''",
+    "client.MQTT_INFO.Broker.MaximumPacketSize": "0",
+    "client.MQTT_INFO.Broker.MaximumQoS": "2",
+    "client.MQTT_INFO.DisconnectReasonCode": "142",
+    "client.IsSendPending": "FALSE",
+    "client.counts.CountPeerCloses": "21",
+    "client.MQTT_INFO.Broker.IsSharedSubscriptionAvailable": "TRUE",
+    "client.counts.CountConnectAttempt": "32",
+    "client.MQTT_INFO.Broker.IsRetainAvailable": "TRUE"
+   },
+   "restored": true
+  },
+  "idle_pending": {
+   "ok": true,
+   "pendingSamples": 1,
+   "of": 10,
+   "samples": [
+    {
+     "PLC_PRG.MqttLink.clientFB.counts.OutSlotsWorking": "0",
+     "PLC_PRG.MqttLink.clientFB.IsSendPending": "FALSE"
+    },
+    {
+     "PLC_PRG.MqttLink.clientFB.counts.OutSlotsWorking": "0",
+     "PLC_PRG.MqttLink.clientFB.IsSendPending": "FALSE"
+    },
+    {
+     "PLC_PRG.MqttLink.clientFB.counts.OutSlotsWorking": "0",
+     "PLC_PRG.MqttLink.clientFB.IsSendPending": "FALSE"
+    }
+   ]
+  }
+ },
+ "restored": true
+}

@@ -1,0 +1,99 @@
+{
+ "started": "2026-11-12 16:44:37",
+ "defaults": {
+  "PLC_PRG.TlsConfig.chiperList": "'HIGH'",
+  "PLC_PRG.TlsConfig.verifyMode": "8",
+  "PLC_PRG.TlsConfig.tlsMethod": "CmpTlsMethod.TLSv2_CLIENT"
+ },
+ "plain_before": {
+  "client.MQTT_INFO.ConnectReasonCode": "0",
+  "client.MQTT_CONTROL.IPC.TLS": "FALSE",
+  "client.MQTT_CONTROL.IPC.TlsConnectTime": "0",
+  "IsBrokerConnected": "TRUE",
+  "client.MQTT_INFO.Broker.ProtocolLevel": "4",
+  "client.MQTT_CONTROL.IPC.c_ready": "TRUE",
+  "client.counts.CountConnectAttempt": "5",
+  "client.MQTT_CONTROL.IPC.c_status": "0"
+ },
+ "cases": [
+  {
+   "case": "library default (CLIENT_ONCE)",
+   "verifyMode": null,
+   "connected": true,
+   "connect_wait_s": 6.8,
+   "messages_in_10s": 13,
+   "link": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.TlsConnectTime": "121",
+    "IsBrokerConnected": "TRUE",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "client.MQTT_CONTROL.IPC.c_ready": "TRUE",
+    "client.counts.CountConnectAttempt": "6",
+    "client.MQTT_CONTROL.IPC.c_status": "0"
+   }
+  },
+  {
+   "case": "VERIFY_NONE",
+   "verifyMode": 1,
+   "connected": true,
+   "connect_wait_s": 7.4,
+   "messages_in_10s": 16,
+   "link": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.TlsConnectTime": "108",
+    "IsBrokerConnected": "TRUE",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "client.MQTT_CONTROL.IPC.c_ready": "TRUE",
+    "client.counts.CountConnectAttempt": "7",
+    "client.MQTT_CONTROL.IPC.c_status": "0"
+   }
+  },
+  {
+   "case": "VERIFY_PEER",
+   "verifyMode": 2,
+   "connected": false,
+   "connect_wait_s": 35.3,
+   "messages_in_10s": 3,
+   "link": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.TlsConnectTime": "25",
+    "IsBrokerConnected": "FALSE",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "client.MQTT_CONTROL.IPC.c_ready": "FALSE",
+    "client.counts.CountConnectAttempt": "19",
+    "client.MQTT_CONTROL.IPC.c_status": "0"
+   }
+  },
+  {
+   "case": "VERIFY_PEER + CLIENT_ONCE",
+   "verifyMode": 10,
+   "connected": false,
+   "connect_wait_s": 38.8,
+   "messages_in_10s": 0,
+   "link": {
+    "client.MQTT_INFO.ConnectReasonCode": "0",
+    "client.MQTT_CONTROL.IPC.TLS": "TRUE",
+    "client.MQTT_CONTROL.IPC.TlsConnectTime": "27",
+    "IsBrokerConnected": "FALSE",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "client.MQTT_CONTROL.IPC.c_ready": "FALSE",
+    "client.counts.CountConnectAttempt": "33",
+    "client.MQTT_CONTROL.IPC.c_status": "0"
+   }
+  }
+ ],
+ "restored": true,
+ "plain_after": {
+  "client.MQTT_INFO.ConnectReasonCode": "0",
+  "client.MQTT_CONTROL.IPC.TLS": "FALSE",
+  "client.MQTT_CONTROL.IPC.TlsConnectTime": "1",
+  "IsBrokerConnected": "TRUE",
+  "client.MQTT_INFO.Broker.ProtocolLevel": "4",
+  "client.MQTT_CONTROL.IPC.c_ready": "TRUE",
+  "client.counts.CountConnectAttempt": "36",
+  "client.MQTT_CONTROL.IPC.c_status": "0"
+ }
+}
