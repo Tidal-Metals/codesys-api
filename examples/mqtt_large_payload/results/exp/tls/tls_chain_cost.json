@@ -1,0 +1,641 @@
+{
+ "started": "2026-11-12 23:11:38",
+ "cases": [
+  {
+   "case": "le_c",
+   "description": "LE-shaped ECDSA chain C (P-256 leaf, P-384 YE1, Root YE, X2), RSA root trusted",
+   "settings": {},
+   "tls_input": true,
+   "expected": "connect",
+   "connected": true,
+   "passed": true,
+   "verified_seen": true,
+   "statuses_seen": [],
+   "first_connected_s": 6.6,
+   "attempts": 1,
+   "messages": 23,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "0",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.ErrorText": "''",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "0",
+    "client.TlsFailCount": "0",
+    "client.ERROR_T": "0",
+    "client.counts.CountConnectAttempt": "2",
+    "MaxIntervalUs": "465053",
+    "tls_status": null
+   },
+   "last_error": null,
+   "samples": [
+    [
+     6.6,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "2",
+      "MaxIntervalUs": "465053",
+      "tls_status": null
+     }
+    ],
+    [
+     13.0,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "2",
+      "MaxIntervalUs": "465053",
+      "tls_status": null
+     }
+    ],
+    [
+     19.7,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "2",
+      "MaxIntervalUs": "465053",
+      "tls_status": null
+     }
+    ],
+    [
+     26.2,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "2",
+      "MaxIntervalUs": "465053",
+      "tls_status": null
+     }
+    ]
+   ]
+  },
+  {
+   "case": "le_a",
+   "description": "LE-shaped RSA chain A, old root trusted (via the cross-signed root)",
+   "settings": {},
+   "tls_input": true,
+   "expected": "connect",
+   "connected": true,
+   "passed": true,
+   "verified_seen": true,
+   "statuses_seen": [],
+   "first_connected_s": 6.5,
+   "attempts": 1,
+   "messages": 26,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "0",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.ErrorText": "''",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "0",
+    "client.TlsFailCount": "0",
+    "client.ERROR_T": "0",
+    "client.counts.CountConnectAttempt": "3",
+    "MaxIntervalUs": "167380",
+    "tls_status": null
+   },
+   "last_error": null,
+   "samples": [
+    [
+     6.5,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "3",
+      "MaxIntervalUs": "167380",
+      "tls_status": null
+     }
+    ],
+    [
+     13.4,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "3",
+      "MaxIntervalUs": "167380",
+      "tls_status": null
+     }
+    ],
+    [
+     19.8,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "3",
+      "MaxIntervalUs": "167380",
+      "tls_status": null
+     }
+    ],
+    [
+     26.2,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "3",
+      "MaxIntervalUs": "167380",
+      "tls_status": null
+     }
+    ]
+   ]
+  },
+  {
+   "case": "trusted_ip",
+   "description": "CA-signed broker by IP",
+   "settings": {},
+   "tls_input": true,
+   "expected": "connect",
+   "connected": true,
+   "passed": true,
+   "verified_seen": true,
+   "statuses_seen": [],
+   "first_connected_s": 6.4,
+   "attempts": 1,
+   "messages": 25,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "0",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.ErrorText": "''",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "0",
+    "client.TlsFailCount": "0",
+    "client.ERROR_T": "0",
+    "client.counts.CountConnectAttempt": "4",
+    "MaxIntervalUs": "206876",
+    "tls_status": null
+   },
+   "last_error": null,
+   "samples": [
+    [
+     6.4,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "4",
+      "MaxIntervalUs": "206876",
+      "tls_status": null
+     }
+    ],
+    [
+     13.1,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "4",
+      "MaxIntervalUs": "206876",
+      "tls_status": null
+     }
+    ],
+    [
+     19.9,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "4",
+      "MaxIntervalUs": "206876",
+      "tls_status": null
+     }
+    ],
+    [
+     26.7,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "4",
+      "MaxIntervalUs": "206876",
+      "tls_status": null
+     }
+    ]
+   ]
+  },
+  {
+   "case": "le_c",
+   "description": "LE-shaped ECDSA chain C (P-256 leaf, P-384 YE1, Root YE, X2), RSA root trusted",
+   "settings": {},
+   "tls_input": true,
+   "expected": "connect",
+   "connected": true,
+   "passed": true,
+   "verified_seen": true,
+   "statuses_seen": [],
+   "first_connected_s": 6.6,
+   "attempts": 1,
+   "messages": 26,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "0",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.ErrorText": "''",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "0",
+    "client.TlsFailCount": "0",
+    "client.ERROR_T": "0",
+    "client.counts.CountConnectAttempt": "5",
+    "MaxIntervalUs": "464782",
+    "tls_status": null
+   },
+   "last_error": null,
+   "samples": [
+    [
+     6.6,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "5",
+      "MaxIntervalUs": "464782",
+      "tls_status": null
+     }
+    ],
+    [
+     13.2,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "5",
+      "MaxIntervalUs": "464782",
+      "tls_status": null
+     }
+    ],
+    [
+     19.9,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "5",
+      "MaxIntervalUs": "464782",
+      "tls_status": null
+     }
+    ],
+    [
+     26.5,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "5",
+      "MaxIntervalUs": "464782",
+      "tls_status": null
+     }
+    ]
+   ]
+  },
+  {
+   "case": "le_a",
+   "description": "LE-shaped RSA chain A, old root trusted (via the cross-signed root)",
+   "settings": {},
+   "tls_input": true,
+   "expected": "connect",
+   "connected": true,
+   "passed": true,
+   "verified_seen": true,
+   "statuses_seen": [],
+   "first_connected_s": 6.8,
+   "attempts": 1,
+   "messages": 24,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "0",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.ErrorText": "''",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "0",
+    "client.TlsFailCount": "0",
+    "client.ERROR_T": "0",
+    "client.counts.CountConnectAttempt": "6",
+    "MaxIntervalUs": "166642",
+    "tls_status": null
+   },
+   "last_error": null,
+   "samples": [
+    [
+     6.8,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "6",
+      "MaxIntervalUs": "166642",
+      "tls_status": null
+     }
+    ],
+    [
+     13.4,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "6",
+      "MaxIntervalUs": "166642",
+      "tls_status": null
+     }
+    ],
+    [
+     24.7,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "6",
+      "MaxIntervalUs": "166642",
+      "tls_status": null
+     }
+    ]
+   ]
+  },
+  {
+   "case": "trusted_ip",
+   "description": "CA-signed broker by IP",
+   "settings": {},
+   "tls_input": true,
+   "expected": "connect",
+   "connected": true,
+   "passed": true,
+   "verified_seen": true,
+   "statuses_seen": [],
+   "first_connected_s": 6.5,
+   "attempts": 1,
+   "messages": 27,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "0",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "TRUE",
+    "client.ERROR_C": "0",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "TRUE",
+    "client.ErrorText": "''",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "0",
+    "client.TlsFailCount": "0",
+    "client.ERROR_T": "0",
+    "client.counts.CountConnectAttempt": "7",
+    "MaxIntervalUs": "206633",
+    "tls_status": null
+   },
+   "last_error": null,
+   "samples": [
+    [
+     6.5,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "7",
+      "MaxIntervalUs": "206633",
+      "tls_status": null
+     }
+    ],
+    [
+     13.1,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "7",
+      "MaxIntervalUs": "206633",
+      "tls_status": null
+     }
+    ],
+    [
+     20.0,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "7",
+      "MaxIntervalUs": "206633",
+      "tls_status": null
+     }
+    ],
+    [
+     26.6,
+     {
+      "client.MQTT_INFO.TlsChainResult": "0",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "TRUE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "TRUE",
+      "client.ErrorText": "''",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "0",
+      "client.TlsFailCount": "0",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "7",
+      "MaxIntervalUs": "206633",
+      "tls_status": null
+     }
+    ]
+   ]
+  }
+ ],
+ "restored": true
+}

@@ -67,6 +67,8 @@ CASES = {  # key: (description, url builder, IsTlsEnabled, TlsConfig changes, ex
     "le_a_untrusted": ("LE-shaped RSA chain A before its root is trusted", lambda: url(8892), True, {}, "reject:NOT_TRUSTED"),
     "le_a": ("LE-shaped RSA chain A, old root trusted (via the cross-signed root)", lambda: url(8892), True, {}, "connect"),
     "le_b": ("LE-shaped RSA chain B, only the new self-signed root trusted", lambda: url(8893), True, {}, "connect"),
+    "le_c": ("LE-shaped ECDSA chain C (P-256 leaf, P-384 YE1, Root YE, X2), RSA root trusted", lambda: url(8894), True, {},
+             "connect"),
     "vm_silent": ("VM listener that accepts TCP and never answers", lambda: url(18896, host=VM, secret="dummy"), True,
                   {}, "reject:CONNECT_TIMEOUT"),
 }

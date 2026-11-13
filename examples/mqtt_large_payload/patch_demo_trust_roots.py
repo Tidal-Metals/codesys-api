@@ -4,6 +4,7 @@
 #   IsrgRootX1   Let's Encrypt's root (from the Windows trust store, SHA-256 96BCEC06...08C6)
 #   RootXa       hierarchy A's old root (make_lechain_certs.sh)
 #   RootYb       hierarchy B's new self-signed root
+#   RootXc       hierarchy C's RSA root (X1-like), anchor of the ECDSA chain
 # Outputs per root: PLC_PRG.Trust<Name>.Done, .Error, .IsAlreadyTrusted, .Result.
 import io
 import os
@@ -12,7 +13,7 @@ p = scriptengine.projects.primary
 assert p.path.replace('\\', '/').endswith('mqtt_large_payload_demo_mqtt5/mqtt_large_payload_demo.project'), p.path
 TLS = os.path.join(os.path.expanduser("~"), "projects", "codesys-api", "tmp", "mqtt5_bench", "tls")
 ROOTS = [("IsrgRootX1", os.path.join(TLS, "ISRGRootX1.der")), ("RootXa", os.path.join(TLS, "le", "rootXa.der")),
-         ("RootYb", os.path.join(TLS, "le", "rootYb.der"))]
+         ("RootYb", os.path.join(TLS, "le", "rootYb.der")), ("RootXc", os.path.join(TLS, "le", "rootXc.der"))]
 MARKER = u"// patch_demo_trust_roots"
 prg = p.find('PLC_PRG', True)[0]
 decl = prg.textual_declaration.text
