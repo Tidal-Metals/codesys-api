@@ -64,6 +64,9 @@ CASES = {  # key: (description, url builder, IsTlsEnabled, TlsConfig changes, ex
                   "reject:NOT_TRUSTED"),
     "vm_clientonly": ("VM s_server, certificate with clientAuth EKU only", lambda: url(18895, host=VM, secret="dummy"),
                       True, {}, "verified_then_timeout"),  # accepted: CmpTls ignores key usage, so do we
+    "le_a_untrusted": ("LE-shaped RSA chain A before its root is trusted", lambda: url(8892), True, {}, "reject:NOT_TRUSTED"),
+    "le_a": ("LE-shaped RSA chain A, old root trusted (via the cross-signed root)", lambda: url(8892), True, {}, "connect"),
+    "le_b": ("LE-shaped RSA chain B, only the new self-signed root trusted", lambda: url(8893), True, {}, "connect"),
     "vm_silent": ("VM listener that accepts TCP and never answers", lambda: url(18896, host=VM, secret="dummy"), True,
                   {}, "reject:CONNECT_TIMEOUT"),
 }

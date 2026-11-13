@@ -1,0 +1,133 @@
+{
+ "started": "2026-11-12 22:37:42",
+ "cases": [
+  {
+   "case": "le_a_untrusted",
+   "description": "LE-shaped RSA chain A before its root is trusted",
+   "settings": {},
+   "tls_input": true,
+   "expected": "reject:NOT_TRUSTED",
+   "connected": false,
+   "passed": true,
+   "verified_seen": false,
+   "statuses_seen": [
+    "0",
+    "NOT_TRUSTED"
+   ],
+   "first_connected_s": null,
+   "attempts": 5,
+   "messages": 0,
+   "final": {
+    "client.MQTT_INFO.TlsChainResult": "1811",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "FALSE",
+    "client.ERROR_C": "385875968",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "FALSE",
+    "client.ErrorText": "'TLS: broker certificate not trusted (CA not in the Trusted store?), chain result 1811'",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "1",
+    "client.TlsFailCount": "5",
+    "client.ERROR_T": "2",
+    "client.counts.CountConnectAttempt": "6",
+    "MaxIntervalUs": "59035",
+    "tls_status": "NOT_TRUSTED"
+   },
+   "last_error": {
+    "client.MQTT_INFO.TlsChainResult": "1811",
+    "client.MQTT_INFO.IsTlsActive": "TRUE",
+    "client.MQTT_INFO.IsTlsVerified": "FALSE",
+    "client.ERROR_C": "385875968",
+    "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+    "IsBrokerConnected": "FALSE",
+    "client.ErrorText": "'TLS: broker certificate not trusted (CA not in the Trusted store?), chain result 1811'",
+    "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+    "client.MQTT_INFO.TlsConnectResult": "1",
+    "client.TlsFailCount": "5",
+    "client.ERROR_T": "2",
+    "client.counts.CountConnectAttempt": "6",
+    "MaxIntervalUs": "59035",
+    "tls_status": "NOT_TRUSTED"
+   },
+   "samples": [
+    [
+     6.6,
+     {
+      "client.MQTT_INFO.TlsChainResult": "1811",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "FALSE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "FALSE",
+      "client.ErrorText": "'TLS: broker certificate not trusted (CA not in the Trusted store?), chain result 1811'",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "1",
+      "client.TlsFailCount": "3",
+      "client.ERROR_T": "0",
+      "client.counts.CountConnectAttempt": "3",
+      "MaxIntervalUs": "59035",
+      "tls_status": null
+     }
+    ],
+    [
+     13.1,
+     {
+      "client.MQTT_INFO.TlsChainResult": "1811",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "FALSE",
+      "client.ERROR_C": "385875968",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "FALSE",
+      "client.ErrorText": "'TLS: broker certificate not trusted (CA not in the Trusted store?), chain result 1811'",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "1",
+      "client.TlsFailCount": "4",
+      "client.ERROR_T": "2",
+      "client.counts.CountConnectAttempt": "5",
+      "MaxIntervalUs": "59035",
+      "tls_status": "NOT_TRUSTED"
+     }
+    ],
+    [
+     19.8,
+     {
+      "client.MQTT_INFO.TlsChainResult": "1811",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "FALSE",
+      "client.ERROR_C": "0",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "FALSE",
+      "client.ErrorText": "'TLS: broker certificate not trusted (CA not in the Trusted store?), chain result 1811'",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "1",
+      "client.TlsFailCount": "5",
+      "client.ERROR_T": "2",
+      "client.counts.CountConnectAttempt": "5",
+      "MaxIntervalUs": "59035",
+      "tls_status": 0
+     }
+    ],
+    [
+     26.4,
+     {
+      "client.MQTT_INFO.TlsChainResult": "1811",
+      "client.MQTT_INFO.IsTlsActive": "TRUE",
+      "client.MQTT_INFO.IsTlsVerified": "FALSE",
+      "client.ERROR_C": "385875968",
+      "client.MQTT_INFO.Broker.ProtocolLevel": "5",
+      "IsBrokerConnected": "FALSE",
+      "client.ErrorText": "'TLS: broker certificate not trusted (CA not in the Trusted store?), chain result 1811'",
+      "client.MQTT_INFO.IsTlsHostMatched": "TRUE",
+      "client.MQTT_INFO.TlsConnectResult": "1",
+      "client.TlsFailCount": "5",
+      "client.ERROR_T": "2",
+      "client.counts.CountConnectAttempt": "6",
+      "MaxIntervalUs": "59035",
+      "tls_status": "NOT_TRUSTED"
+     }
+    ]
+   ]
+  }
+ ],
+ "restored": true
+}
